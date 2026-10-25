@@ -318,6 +318,26 @@
   @media (max-width: 560px) { .rpage .kv4 { grid-template-columns: repeat(2, 1fr); } .rpage.mrep .stamp { position: static; display: inline-block; margin-bottom: 8px; } }
   @media print { .sync { display: none !important; } }
   .chother { margin-top: 6px !important; }
+  .form textarea.grow1 { resize: none; overflow: hidden; line-height: 1.45; min-height: calc(1.45em + 26px); }
+  .form input:not([type=checkbox]):not([type=radio]):not([type=file]), .form select { height: calc(1.45em + 26px); line-height: 1.45; }
+  .form input[type=date] { -webkit-appearance: none; appearance: none; line-height: 1.45; text-align: left; }
+  .locrow2 { display: flex; gap: 8px; margin: -10px 0 6px; }
+  .locrow2 .btn { flex: 1; width: auto !important; min-width: 0 !important; }
+  .form .blockhint { display: block; font-size: 13px; color: var(--muted); margin: 0 0 16px; }
+  .mpicker .pklay { position: absolute; right: 10px; top: 10px; z-index: 500; display: flex; background: #fff; border-radius: 7px; overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,.35); }
+  .mpicker .pklay button { border: 0; background: #fff; font: inherit; font-weight: 700; font-size: 14px; padding: 8px 12px; cursor: pointer; color: var(--navy); }
+  .mpicker .pklay button.on { background: var(--navy); color: #fff; }
+  .kpin { display: flex !important; align-items: center; gap: 3px; white-space: nowrap; color: #1e4d36; font-weight: 700; font-size: 12px; }
+  .kpin b { font-size: 22px; color: #d4a93c; text-shadow: 0 0 2px #000; }
+  .kpin span { background: #fff; padding: 1px 5px; border-radius: 4px; box-shadow: 0 1px 2px rgba(0,0,0,.3); }
+  .svsheet { position: fixed; inset: 0; z-index: 85; }
+  .svsheet .svdim { position: absolute; inset: 0; background: rgba(0,0,0,.4); }
+  .svsheet .svbox { position: absolute; left: 0; right: 0; bottom: 0; max-height: 75vh; overflow: auto; background: #fff; border-radius: 14px 14px 0 0;
+    padding: 14px 16px 18px; box-shadow: 0 -6px 20px rgba(0,0,0,.25); max-width: 640px; margin: 0 auto; }
+  .svsheet h4 { margin: 0 0 6px; color: var(--navy); font-size: 17px; }
+  .svsheet .svit { display: block; width: 100%; text-align: left; background: none; border: 0; border-bottom: 1px solid var(--line); padding: 12px 4px; font: inherit; cursor: pointer; }
+  .svsheet .svit small { display: block; color: var(--muted); font-size: 14px; }
+  .svsheet .btn { width: 100%; }
   .mpicker { position: fixed; inset: 0; z-index: 80; background: #fff; display: flex; flex-direction: column; }
   .mpicker .pkbar { background: var(--navy); padding: 10px 12px; display: flex; gap: 8px; align-items: center; }
   .mpicker .pkbar input { flex: 1; min-width: 0; padding: 10px; border-radius: 7px; border: 0; font: inherit; font-size: 16px; }
@@ -354,9 +374,18 @@ const POSSE_INFO = {"key":"west","short":"West Posse","header":"West Millard She
 </script>
 <script>
 /* ================= Duty Log: core (shared by the East and West posses) ================= */
-const APP_VERSION = 'V1.5.3';
+const APP_VERSION = 'V1.5.4';
 const APP_DATE = 'October 25, 2026';
 const CHANGELOG = [
+  { v: 'V1.5.4', date: 'October 25, 2026', items: [
+    'The GroupMe post and the Open CalTopo map button use a share link (Write access by default, set in Settings > Connections), so members open the map in one tap with no bookmark questions. The message also says where to find the map in CalTopo.',
+    'Mission names are in ALL CAPS (Add Mission, Rename, and new names on the Log page), to match the CalTopo map name.',
+    'Long mission names and locations wrap onto more lines so they are easy to read and edit.',
+    'Map picker: Topo / Aerial switch at any zoom, and saved places show as ★ pins you can tap. A ★ Saved button fills a location from your saved places.',
+    'The screen stays put after picking a location on the map. The start date box matches the other boxes.',
+    'Clear button on the Log page.',
+    'Weak signal: the app tries again on its own and never gets stuck. What you type on Add Mission and the Log page is kept on your phone until it is saved, and a retry never adds a mission or entry twice.'
+  ] },
   { v: 'V1.5.3', date: 'October 25, 2026', items: [
     '“Location” is now “Incident Location”.',
     'Pick on map has a Name box: name the spot (like Cemetery or Trailhead) and the box keeps the name with its exact coordinates, e.g. Cemetery (38.97012, -112.30455). That is what goes in the GroupMe message.',
@@ -502,13 +531,55 @@ async function viaFetch(fn, args) {
   } finally { clearTimeout(timer); }
 }
 
+/**
+ * Calls the server. A dropped connection or slow answer is tried once more on its own; after that the member gets a
+ * plain message and can tap the button again (nothing they typed is lost, and nothing is ever saved twice).
+ */
 async function run(fn, ...args) {
-  if (useFetch) {
+  const scriptRun = !!(window.google && google.script && google.script.run);
+  if (useFetch || !scriptRun) {
     try { return await viaFetch(fn, args); }
-    catch (e) { if (e.server) throw e; useFetch = false; }
+    catch (e) {
+      if (e.server) throw e;
+      await new Promise(r => setTimeout(r, 1500));
+      try { return await viaFetch(fn, args); }
+      catch (e2) {
+        if (e2.server) throw e2;
+        if (!scriptRun) throw new Error("Couldn't reach the server. Check your signal and tap the button again. What you typed is still here.");
+        useFetch = false;
+      }
+    }
   }
   return viaScriptRun(fn, args);
 }
+
+/* ---------------- Form helpers: ALL CAPS, boxes that grow, drafts kept on the phone ---------------- */
+
+function capsInput(el) {
+  if (!el) return;
+  el.addEventListener('input', () => {
+    const u = el.value.toUpperCase();
+    if (u === el.value) return;
+    const a = el.selectionStart, b = el.selectionEnd;
+    el.value = u;
+    try { el.setSelectionRange(a, b); } catch (x) {}
+  });
+}
+/** A one-line text box that wraps onto more lines as the text gets long (Enter doesn't add a line). */
+function growBox(el) {
+  if (!el) return;
+  const fit = () => { el.style.height = 'auto'; el.style.height = (el.scrollHeight + 2) + 'px'; };
+  el.addEventListener('keydown', ev => { if (ev.key === 'Enter') ev.preventDefault(); });
+  el.addEventListener('input', () => { if (/\n/.test(el.value)) el.value = el.value.replace(/\s*\n\s*/g, ' '); fit(); });
+  el.fit = fit;
+  requestAnimationFrame(fit);
+}
+function setBox(el, v) { el.value = v; if (el.fit) el.fit(); }
+function draftKey(k) { return 'draft_' + k + '_' + (S.creds ? S.creds.unit : ''); }
+function draftSave(k, o) { try { localStorage.setItem(draftKey(k), JSON.stringify(o)); } catch (e) {} }
+function draftLoad(k) { try { return JSON.parse(localStorage.getItem(draftKey(k)) || 'null'); } catch (e) { return null; } }
+function draftClear(k) { try { localStorage.removeItem(draftKey(k)); } catch (e) {} }
+function newRid() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 8); }
 
 window.addEventListener('error', ev => {
   const m = $('main');
@@ -934,7 +1005,7 @@ function entryForm(e, button, cancel) {
       </div>
       <label>Mission / Event${missionSelect(e ? e.mission : '')}
         <span class="hint">Pick from the list so everyone's time lands on the same mission. Can't find it? Choose “+ New”.${(S.d.missions || []).some(m => m.locked) ? ' Locked missions have been reported. Ask an admin if you need to add time.' : ''}</span></label>
-      <label id="emwrap" class="hidden">New Mission / Event name<input id="em" maxlength="80" autocomplete="off" placeholder="e.g. Lost hiker – Chalk Creek"></label>
+      <label id="emwrap" class="hidden">New Mission / Event name<textarea id="em" class="grow1" rows="1" maxlength="80" autocomplete="off" placeholder="e.g. LOST HIKER – CHALK CREEK"></textarea></label>
       <div id="simbox" class="simbox hidden"></div>
       <div class="row2">
         <label>Hours (include travel)<input type="number" id="eh" min="0.5" max="72" step="0.5" inputmode="decimal" required value="${e ? e.h : ''}"></label>
@@ -944,7 +1015,8 @@ function entryForm(e, button, cancel) {
       <label>Add photos (optional)<input type="file" id="ep" accept="image/*" multiple>
         <span class="hint">Saved to the mission's photo folder. Everyone in the posse can see them on the Missions tab.</span></label>
       <div id="pprev" class="thumbs"></div>
-      <button class="btn" type="submit" id="eb">${button}</button>
+      <div class="btnrow"><button class="btn" type="submit" id="eb" style="flex:1;width:auto">${button}</button>
+        ${cancel ? '' : '<button class="btn ghost" type="button" id="eclr" style="width:auto">Clear</button>'}</div>
       ${cancel ? '<button class="btn gray" type="button" id="ec" style="margin-top:8px">Cancel</button>' : ''}
     </form>`;
 }
@@ -1002,10 +1074,11 @@ function checkMissionName() {
 
 function hookEntryForm() {
   S.simOk = null; S.simForced = null;
+  capsInput($('em')); growBox($('em'));
   $('ems').addEventListener('change', () => {
     const v = $('ems').value;
     $('emwrap').classList.toggle('hidden', v !== '__new');
-    if (v === '__new') { $('em').focus(); return; }
+    if (v === '__new') { $('em').focus(); if ($('em').fit) $('em').fit(); return; }
     $('simbox').classList.add('hidden');
     const m = S.d.missions.find(x => x.name === v);
     if (m) $('et').value = m.type;
@@ -1032,6 +1105,24 @@ function renderLog() {
   main(section('Log Activity', entryForm(pre, 'Save entry', false))
     + section(`This Month · ${MONTHS_LONG[now.getMonth()]}`, tiles(mtd)));
   hookEntryForm();
+  /* Keep what the member is typing on the phone until it's saved */
+  const ids = ['ed', 'et', 'ems', 'em', 'eh', 'ei', 'en'];
+  const dr = pre ? null : draftLoad('entry');
+  if (dr && (dr.em || dr.eh || dr.ei || dr.en || dr.ems)) {
+    ids.forEach(id => { if (dr[id] != null && $(id)) $(id).value = dr[id]; });
+    if ($('ems').value !== dr.ems && dr.ems && dr.ems !== '__new') { /* mission no longer on the list */ $('ems').value = '__new'; $('em').value = dr.ems; }
+    $('emwrap').classList.toggle('hidden', $('ems').value !== '__new');
+    if ($('em').fit) $('em').fit();
+    toast('Restored what you were typing. Tap Clear to start over.', false, 4000);
+  }
+  let dt;
+  const keep = () => { clearTimeout(dt); dt = setTimeout(() => { const o = {}; ids.forEach(id => { o[id] = $(id) ? $(id).value : ''; }); draftSave('entry', o); }, 300); };
+  $('ef').addEventListener('input', keep); $('ef').addEventListener('change', keep);
+  $('eclr').onclick = () => {
+    if (($('em').value.trim() || $('eh').value || $('ei').value || $('en').value.trim() || $('ems').value) && !confirm('Clear the form and start over?')) return;
+    clearTimeout(dt); draftClear('entry'); S.entryRid = null; S.prefill = null;
+    const y = window.scrollY; render(); window.scrollTo(0, y);
+  };
   if (finePointer()) $('ed').focus();
   $('ef').onsubmit = ev => { ev.preventDefault(); saveEntry(false); };
 }
@@ -1085,6 +1176,8 @@ async function saveEntry(force) {
   if (!force && Number(e.hours) > 16 && !confirm(e.hours + ' hours is a long stretch. Save it?')) return;
   const files = [].slice.call($('ep').files || []);
   const b = $('eb'); b.disabled = true; b.textContent = 'Saving…';
+  S.entryRid = S.entryRid || newRid();
+  e.rid = S.entryRid;
   try {
     const r = await run('apiAddEntry', S.creds, e, force);
     if (r.dup) {
@@ -1092,6 +1185,7 @@ async function saveEntry(force) {
       if (confirm('You already logged this mission on this date. Save another entry anyway?')) saveEntry(true);
       return;
     }
+    S.entryRid = null; draftClear('entry');
     setData(r.data);
     toast('Saved. Thanks!');
     if (files.length) await uploadPhotos(files, { entryId: r.id, mission: e.mission, date: e.date });
@@ -1387,7 +1481,7 @@ function missionDialog(m, mode) {
        <label>Merge into<select id="mdsel"><option value="">Pick the mission to keep…</option>
          ${others.map(x => `<option value="${esc(x.name)}">${esc(label(x))}</option>`).join('')}</select></label>`
     : `<p style="margin:0 0 12px;font-size:16px">Changes the name everywhere: every entry, the Log list and the photo folder.</p>
-       <label>New name<input id="mdname" maxlength="80" value="${esc(m.name)}"></label>`;
+       <label>New name<textarea id="mdname" class="grow1" rows="1" maxlength="80">${esc(m.name.toUpperCase())}</textarea></label>`;
   document.body.insertAdjacentHTML('beforeend', `<div id="npop" class="npop" role="dialog" aria-modal="true" aria-labelledby="mdt">
     <div class="nbox form"><div class="nhead"><div><div id="mdt" class="what">${mode === 'merge' ? 'Merge mission' : 'Rename mission'}</div>
       <div class="meta">${esc(m.name)}${facts ? ' · ' + esc(facts) : ''}</div></div>
@@ -1402,6 +1496,7 @@ function missionDialog(m, mode) {
   pop.onclick = ev => { if (ev.target === pop) close(); };
   pop.querySelector('.nclose').onclick = close;
   pop.querySelector('.mdcancel').onclick = close;
+  if ($('mdname')) { capsInput($('mdname')); growBox($('mdname')); }
   (mode === 'merge' ? $('mdsel') : $('mdname')).focus();
   pop.querySelector('.mdgo').onclick = async () => {
     const to = mode === 'merge' ? $('mdsel').value : $('mdname').value.trim();
@@ -1417,7 +1512,7 @@ function missionDialog(m, mode) {
 }
 
 const MAP_PLACEHOLDER = '(map link added when the map is ready)';
-function mapLink(id) { return id ? 'https:\/\/caltopo.com/m/' + encodeURIComponent(id) : ''; }
+function mapLink(id) { return id ? 'https:\/\/caltopo.com/m/' + String(id).split('/').map(encodeURIComponent).join('/') : ''; }
 function isLockedName(n) { const k = String(n || '').toLowerCase(); return (S.d.locked || []).some(x => x.toLowerCase() === k); }
 function lockedWhen(t) {
   const m = /^(\d{4}-\d{2}-\d{2})\s+(\d{1,2}):(\d{2})\s+by\s+(.*)$/.exec(String(t || ''));
@@ -1450,7 +1545,10 @@ function alertMessage(f) {
     if (f.backup) lines.push('Backup Ch: ' + f.backup);
   }
   if (f.extra) lines.push(f.extra);
-  if (f.map) lines.push('Map: ' + MAP_PLACEHOLDER);
+  if (f.map) {
+    lines.push('Map: ' + MAP_PLACEHOLDER);
+    lines.push('Or in CalTopo: ' + ((S.d.posse && S.d.posse.short) || 'Posse') + ' Data › ' + (f.name || '(mission name)'));
+  }
   lines.push('Log your time: ' + ((S.d.conn && S.d.conn.appUrl) || POSSE_INFO.appUrl || ''));
   return lines.filter(Boolean).join('\n');
 }
@@ -1508,15 +1606,22 @@ async function openPicker(current, place, done, opts) {
       <button class="btn small" type="submit" style="background:#fff;color:var(--navy)">Find</button>
       <button class="pkx" type="button" aria-label="Close">✕</button></form>
     <div class="pkmap" id="pkmap"><div class="pkload" id="pkload">Loading the map…</div>
-      <button class="pkme" type="button" id="pkme">📍 My location</button></div>
-    <div class="pkfoot"><div class="muted small">${esc(opts.hint || 'Tap the map to place the Staging Point')}</div>
+      <button class="pkme" type="button" id="pkme">📍 My location</button>
+      <div class="pklay" id="pklay"><button type="button" data-l="topo">Topo</button><button type="button" data-l="aerial">Aerial</button></div></div>
+    <div class="pkfoot"><div class="muted small">${esc(opts.hint || 'Tap the map to place the Staging Point')}${(S.d.places || []).length ? ', or tap a ★ saved place' : ''}</div>
       <div class="pkpt" id="pkpt">No point yet</div>
       <label class="pkname">Name this spot (optional)<input id="pkn" maxlength="60" autocomplete="off" placeholder="e.g. Cemetery" value="${esc(opts.name || '')}" ${opts.lockName ? 'readonly' : ''}></label>
       <label class="pksave hidden" id="pksvw"><input type="checkbox" id="pksv"> <span id="pksvl"></span></label>
       <div class="btnrow"><button class="btn" type="button" id="pkuse" disabled style="flex:1;width:auto">Use this point</button>
         <button class="btn ghost" type="button" id="pkcancel" style="width:auto">Cancel</button></div></div></div>`);
+  const y0 = window.scrollY;
   document.body.style.overflow = 'hidden';
-  const close = () => { const v = $('mpicker'); if (v) v.remove(); document.body.style.overflow = ''; document.removeEventListener('keydown', key); };
+  const close = () => {
+    const v = $('mpicker'); if (v) v.remove(); document.body.style.overflow = ''; document.removeEventListener('keydown', key);
+    /* Back to the same spot on the form, with the box that was just filled in view */
+    window.scrollTo(0, y0);
+    if (opts.input) setTimeout(() => { window.scrollTo(0, y0); const r = opts.input.getBoundingClientRect(); if (r.top < 80 || r.bottom > window.innerHeight - 40) opts.input.scrollIntoView({ block: 'center' }); }, 60);
+  };
   const key = ev => { if (ev.key === 'Escape') close(); };
   document.addEventListener('keydown', key);
   $('mpicker').querySelector('.pkx').onclick = close;
@@ -1529,11 +1634,26 @@ async function openPicker(current, place, done, opts) {
   $('pkload').remove();
   const start = parsePoint(current);
   const map = L.map('pkmap', { zoomControl: true }).setView(start || MAP_HOME, start ? 14 : 9);
-  L.tileLayer('https:\/\/basemap.nationalmap.gov/arcgis/rest/services/USGSTopo/MapServer/tile/{z}/{y}/{x}',
-    { maxZoom: 16, attribution: 'USGS The National Map' }).addTo(map);
-  L.tileLayer('https:\/\/server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
-    { minZoom: 17, maxZoom: 19, attribution: 'Esri imagery' }).addTo(map);
+  /* Topo or aerial photos, switchable at any zoom (the choice is remembered on this phone) */
+  const layers = {
+    topo: L.tileLayer('https:\/\/basemap.nationalmap.gov/arcgis/rest/services/USGSTopo/MapServer/tile/{z}/{y}/{x}',
+      { maxNativeZoom: 16, maxZoom: 19, attribution: 'USGS The National Map' }),
+    aerial: L.tileLayer('https:\/\/server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+      { maxZoom: 19, attribution: 'Esri imagery' })
+  };
+  let cur = null;
+  const useLayer = k => {
+    if (!layers[k]) k = 'topo';
+    if (cur) map.removeLayer(layers[cur]);
+    layers[k].addTo(map); cur = k;
+    $('pklay').querySelectorAll('button').forEach(b => b.classList.toggle('on', b.dataset.l === k));
+    try { localStorage.setItem('pkLayer', k); } catch (e) {}
+  };
+  let pref = 'topo'; try { pref = localStorage.getItem('pkLayer') || 'topo'; } catch (e) {}
+  useLayer(pref);
+  $('pklay').querySelectorAll('button').forEach(b => b.onclick = () => useLayer(b.dataset.l));
   L.DomEvent.disableClickPropagation($('pkme'));
+  L.DomEvent.disableClickPropagation($('pklay'));
   let pin = null, pt = null;
   const place2 = (lat, lon, zoom) => {
     pt = fmtPoint(lat, lon);
@@ -1555,6 +1675,12 @@ async function openPicker(current, place, done, opts) {
   };
   $('pkn').addEventListener('input', updSave);
   updSave();
+  /* Saved places as ★ pins: tap one to use that spot and its name */
+  (S.d.places || []).forEach(p => {
+    const pp = parsePoint(p.point); if (!pp) return;
+    L.marker(pp, { icon: L.divIcon({ className: 'kpin', html: '<b>★</b><span>' + esc(p.name) + '</span>', iconSize: null }) })
+      .addTo(map).on('click', () => { place2(pp[0], pp[1]); $('pkn').value = p.name; updSave(); });
+  });
   $('pkuse').onclick = async () => {
     if (!pt) return;
     const n = $('pkn').value.trim();
@@ -1620,24 +1746,49 @@ function pickStaging(input, near, after, hint) {
   const sp = splitPlace(input.value), kp = !sp.pt && knownPlace(sp.name);
   const pt = sp.pt || (kp ? kp.point : '');
   openPicker(pt, pt ? '' : (sp.name || near), (name, p) => {
-    input.value = name ? name + ' (' + p + ')' : p;
+    setBox(input, name ? name + ' (' + p + ')' : p);
+    input.dispatchEvent(new Event('input', { bubbles: true }));
     refreshPlaceList(); if (after) after();
-  }, { hint: hint, name: kp ? kp.name : sp.name });
+  }, { hint: hint, name: kp ? kp.name : sp.name, input: input });
+}
+
+/** ★ Saved: the posse's saved places in a list; tapping one fills the box with "Name (lat, lon)". */
+function openSaved(input, after) {
+  const old = $('svsheet'); if (old) old.remove();
+  const list = S.d.places || [];
+  document.body.insertAdjacentHTML('beforeend', `<div id="svsheet" class="svsheet" role="dialog" aria-modal="true" aria-label="Saved places">
+    <div class="svdim"></div><div class="svbox"><h4>Saved places · ${esc((S.d.posse || {}).short || '')}</h4>
+      ${list.length ? list.map((p, k) => `<button type="button" class="svit" data-k="${k}"><b>${esc(p.name)}</b><small>${esc(p.point)}</small></button>`).join('')
+        : '<p class="muted">No saved places yet. Save one from Pick on map (name the spot and keep “Save as a known place” checked), or under Settings › Known places.</p>'}
+      <button type="button" class="btn ghost svcancel" style="margin-top:10px">Cancel</button>
+      <p class="muted small" style="margin:8px 0 0">Edit or delete saved places in Settings › Known places.</p></div></div>`);
+  const close = () => { const v = $('svsheet'); if (v) v.remove(); };
+  $('svsheet').querySelector('.svdim').onclick = close;
+  $('svsheet').querySelector('.svcancel').onclick = close;
+  $('svsheet').querySelectorAll('.svit').forEach(b => b.onclick = () => {
+    const p = list[+b.dataset.k];
+    setBox(input, p.name + ' (' + p.point + ')');
+    input.dispatchEvent(new Event('input', { bubbles: true }));
+    close(); if (after) after();
+  });
 }
 
 function addMissionForm() {
   const d = S.d, c = d.conn || {};
   const folder = c.ctFolder || (d.posse && d.posse.short) || '';
   return section('Add Mission / Event', `<form id="mf" class="form">
-      <label>Mission / Event name<input id="mn" maxlength="80" required placeholder="e.g. Lost hiker – Chalk Creek, or Nov 2026 Meeting"></label>
+      <label>Mission / Event name<textarea id="mn" class="grow1" rows="1" maxlength="80" required placeholder="e.g. LOST HIKER – CHALK CREEK"></textarea>
+        <span class="hint">Letters are capitalized automatically, to match the CalTopo map name.</span></label>
       <div class="row2">
         <label id="mdw">Start date<input type="date" id="md" value="${todayStr()}" required></label>
         <label>Type<select id="mt">${typeOptions('Callout')}</select></label>
       </div>
-      <label>Incident Location (optional)<span class="locrow"><input id="mloc" maxlength="200" placeholder="e.g. Trailhead, or pick on map" list="kpl" autocomplete="off"><button class="btn small ghost" type="button" id="mgeo">🗺 Pick on map</button></span>
-        <span class="hint">Pick the spot on the map and give it a name. It's marked on the new CalTopo map.</span></label>
-      <label>Staging Point (optional)<span class="locrow"><input id="mstg" maxlength="120" placeholder="e.g. Posse Shed, or pick on map" list="kpl" autocomplete="off">${placeList()}<button class="btn small ghost" type="button" id="mpick">🗺 Pick on map</button></span>
-        <span class="hint">Pick the spot on the map and give it a name, or choose a saved place. It's marked on the new CalTopo map.</span></label>
+      <label>Incident Location (optional)<textarea id="mloc" class="grow1" rows="1" maxlength="200" placeholder="e.g. Trailhead" autocomplete="off"></textarea></label>
+      <div class="locrow2"><button class="btn small ghost" type="button" id="mgeo">🗺 Pick on map</button><button class="btn small ghost" type="button" id="mlsv">★ Saved</button></div>
+      <span class="hint blockhint">Pick the spot on the map and give it a name, or choose a saved place. It's marked on the CalTopo map.</span>
+      <label>Staging Point (optional)<textarea id="mstg" class="grow1" rows="1" maxlength="120" placeholder="e.g. Posse Shed" autocomplete="off"></textarea></label>
+      <div class="locrow2"><button class="btn small ghost" type="button" id="mpick">🗺 Pick on map</button><button class="btn small ghost" type="button" id="mssv">★ Saved</button></div>
+      <span class="hint blockhint">Pick the spot on the map and give it a name, or choose a saved place. It's marked on the CalTopo map.</span>
       <label>MCSO case #<input id="mcase" maxlength="40" placeholder="Optional, add it later if you don't have it" style="max-width:300px"></label>
       <div class="row2">
         <label>Primary${channelSelect('mpri', (d.comms || {}).primary)}<input id="mprio" class="hidden chother" maxlength="60" placeholder="Type the channel"></label>
@@ -1675,7 +1826,10 @@ function hookAddMission() {
     $('mmsg').classList.toggle('hidden', !$('mpost').checked);
     if (!st.msgEdited) $('mmsg').value = alertMessage(fields());
   };
+  capsInput($('mn')); ['mn', 'mloc', 'mstg'].forEach(id => growBox($(id)));
   ['mn', 'md', 'mloc', 'mstg', 'mprio', 'mbako', 'mxtra'].forEach(id => $(id).addEventListener('input', sync));
+  $('mlsv').onclick = () => openSaved($('mloc'), sync);
+  $('mssv').onclick = () => openSaved($('mstg'), sync);
   hookChannel('mpri', 'mprio', sync); hookChannel('mbak', 'mbako', sync);
   $('mpick').onclick = () => pickStaging($('mstg'), splitPlace(placeValue($('mloc'))).pt || $('mloc').value.trim(), sync);
   $('mt').addEventListener('change', sync);
@@ -1690,11 +1844,35 @@ function hookAddMission() {
   };
   $('mclr').onclick = () => {
     if (($('mn').value.trim() || $('mloc').value.trim() || $('mstg').value.trim() || $('mnotes').value.trim() || $('mxtra').value.trim()) && !confirm('Clear the form and start over?')) return;
+    clearTimeout(st.dt); draftClear('mission'); S.missionRid = null;
     const y = window.scrollY; render(); window.scrollTo(0, y);
     if ($('mn')) $('mn').focus();
   };
   $('mgeo').onclick = () => pickStaging($('mloc'), '', sync, 'Tap the map to place the Incident Location');
   $('mloc').addEventListener('change', sync); $('mstg').addEventListener('change', sync);
+  /* Keep what the admin is typing on the phone until the mission is added (weak signal, app closed, phone died) */
+  const D_IDS = ['mn', 'md', 'mt', 'mloc', 'mstg', 'mcase', 'mpri', 'mprio', 'mbak', 'mbako', 'mxtra', 'mnotes', 'mmsg'];
+  const D_CHK = ['mjoint', 'mong', 'mmap', 'mpost'];
+  const dr = draftLoad('mission');
+  if (dr && (dr.mn || dr.mloc || dr.mstg || dr.mnotes || dr.mxtra)) {
+    D_IDS.forEach(id => {
+      if (dr[id] == null || !$(id)) return;
+      const el = $(id);
+      if (el.tagName === 'SELECT' && ![].some.call(el.options, o => o.value === dr[id])) el.insertAdjacentHTML('afterbegin', `<option value="${esc(dr[id])}">${esc(dr[id])}</option>`);
+      el.value = dr[id]; if (el.fit) el.fit();
+    });
+    D_CHK.forEach(id => { if (dr[id] != null && $(id) && !$(id).disabled) $(id).checked = !!dr[id]; });
+    ['mpri', 'mbak'].forEach(id => $(id + 'o').classList.toggle('hidden', $(id).value !== '__other'));
+    $('mdw').classList.toggle('hidden', $('mong').checked);
+    Object.assign(st, dr._st || {});
+    toast('Restored what you were typing. Tap Clear to start over.', false, 4000);
+  }
+  const keep = () => { clearTimeout(st.dt); st.dt = setTimeout(() => {
+    const o = { _st: { mapTouched: st.mapTouched, postTouched: st.postTouched, msgEdited: st.msgEdited } };
+    D_IDS.forEach(id => { o[id] = $(id) ? $(id).value : ''; }); D_CHK.forEach(id => { o[id] = $(id) ? $(id).checked : false; });
+    draftSave('mission', o);
+  }, 300); };
+  $('mf').addEventListener('input', keep); $('mf').addEventListener('change', keep);
   sync();
   $('mf').onsubmit = async ev => {
     ev.preventDefault();
@@ -1702,11 +1880,13 @@ function hookAddMission() {
     const post = $('mpost').checked, msg = $('mmsg').value.trim();
     if (post && !msg) { toast('Write the GroupMe message, or uncheck Post to GroupMe.', true); return; }
     $('mb').disabled = true; $('mb').textContent = f.map || post ? 'Adding (and setting up the map and post)…' : 'Adding…';
+    S.missionRid = S.missionRid || newRid();
     try {
       const r = await run('apiAddMission', S.creds, { name: f.name, date: $('md').value, type: f.type, notes: $('mnotes').value,
         ongoing: $('mong').checked, joint: $('mjoint').checked, location: f.location, caseNo: $('mcase').value.trim(),
         staging: f.staging, primary: f.primary, backup: f.backup,
-        makeMap: f.map, post: post, message: post ? msg : '' });
+        makeMap: f.map, post: post, message: post ? msg : '', rid: S.missionRid });
+      clearTimeout(st.dt); draftClear('mission'); S.missionRid = null;
       if (r && r.results) {
         S.addResult = { name: r.name, results: r.results, message: msg, wantMap: f.map, wantPost: post };
         setData(r.data); window.scrollTo(0, 0);
@@ -1804,10 +1984,11 @@ function renderMissions() {
           <div class="btnrow" style="margin-top:8px"><button class="btn small ghost mcopy" type="button">Copy map link</button>
           ${admin && conn.caltopo ? '<button class="btn small ghost mbak" type="button">Back up map now</button>' : ''}</div>`
         : edit && conn.caltopo ? `<button class="btn small ghost mmk" type="button">🗺 Create CalTopo map</button>` : '';
-      const details = edit ? `<div class="row2">
-            <label>MCSO case #<input class="mcs" maxlength="40" value="${esc(m.caseNo || '')}"></label>
-            <label>Incident Location<span class="locrow"><input class="mlc" maxlength="200" value="${esc(m.location || '')}" list="kpl" autocomplete="off"><button class="btn small ghost mlpk" type="button" aria-label="Pick the incident location on a map">🗺</button></span></label></div>
-          <label>Staging Point<span class="locrow"><input class="mst" maxlength="120" value="${esc(m.staging || '')}" placeholder="Place name or coordinates" list="kpl" autocomplete="off">${placeList()}<button class="btn small ghost mpk" type="button">🗺 Pick on map</button></span></label>
+      const details = edit ? `<label>MCSO case #<input class="mcs" maxlength="40" value="${esc(m.caseNo || '')}" style="max-width:300px"></label>
+          <label>Incident Location<textarea class="mlc grow1" rows="1" maxlength="200">${esc(m.location || '')}</textarea></label>
+          <div class="locrow2"><button class="btn small ghost mlpk" type="button">🗺 Pick on map</button><button class="btn small ghost mlsv" type="button">★ Saved</button></div>
+          <label style="margin-top:12px">Staging Point<textarea class="mst grow1" rows="1" maxlength="120">${esc(m.staging || '')}</textarea></label>
+          <div class="locrow2" style="margin-bottom:12px"><button class="btn small ghost mpk" type="button">🗺 Pick on map</button><button class="btn small ghost mssv" type="button">★ Saved</button></div>
           <div class="row2">
             <label>Primary${channelSelect('cp' + i, m.primary, true)}<input id="cpo${i}" class="hidden chother" maxlength="60" placeholder="Type the channel"></label>
             <label>Backup${channelSelect('cb' + i, m.backup, true)}<input id="cbo${i}" class="hidden chother" maxlength="60" placeholder="Type the channel"></label></div>
@@ -1968,6 +2149,8 @@ function renderMissions() {
     hookChannel('cp' + card.dataset.i, 'cpo' + card.dataset.i); hookChannel('cb' + card.dataset.i, 'cbo' + card.dataset.i);
     q('.mpk').onclick = () => pickStaging(q('.mst'), splitPlace(placeValue(q('.mlc'))).pt || q('.mlc').value.trim() || m.location || '');
     q('.mlpk').onclick = () => pickStaging(q('.mlc'), '', null, 'Tap the map to place the Incident Location');
+    q('.mlsv').onclick = () => openSaved(q('.mlc')); q('.mssv').onclick = () => openSaved(q('.mst'));
+    growBox(q('.mlc')); growBox(q('.mst'));
     q('.msave').onclick = () => { const p = detailPatch(); if (Object.keys(p).length) save(p, 'Saved.'); else toast('Nothing to save.'); };
     q('.mtype').onchange = ev => save({ type: ev.target.value }, 'Type changed.');
     q('.mjt').onchange = ev => {
@@ -1992,12 +2175,14 @@ function renderMissions() {
     q('.xr1').onchange = pickReceipt(q('.xr1'));
     q('.xr2').onchange = pickReceipt(q('.xr2'));
     q('.xadd').onclick = ev => busy(ev.target, async () => {
-      const x = { date: q('.xd').value, amount: q('.xa').value, cat: q('.xc').value, desc: q('.xs').value.trim(), paidBy: q('.xp').value.trim() };
+      S.expRid = S.expRid || newRid();
+      const x = { date: q('.xd').value, amount: q('.xa').value, cat: q('.xc').value, desc: q('.xs').value.trim(), paidBy: q('.xp').value.trim(), rid: S.expRid };
       if (!x.desc) { toast('Say what the expense was for.', true); return; }
       if (receipt) x.receipt = { data: receipt };
       const p = detailPatch();
       if (Object.keys(p).length) await save(p);
       setData(await run('apiAddExpense', S.creds, m.name, x));
+      S.expRid = null;
       toast('Expense added.');
     });
   });
@@ -2473,6 +2658,9 @@ function renderSettings() {
         <label>Folder for new maps<input id="ccf" maxlength="80" value="${esc(c.ctFolder || '')}"></label>
       </div>
       <label>Credential ID<input id="cci" maxlength="40" value="${esc(c.ctId || '')}" spellcheck="false"></label>
+      <label>Share link access for new maps<select id="ccl">${[['20', 'Write – members can change anything'], ['16', 'Update – members can add and edit'], ['10', 'Read – view only']]
+        .map(([v, l]) => `<option value="${v}" ${String(c.ctLink || '20') === v ? 'selected' : ''}>${l}</option>`).join('')}</select>
+        <span class="hint">Used for the link in GroupMe posts and the Open CalTopo map button, so members open the map in one tap.</span></label>
       <label>Credential secret<input id="cck" type="password" maxlength="200" placeholder="${c.ctHasKey ? 'Saved. Leave blank to keep it.' : 'Paste the secret CalTopo showed once'}" spellcheck="false" autocomplete="new-password"></label>
       <div class="btnrow" style="margin-bottom:16px"><button class="btn small ghost" type="button" data-test="caltopo">Test CalTopo</button>
         ${c.ctHasKey ? '<button class="btn small ghost" type="button" id="ccx">Remove CalTopo keys</button>' : ''}</div>
@@ -2543,7 +2731,7 @@ function renderSettings() {
     try { setData(await run('apiSaveComms', S.creds, { primary: channelValue('cmp', 'cmpo'), backup: channelValue('cmb', 'cmbo'), channels: $('cml').value })); toast('Comms plan saved.'); }
     catch (e) { $('cmsb').disabled = false; toast(clean(e), true); }
   };
-  const connVals = () => ({ ctTeam: $('cct').value, ctFolder: $('ccf').value, ctId: $('cci').value, ctKey: $('cck').value.trim(),
+  const connVals = () => ({ ctTeam: $('cct').value, ctFolder: $('ccf').value, ctId: $('cci').value, ctKey: $('cck').value.trim(), ctLink: $('ccl').value,
     gmBot: $('cgb').value.trim(), ghToken: $('cgt').value.trim(), ghRepo: $('cgr').value, ghPath: $('cgp').value });
   const saveConn = async (extra, msg) => {
     try { setData(await run('apiSaveConnections', S.creds, Object.assign(connVals(), extra || {}))); if (msg) toast(msg); return true; }
