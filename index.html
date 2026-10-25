@@ -317,6 +317,18 @@
   .rpage.pdf .stamp { top: 0; right: 0; }
   @media (max-width: 560px) { .rpage .kv4 { grid-template-columns: repeat(2, 1fr); } .rpage.mrep .stamp { position: static; display: inline-block; margin-bottom: 8px; } }
   @media print { .sync { display: none !important; } }
+  .chother { margin-top: 6px !important; }
+  .mpicker { position: fixed; inset: 0; z-index: 80; background: #fff; display: flex; flex-direction: column; }
+  .mpicker .pkbar { background: var(--navy); padding: 10px 12px; display: flex; gap: 8px; align-items: center; }
+  .mpicker .pkbar input { flex: 1; min-width: 0; padding: 10px; border-radius: 7px; border: 0; font: inherit; font-size: 16px; }
+  .mpicker .pkbar .btn { width: auto; }
+  .mpicker .pkx { background: none; border: 0; color: #fff; font-size: 22px; cursor: pointer; padding: 0 6px; }
+  .mpicker .pkmap { flex: 1; position: relative; background: #e9e4d4; }
+  .mpicker .pkload { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: var(--muted); }
+  .mpicker .pkme { position: absolute; left: 54px; top: 10px; z-index: 500; background: #fff; border: 0; border-radius: 6px; padding: 8px 11px;
+    font: inherit; font-weight: 700; font-size: 14px; box-shadow: 0 1px 4px rgba(0,0,0,.35); cursor: pointer; }
+  .mpicker .pkfoot { padding: 12px 14px 16px; border-top: 3px solid var(--gold); }
+  .mpicker .pkpt { font-size: 20px; font-weight: 700; margin: 2px 0 10px; }
 </style>
 </head>
 <body>
@@ -336,9 +348,14 @@ const POSSE_INFO = {"key":"west","short":"West Posse","header":"West Millard She
 </script>
 <script>
 /* ================= Duty Log: core (shared by the East and West posses) ================= */
-const APP_VERSION = 'V1.5';
+const APP_VERSION = 'V1.5.1';
 const APP_DATE = 'October 25, 2026';
 const CHANGELOG = [
+  { v: 'V1.5.1', date: 'October 25, 2026', items: [
+    'Staging Point on each mission: pick it on a topo map (or type coordinates). It becomes the Staging Point marker on the new CalTopo map and goes in the GroupMe message.',
+    'Comms plan on each mission: Primary and Backup channel dropdowns, starting with the posse\'s standard plan, with “Other…” to type any channel. It goes in the GroupMe message and the Mission Report.',
+    'Settings > Comms plan: set the standard Primary and Backup channels and edit the channel list (shared by East and West).'
+  ] },
   { v: 'V1.5', date: 'October 25, 2026', items: [
     'Faster: the app now loads from east.millardsar.org / west.millardsar.org directly, and your phone remembers your last numbers so they show instantly while fresh ones load.',
     'Everyone can open a mission to see its map link, notes, photos, expenses and who logged time. Only admins can change a mission.',
@@ -1407,9 +1424,117 @@ function missionEmoji(type) { return { Callout: '🚨', Training: '📘', 'Event
 function alertMessage(f) {
   const lines = [missionEmoji(f.type) + ' ' + f.type + ': ' + (f.name || '(mission name)')];
   lines.push([f.date ? fmtDate(f.date) : '', f.location].filter(Boolean).join(' · '));
+  if (f.staging) lines.push('Staging Point: ' + f.staging);
+  if (f.primary || f.backup) {
+    lines.push('Comms Plan:');
+    if (f.primary) lines.push('Primary Ch: ' + f.primary);
+    if (f.backup) lines.push('Backup Ch: ' + f.backup);
+  }
   if (f.map) lines.push('Map: ' + MAP_PLACEHOLDER);
   lines.push('Log your time: ' + ((S.d.conn && S.d.conn.appUrl) || POSSE_INFO.appUrl || ''));
   return lines.filter(Boolean).join('\n');
+}
+
+/* ---------------- Comms plan: channel dropdowns ---------------- */
+
+/** A Primary / Backup channel dropdown: the shared list grouped by band, the mission's own channel if it isn't listed, and "Other…". */
+function channelSelect(id, value, allowBlank) {
+  const list = (S.d.comms && S.d.comms.channels) || [];
+  const band = c => /\(700\)\s*$/.test(c) ? '700 MHz' : /\(VHF\)\s*$/.test(c) ? 'VHF' : 'Other channels';
+  const groups = {};
+  list.forEach(c => { (groups[band(c)] = groups[band(c)] || []).push(c); });
+  const v = String(value || '');
+  const custom = v && list.indexOf(v) < 0 ? `<option value="${esc(v)}" selected>${esc(v)}</option>` : '';
+  return `<select id="${id}">${allowBlank || !v ? `<option value="" ${v ? '' : 'selected'}>${allowBlank ? '— None —' : '— Pick a channel —'}</option>` : ''}${custom}
+    ${['700 MHz', 'VHF', 'Other channels'].filter(g => groups[g]).map(g => `<optgroup label="${g}">${groups[g].map(c => `<option value="${esc(c)}" ${c === v ? 'selected' : ''}>${esc(c)}</option>`).join('')}</optgroup>`).join('')}
+    <option value="__other">Other…</option></select>`;
+}
+function channelValue(selId, otherId) {
+  const s = $(selId); if (!s) return '';
+  return s.value === '__other' ? $(otherId).value.trim() : s.value;
+}
+function hookChannel(selId, otherId, after) {
+  const s = $(selId); if (!s) return;
+  s.addEventListener('change', () => {
+    const o = s.value === '__other';
+    $(otherId).classList.toggle('hidden', !o);
+    if (o) $(otherId).focus();
+    if (after) after();
+  });
+}
+
+/* ---------------- Pick the Staging Point on a map ---------------- */
+
+const MAP_HOME = [39.05, -112.6]; /* Millard County */
+function loadCss(href) {
+  return new Promise(res => {
+    if ([].some.call(document.querySelectorAll('link[rel=stylesheet]'), l => l.href === href)) return res();
+    const l = document.createElement('link'); l.rel = 'stylesheet'; l.href = href; l.onload = res; l.onerror = res;
+    document.head.appendChild(l);
+  });
+}
+function parsePoint(s) {
+  const m = /^\s*(-?\d{1,2}(?:\.\d+)?)\s*[, ]\s*(-?\d{1,3}(?:\.\d+)?)\s*$/.exec(String(s || ''));
+  return m ? [+m[1], +m[2]] : null;
+}
+function fmtPoint(lat, lon) { return lat.toFixed(5) + ', ' + lon.toFixed(5); }
+
+/** Full-screen topo map: search a place, use my location, tap to drop the pin, then "Use this point". */
+async function openPicker(current, place, done) {
+  const old = $('mpicker'); if (old) old.remove();
+  document.body.insertAdjacentHTML('beforeend', `<div id="mpicker" class="mpicker" role="dialog" aria-modal="true" aria-label="Pick the Staging Point">
+    <form class="pkbar" id="pkf"><input id="pkq" placeholder="Search a place" value="${esc(place || '')}" autocomplete="off">
+      <button class="btn small" type="submit" style="background:#fff;color:var(--navy)">Find</button>
+      <button class="pkx" type="button" aria-label="Close">✕</button></form>
+    <div class="pkmap" id="pkmap"><div class="pkload" id="pkload">Loading the map…</div>
+      <button class="pkme" type="button" id="pkme">📍 My location</button></div>
+    <div class="pkfoot"><div class="muted small">Tap the map to place the Staging Point</div>
+      <div class="pkpt" id="pkpt">No point yet</div>
+      <div class="btnrow"><button class="btn" type="button" id="pkuse" disabled style="flex:1;width:auto">Use this point</button>
+        <button class="btn ghost" type="button" id="pkcancel" style="width:auto">Cancel</button></div></div></div>`);
+  document.body.style.overflow = 'hidden';
+  const close = () => { const v = $('mpicker'); if (v) v.remove(); document.body.style.overflow = ''; document.removeEventListener('keydown', key); };
+  const key = ev => { if (ev.key === 'Escape') close(); };
+  document.addEventListener('keydown', key);
+  $('mpicker').querySelector('.pkx').onclick = close;
+  $('pkcancel').onclick = close;
+  try {
+    await loadCss('https:\/\/cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css');
+    if (!window.L) await loadScript('https:\/\/cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js');
+  } catch (e) { $('pkload').textContent = "Couldn't load the map. Type the coordinates instead."; return; }
+  if (!$('mpicker')) return;
+  $('pkload').remove();
+  const start = parsePoint(current);
+  const map = L.map('pkmap', { zoomControl: true }).setView(start || MAP_HOME, start ? 14 : 9);
+  L.tileLayer('https:\/\/basemap.nationalmap.gov/arcgis/rest/services/USGSTopo/MapServer/tile/{z}/{y}/{x}',
+    { maxZoom: 16, attribution: 'USGS The National Map' }).addTo(map);
+  L.tileLayer('https:\/\/server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+    { minZoom: 17, maxZoom: 19, attribution: 'Esri imagery' }).addTo(map);
+  L.DomEvent.disableClickPropagation($('pkme'));
+  let pin = null, pt = null;
+  const place2 = (lat, lon, zoom) => {
+    pt = fmtPoint(lat, lon);
+    if (pin) pin.setLatLng([lat, lon]); else pin = L.marker([lat, lon], { draggable: true }).addTo(map).on('dragend', ev => { const ll = ev.target.getLatLng(); place2(ll.lat, ll.lng); });
+    if (zoom) map.setView([lat, lon], zoom);
+    $('pkpt').textContent = pt; $('pkuse').disabled = false;
+  };
+  if (start) place2(start[0], start[1]);
+  map.on('click', ev => place2(ev.latlng.lat, ev.latlng.lng));
+  $('pkuse').onclick = () => { if (pt) { done(pt); close(); } };
+  $('pkme').onclick = () => {
+    if (!navigator.geolocation) { toast("This device can't share its location.", true); return; }
+    navigator.geolocation.getCurrentPosition(p => place2(p.coords.latitude, p.coords.longitude, 15),
+      () => toast("Couldn't get your location.", true), { enableHighAccuracy: true, timeout: 15000 });
+  };
+  const find = async q => {
+    const pp = parsePoint(q);
+    if (pp) { place2(pp[0], pp[1], 14); return; }
+    try { const r = await run('apiGeocode', S.creds, q); map.setView([r.lat, r.lon], 13); toast('Now tap the exact spot.'); }
+    catch (e) { toast(clean(e), true); }
+  };
+  $('pkf').onsubmit = ev => { ev.preventDefault(); const q = $('pkq').value.trim(); if (q) find(q); };
+  if (!start && place) find(place);
+  setTimeout(() => map.invalidateSize(), 200);
 }
 
 function addMissionForm() {
@@ -1423,7 +1548,14 @@ function addMissionForm() {
       </div>
       <label>Location (optional)<span class="locrow"><input id="mloc" maxlength="200" placeholder="Place name or coordinates"><button class="btn small ghost" type="button" id="mgeo">📍 Use mine</button></span>
         <span class="hint">A place name or coordinates. A new CalTopo map opens centered here with a marker.</span></label>
+      <label>Staging Point (optional)<span class="locrow"><input id="mstg" maxlength="40" placeholder="Coordinates, e.g. 38.97012, -112.30455" inputmode="decimal"><button class="btn small ghost" type="button" id="mpick">🗺 Pick on map</button></span>
+        <span class="hint">Tap the spot on a map, or type coordinates. It becomes the Staging Point marker on the CalTopo map.</span></label>
       <label>MCSO case #<input id="mcase" maxlength="40" placeholder="Optional, add it later if you don't have it" style="max-width:300px"></label>
+      <div class="row2">
+        <label>Primary${channelSelect('mpri', (d.comms || {}).primary)}<input id="mprio" class="hidden chother" maxlength="60" placeholder="Type the channel"></label>
+        <label>Backup${channelSelect('mbak', (d.comms || {}).backup)}<input id="mbako" class="hidden chother" maxlength="60" placeholder="Type the channel"></label>
+      </div>
+      <span class="hint" style="display:block;margin:-6px 0 12px">Comms plan. Starts with the standard plan from Settings; pick “Other…” to type a channel for this mission.</span>
       <label class="chk"><input type="checkbox" id="mjoint"> Joint mission (East &amp; West) <span class="hint">Shows up for both posses, so everyone logs time to the same mission.</span></label>
       <label class="chk"><input type="checkbox" id="mong"> Ongoing (no end date) <span class="hint">For recurring work like meetings or maintenance. It stays at the top of the Log list until you close it.</span></label>
       <label>Operational notes (optional)<textarea id="mnotes" rows="3" maxlength="5000" placeholder="Agencies involved, outcome…"></textarea></label>
@@ -1443,7 +1575,8 @@ function hookAddMission() {
   const d = S.d, c = d.conn || {};
   const st = { mapTouched: false, postTouched: false, msgEdited: false };
   const fields = () => ({ name: $('mn').value.trim(), date: $('mong').checked ? '' : $('md').value, type: $('mt').value,
-    location: $('mloc').value.trim(), map: $('mmap').checked });
+    location: $('mloc').value.trim(), map: $('mmap').checked, staging: $('mstg').value.trim(),
+    primary: channelValue('mpri', 'mprio'), backup: channelValue('mbak', 'mbako') });
   const sync = () => {
     const def = (d.mapTypes || []).indexOf($('mt').value) >= 0 && !$('mong').checked;
     if (!st.mapTouched) $('mmap').checked = !!c.caltopo && def;
@@ -1451,7 +1584,9 @@ function hookAddMission() {
     $('mmsg').classList.toggle('hidden', !$('mpost').checked);
     if (!st.msgEdited) $('mmsg').value = alertMessage(fields());
   };
-  ['mn', 'md', 'mloc'].forEach(id => $(id).addEventListener('input', sync));
+  ['mn', 'md', 'mloc', 'mstg', 'mprio', 'mbako'].forEach(id => $(id).addEventListener('input', sync));
+  hookChannel('mpri', 'mprio', sync); hookChannel('mbak', 'mbako', sync);
+  $('mpick').onclick = () => openPicker($('mstg').value || '', $('mloc').value.trim(), pt => { $('mstg').value = pt; sync(); });
   $('mt').addEventListener('change', sync);
   $('mmap').addEventListener('change', () => { st.mapTouched = true; sync(); });
   $('mpost').addEventListener('change', () => { st.postTouched = true; sync(); });
@@ -1480,6 +1615,7 @@ function hookAddMission() {
     try {
       const r = await run('apiAddMission', S.creds, { name: f.name, date: $('md').value, type: f.type, notes: $('mnotes').value,
         ongoing: $('mong').checked, joint: $('mjoint').checked, location: f.location, caseNo: $('mcase').value.trim(),
+        staging: f.staging, primary: f.primary, backup: f.backup,
         makeMap: f.map, post: post, message: post ? msg : '' });
       if (r && r.results) {
         S.addResult = { name: r.name, results: r.results, message: msg, wantMap: f.map, wantPost: post };
@@ -1581,8 +1717,13 @@ function renderMissions() {
       const details = edit ? `<div class="row2">
             <label>MCSO case #<input class="mcs" maxlength="40" value="${esc(m.caseNo || '')}"></label>
             <label>Location<input class="mlc" maxlength="200" value="${esc(m.location || '')}"></label></div>
+          <label>Staging Point<span class="locrow"><input class="mst" maxlength="40" value="${esc(m.staging || '')}" placeholder="Coordinates" inputmode="decimal"><button class="btn small ghost mpk" type="button">🗺 Pick on map</button></span></label>
+          <div class="row2">
+            <label>Primary${channelSelect('cp' + i, m.primary, true)}<input id="cpo${i}" class="hidden chother" maxlength="60" placeholder="Type the channel"></label>
+            <label>Backup${channelSelect('cb' + i, m.backup, true)}<input id="cbo${i}" class="hidden chother" maxlength="60" placeholder="Type the channel"></label></div>
           ${url ? '' : `<label>CalTopo map link<input class="mml" placeholder="Paste a link like https:\/\/caltopo.com/m/AB12C" value=""></label>`}`
-        : (m.caseNo || m.location ? `<div class="kvl">${m.caseNo ? `<div><span>MCSO case #</span>${esc(m.caseNo)}</div>` : ''}${m.location ? `<div><span>Location</span>${esc(m.location)}</div>` : ''}</div>` : '');
+        : (m.caseNo || m.location || m.staging || m.primary || m.backup ? `<div class="kvl">${m.caseNo ? `<div><span>MCSO case #</span>${esc(m.caseNo)}</div>` : ''}${m.location ? `<div><span>Location</span>${esc(m.location)}</div>` : ''}
+            ${m.staging ? `<div><span>Staging Point</span>${esc(m.staging)}</div>` : ''}${m.primary ? `<div><span>Primary Ch</span>${esc(m.primary)}</div>` : ''}${m.backup ? `<div><span>Backup Ch</span>${esc(m.backup)}</div>` : ''}</div>` : '');
       const exps = m.expenses || [];
       const etotal = exps.reduce((a, x) => a + (x.amount || 0), 0);
       const erows = exps.map((x, k) => `<tr><td>${esc(fmtDate(x.date).replace(/, \d{4}$/, ''))}</td>
@@ -1676,6 +1817,10 @@ function renderMissions() {
       if (q('.mcs') && q('.mcs').value.trim() !== (m.caseNo || '')) p.caseNo = q('.mcs').value;
       if (q('.mlc') && q('.mlc').value.trim() !== (m.location || '')) p.location = q('.mlc').value;
       if (q('.mml') && q('.mml').value.trim()) p.mapUrl = q('.mml').value;
+      if (q('.mst') && q('.mst').value.trim() !== (m.staging || '')) p.staging = q('.mst').value;
+      const i = card.dataset.i;
+      if ($('cp' + i)) { const v = channelValue('cp' + i, 'cpo' + i); if (v !== (m.primary || '')) p.primary = v; }
+      if ($('cb' + i)) { const v = channelValue('cb' + i, 'cbo' + i); if (v !== (m.backup || '')) p.backup = v; }
       return p;
     };
     q('.mclose').onclick = async () => {
@@ -1729,6 +1874,8 @@ function renderMissions() {
       render(); window.scrollTo(0, 0);
     });
     if (!q('.msave')) return;
+    hookChannel('cp' + card.dataset.i, 'cpo' + card.dataset.i); hookChannel('cb' + card.dataset.i, 'cbo' + card.dataset.i);
+    q('.mpk').onclick = () => openPicker(q('.mst').value || '', q('.mlc').value.trim() || m.location || '', pt => { q('.mst').value = pt; });
     q('.msave').onclick = () => { const p = detailPatch(); if (Object.keys(p).length) save(p, 'Saved.'); else toast('Nothing to save.'); };
     q('.mtype').onchange = ev => save({ type: ev.target.value }, 'Type changed.');
     q('.mjt').onchange = ev => {
@@ -1797,7 +1944,8 @@ function renderMissionReport() {
       <div class="mtitle">Mission Report: ${esc(r.name)}</div>
       <div class="facts"><div><b>Type</b>${esc(r.type)}</div><div><b>Dates</b>${esc(fmtRange(r.first, r.last))}</div>
         <div><b>Teams</b>${esc(r.teams.join(', '))}</div><div><b>Report #</b>${esc(r.reportNo || '—')}</div>
-        ${r.caseNo ? `<div><b>MCSO case #</b>${esc(r.caseNo)}</div>` : ''}${r.location ? `<div><b>Location</b>${esc(r.location)}</div>` : ''}</div>
+        ${r.caseNo ? `<div><b>MCSO case #</b>${esc(r.caseNo)}</div>` : ''}${r.location ? `<div><b>Location</b>${esc(r.location)}</div>` : ''}
+        ${r.staging ? `<div><b>Staging Point</b>${esc(r.staging)}</div>` : ''}${r.primary || r.backup ? `<div><b>Comms Plan</b>${r.primary ? 'Primary Ch: ' + esc(r.primary) : ''}${r.primary && r.backup ? ' · ' : ''}${r.backup ? 'Backup Ch: ' + esc(r.backup) : ''}</div>` : ''}</div>
       <div class="kv4"><div><span>Members</span><b>${r.people.length}</b></div><div><span>Man hours</span><b>${n1(tot.h)}</b></div>
         <div><span>Miles</span><b>${n1(tot.mi)}</b></div><div><span>Expenses</span><b>${money2(etot)}</b></div></div>
       <h3>Personnel</h3>
@@ -2206,6 +2354,16 @@ function renderSettings() {
     The Commander name and title print under the signature line on year-end reports.
     These are also on the Settings tab of the sheet. Admin access is managed on the Roster tab.</p>`);
 
+  const cm = S.d.comms || {};
+  html += section('Comms Plan', `<form id="cmf" class="form">
+      <div class="row2">
+        <label>Standard Primary${channelSelect('cmp', cm.primary)}<input id="cmpo" class="hidden chother" maxlength="60" placeholder="Type the channel"></label>
+        <label>Standard Backup${channelSelect('cmb', cm.backup)}<input id="cmbo" class="hidden chother" maxlength="60" placeholder="Type the channel"></label>
+      </div>
+      <label>Channel list (one per line, shared by East and West)<textarea id="cml" rows="10" spellcheck="false">${esc((cm.channels || []).join('\n'))}</textarea>
+        <span class="hint">End each name with (700) or (VHF) to group it in the dropdowns. Changes show for both posses.</span></label>
+      <button class="btn" type="submit" id="cmsb">Save comms plan</button>
+    </form>`);
   const c = S.d.conn || {};
   const saved = (on, tail) => on ? `Saved${tail ? ' (' + esc(tail) + ')' : ''}. Leave blank to keep it.` : '';
   html += section('Connections', `<form id="cf" class="form" autocomplete="off">
@@ -2267,6 +2425,12 @@ function renderSettings() {
     } catch (e) { $('sb').disabled = false; toast(clean(e), true); }
   };
   $('mps').onchange = ev => { S.memberSel = ev.target.value; render(); };
+  hookChannel('cmp', 'cmpo'); hookChannel('cmb', 'cmbo');
+  $('cmf').onsubmit = async ev => {
+    ev.preventDefault(); $('cmsb').disabled = true;
+    try { setData(await run('apiSaveComms', S.creds, { primary: channelValue('cmp', 'cmpo'), backup: channelValue('cmb', 'cmbo'), channels: $('cml').value })); toast('Comms plan saved.'); }
+    catch (e) { $('cmsb').disabled = false; toast(clean(e), true); }
+  };
   const connVals = () => ({ ctTeam: $('cct').value, ctFolder: $('ccf').value, ctId: $('cci').value, ctKey: $('cck').value.trim(),
     gmBot: $('cgb').value.trim(), ghToken: $('cgt').value.trim(), ghRepo: $('cgr').value, ghPath: $('cgp').value });
   const saveConn = async (extra, msg) => {
