@@ -329,6 +329,8 @@
     font: inherit; font-weight: 700; font-size: 14px; box-shadow: 0 1px 4px rgba(0,0,0,.35); cursor: pointer; }
   .mpicker .pkfoot { padding: 12px 14px 16px; border-top: 3px solid var(--gold); }
   .mpicker .pkpt { font-size: 20px; font-weight: 700; margin: 2px 0 10px; }
+  .mpicker .pkname { display: block; font-weight: 600; font-size: 14px; color: var(--muted); margin: 0 0 10px; }
+  .mpicker .pkname input { display: block; width: 100%; margin-top: 4px; padding: 10px; font: inherit; font-size: 16px; color: var(--text); border: 1px solid var(--line); border-radius: 7px; }
   .mpicker .pksave { display: flex; gap: 10px; align-items: center; font-weight: 600; font-size: 16px; margin: 0 0 12px; cursor: pointer; }
   .mpicker .pksave input { width: 22px; height: 22px; accent-color: var(--navy); }
   .plc { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 9px 0; border-bottom: 1px solid var(--line); }
@@ -352,9 +354,14 @@ const POSSE_INFO = {"key":"west","short":"West Posse","header":"West Millard She
 </script>
 <script>
 /* ================= Duty Log: core (shared by the East and West posses) ================= */
-const APP_VERSION = 'V1.5.2';
+const APP_VERSION = 'V1.5.3';
 const APP_DATE = 'October 25, 2026';
 const CHANGELOG = [
+  { v: 'V1.5.3', date: 'October 25, 2026', items: [
+    '“Location” is now “Incident Location”.',
+    'Pick on map has a Name box: name the spot (like Cemetery or Trailhead) and the box keeps the name with its exact coordinates, e.g. Cemetery (38.97012, -112.30455). That is what goes in the GroupMe message.',
+    'The new CalTopo map gets a marker for both the Incident Location and the Staging Point when both are filled in.'
+  ] },
   { v: 'V1.5.2', date: 'October 25, 2026', items: [
     'Staging Point can be a known place name (like Kanosh Park or Posse Shed) as well as coordinates picked on the map.',
     'After an update, the app loads fresh data once instead of showing numbers saved by the older version.',
@@ -1434,7 +1441,8 @@ function missionEmoji(type) { return { Callout: '🚨', Training: '📘', 'Event
 /** Default GroupMe message for a new mission (the admin can edit it before it goes out). */
 function alertMessage(f) {
   const lines = [missionEmoji(f.type) + ' ' + f.type + ': ' + (f.name || '(mission name)')];
-  lines.push([f.date ? fmtDate(f.date) : '', f.location].filter(Boolean).join(' · '));
+  if (f.date) lines.push(fmtDate(f.date));
+  if (f.location) lines.push('Incident Location: ' + f.location);
   if (f.staging) lines.push('Staging Point: ' + f.staging);
   if (f.primary || f.backup) {
     lines.push('Comms Plan:');
@@ -1503,7 +1511,8 @@ async function openPicker(current, place, done, opts) {
       <button class="pkme" type="button" id="pkme">📍 My location</button></div>
     <div class="pkfoot"><div class="muted small">${esc(opts.hint || 'Tap the map to place the Staging Point')}</div>
       <div class="pkpt" id="pkpt">No point yet</div>
-      ${opts.saveName ? `<label class="pksave"><input type="checkbox" id="pksv" ${opts.saveChecked ? 'checked' : ''}> ${esc(opts.saveLabel || 'Save “' + opts.saveName + '” as a known place')}</label>` : ''}
+      <label class="pkname">Name this spot (optional)<input id="pkn" maxlength="60" autocomplete="off" placeholder="e.g. Cemetery" value="${esc(opts.name || '')}" ${opts.lockName ? 'readonly' : ''}></label>
+      <label class="pksave hidden" id="pksvw"><input type="checkbox" id="pksv"> <span id="pksvl"></span></label>
       <div class="btnrow"><button class="btn" type="button" id="pkuse" disabled style="flex:1;width:auto">Use this point</button>
         <button class="btn ghost" type="button" id="pkcancel" style="width:auto">Cancel</button></div></div></div>`);
   document.body.style.overflow = 'hidden';
@@ -1534,19 +1543,33 @@ async function openPicker(current, place, done, opts) {
   };
   if (start) place2(start[0], start[1]);
   map.on('click', ev => place2(ev.latlng.lat, ev.latlng.lng));
+  /* "Save as a known place" shows once the spot has a name: checked for a new name, unchecked for one already saved */
+  let saveMode = '';
+  const updSave = () => {
+    const n = $('pkn').value.trim(), kp = knownPlace(n);
+    $('pksvw').classList.toggle('hidden', !n);
+    if (!n) return;
+    const mode = kp ? 'known:' + kp.name : 'new';
+    $('pksvl').textContent = kp ? 'Update the saved spot for “' + kp.name + '”' : 'Save “' + n + '” as a known place';
+    if (mode !== saveMode) { $('pksv').checked = opts.saveChecked != null ? opts.saveChecked : !kp; saveMode = mode; }
+  };
+  $('pkn').addEventListener('input', updSave);
+  updSave();
   $('pkuse').onclick = async () => {
     if (!pt) return;
-    if (opts.saveName && $('pksv') && $('pksv').checked) {
+    const n = $('pkn').value.trim();
+    if (n && $('pksv').checked) {
       $('pkuse').disabled = true;
       try {
-        const r = await run('apiSavePlace', S.creds, { name: opts.saveName, oldName: opts.oldName, point: pt });
+        const kp = knownPlace(n);
+        const r = await run('apiSavePlace', S.creds, { name: n, oldName: kp ? kp.name : undefined, point: pt });
         S.d.places = r.places; cacheData();
-        toast('Saved “' + opts.saveName + '”.');
-        done(opts.saveName, pt, true); close();
+        toast('Saved “' + n + '”.');
+        done(n, pt, true); close();
       } catch (e) { $('pkuse').disabled = false; toast(clean(e), true); }
       return;
     }
-    done(pt, pt, false); close();
+    done(n, pt, false); close();
   };
   $('pkme').onclick = () => {
     if (!navigator.geolocation) { toast("This device can't share its location.", true); return; }
@@ -1576,19 +1599,30 @@ function refreshPlaceList() {
   const old = $('kpl'); if (old) old.remove();
   document.body.insertAdjacentHTML('beforeend', `<datalist id="kpl">${(S.d.places || []).map(p => `<option value="${esc(p.name)}">${esc(p.point)}</option>`).join('')}</datalist>`);
 }
+/** "Cemetery (38.97012, -112.30455)" -> { name: 'Cemetery', pt: '38.97012, -112.30455' }; coordinates or a name alone also work. */
+function splitPlace(v) {
+  const s = String(v || '').trim();
+  const m = /^(.*?)\s*\(\s*(-?\d{1,2}(?:\.\d+)?)\s*,\s*(-?\d{1,3}(?:\.\d+)?)\s*\)\s*$/.exec(s);
+  if (m) return { name: m[1].trim(), pt: fmtPoint(+m[2], +m[3]) };
+  const p = parsePoint(s);
+  return p ? { name: '', pt: fmtPoint(p[0], p[1]) } : { name: s, pt: '' };
+}
+/** What a place box sends: a saved place's name gets its coordinates added, e.g. "Posse Shed (38.79912, -112.43301)". */
+function placeValue(input) {
+  const v = input.value.trim(), sp = splitPlace(v), kp = !sp.pt && knownPlace(sp.name);
+  return kp ? kp.name + ' (' + kp.point + ')' : v;
+}
 /**
- * "Pick on map" for a Staging Point box. A known place opens at its saved spot (with an option to update it);
- * a new name opens a search for it and offers to save it as a known place; coordinates open right there.
+ * "Pick on map" for an Incident Location or Staging Point box. Opens at the spot already in the box (or a saved place,
+ * or searches the typed name). The spot can be named; the box then holds "Name (lat, lon)".
  */
 function pickStaging(input, near, after, hint) {
-  const v = input.value.trim();
-  const fin = val => { input.value = val; refreshPlaceList(); if (after) after(); };
-  const kp = knownPlace(v);
-  if (parsePoint(v)) return openPicker(v, '', val => fin(val), { hint: hint });
-  if (kp) return openPicker(kp.point, '', (val, pt, saved) => fin(saved || pt === kp.point ? kp.name : val),
-    { saveName: kp.name, saveLabel: 'Update the saved spot for “' + kp.name + '”', saveChecked: false, hint: hint });
-  if (v) return openPicker('', v, (val, pt, saved) => fin(saved ? v : val), { saveName: v, saveChecked: true, hint: hint });
-  return openPicker('', near, val => fin(val), { hint: hint });
+  const sp = splitPlace(input.value), kp = !sp.pt && knownPlace(sp.name);
+  const pt = sp.pt || (kp ? kp.point : '');
+  openPicker(pt, pt ? '' : (sp.name || near), (name, p) => {
+    input.value = name ? name + ' (' + p + ')' : p;
+    refreshPlaceList(); if (after) after();
+  }, { hint: hint, name: kp ? kp.name : sp.name });
 }
 
 function addMissionForm() {
@@ -1600,10 +1634,10 @@ function addMissionForm() {
         <label id="mdw">Start date<input type="date" id="md" value="${todayStr()}" required></label>
         <label>Type<select id="mt">${typeOptions('Callout')}</select></label>
       </div>
-      <label>Location (optional)<span class="locrow"><input id="mloc" maxlength="200" placeholder="Place name or coordinates" list="kpl" autocomplete="off"><button class="btn small ghost" type="button" id="mgeo">🗺 Pick on map</button></span>
-        <span class="hint">Where the mission is: a place name, or pick the spot on a map. If there's no Staging Point, the new CalTopo map gets a marker here.</span></label>
-      <label>Staging Point (optional)<span class="locrow"><input id="mstg" maxlength="100" placeholder="e.g. Posse Shed, or coordinates" list="kpl" autocomplete="off">${placeList()}<button class="btn small ghost" type="button" id="mpick">🗺 Pick on map</button></span>
-        <span class="hint">Type a known place (Kanosh Park, Posse Shed), or pick the spot on a map for exact coordinates. It becomes the Staging Point marker on the CalTopo map.</span></label>
+      <label>Incident Location (optional)<span class="locrow"><input id="mloc" maxlength="200" placeholder="e.g. Trailhead, or pick on map" list="kpl" autocomplete="off"><button class="btn small ghost" type="button" id="mgeo">🗺 Pick on map</button></span>
+        <span class="hint">Pick the spot on the map and give it a name. It's marked on the new CalTopo map.</span></label>
+      <label>Staging Point (optional)<span class="locrow"><input id="mstg" maxlength="120" placeholder="e.g. Posse Shed, or pick on map" list="kpl" autocomplete="off">${placeList()}<button class="btn small ghost" type="button" id="mpick">🗺 Pick on map</button></span>
+        <span class="hint">Pick the spot on the map and give it a name, or choose a saved place. It's marked on the new CalTopo map.</span></label>
       <label>MCSO case #<input id="mcase" maxlength="40" placeholder="Optional, add it later if you don't have it" style="max-width:300px"></label>
       <div class="row2">
         <label>Primary${channelSelect('mpri', (d.comms || {}).primary)}<input id="mprio" class="hidden chother" maxlength="60" placeholder="Type the channel"></label>
@@ -1632,7 +1666,7 @@ function hookAddMission() {
   const d = S.d, c = d.conn || {};
   const st = { mapTouched: false, postTouched: false, msgEdited: false };
   const fields = () => ({ name: $('mn').value.trim(), date: $('mong').checked ? '' : $('md').value, type: $('mt').value,
-    location: $('mloc').value.trim(), map: $('mmap').checked, staging: $('mstg').value.trim(),
+    location: placeValue($('mloc')), map: $('mmap').checked, staging: placeValue($('mstg')),
     primary: channelValue('mpri', 'mprio'), backup: channelValue('mbak', 'mbako'), extra: $('mxtra').value.trim() });
   const sync = () => {
     const def = (d.mapTypes || []).indexOf($('mt').value) >= 0 && !$('mong').checked;
@@ -1643,7 +1677,7 @@ function hookAddMission() {
   };
   ['mn', 'md', 'mloc', 'mstg', 'mprio', 'mbako', 'mxtra'].forEach(id => $(id).addEventListener('input', sync));
   hookChannel('mpri', 'mprio', sync); hookChannel('mbak', 'mbako', sync);
-  $('mpick').onclick = () => pickStaging($('mstg'), $('mloc').value.trim(), sync);
+  $('mpick').onclick = () => pickStaging($('mstg'), splitPlace(placeValue($('mloc'))).pt || $('mloc').value.trim(), sync);
   $('mt').addEventListener('change', sync);
   $('mmap').addEventListener('change', () => { st.mapTouched = true; sync(); });
   $('mpost').addEventListener('change', () => { st.postTouched = true; sync(); });
@@ -1659,7 +1693,8 @@ function hookAddMission() {
     const y = window.scrollY; render(); window.scrollTo(0, y);
     if ($('mn')) $('mn').focus();
   };
-  $('mgeo').onclick = () => pickStaging($('mloc'), '', sync, 'Tap the map to place the Location');
+  $('mgeo').onclick = () => pickStaging($('mloc'), '', sync, 'Tap the map to place the Incident Location');
+  $('mloc').addEventListener('change', sync); $('mstg').addEventListener('change', sync);
   sync();
   $('mf').onsubmit = async ev => {
     ev.preventDefault();
@@ -1771,13 +1806,13 @@ function renderMissions() {
         : edit && conn.caltopo ? `<button class="btn small ghost mmk" type="button">🗺 Create CalTopo map</button>` : '';
       const details = edit ? `<div class="row2">
             <label>MCSO case #<input class="mcs" maxlength="40" value="${esc(m.caseNo || '')}"></label>
-            <label>Location<span class="locrow"><input class="mlc" maxlength="200" value="${esc(m.location || '')}" list="kpl" autocomplete="off"><button class="btn small ghost mlpk" type="button" aria-label="Pick the location on a map">🗺</button></span></label></div>
-          <label>Staging Point<span class="locrow"><input class="mst" maxlength="100" value="${esc(m.staging || '')}" placeholder="Place name or coordinates" list="kpl" autocomplete="off">${placeList()}<button class="btn small ghost mpk" type="button">🗺 Pick on map</button></span></label>
+            <label>Incident Location<span class="locrow"><input class="mlc" maxlength="200" value="${esc(m.location || '')}" list="kpl" autocomplete="off"><button class="btn small ghost mlpk" type="button" aria-label="Pick the incident location on a map">🗺</button></span></label></div>
+          <label>Staging Point<span class="locrow"><input class="mst" maxlength="120" value="${esc(m.staging || '')}" placeholder="Place name or coordinates" list="kpl" autocomplete="off">${placeList()}<button class="btn small ghost mpk" type="button">🗺 Pick on map</button></span></label>
           <div class="row2">
             <label>Primary${channelSelect('cp' + i, m.primary, true)}<input id="cpo${i}" class="hidden chother" maxlength="60" placeholder="Type the channel"></label>
             <label>Backup${channelSelect('cb' + i, m.backup, true)}<input id="cbo${i}" class="hidden chother" maxlength="60" placeholder="Type the channel"></label></div>
           ${url ? '' : `<label>CalTopo map link<input class="mml" placeholder="Paste a link like https:\/\/caltopo.com/m/AB12C" value=""></label>`}`
-        : (m.caseNo || m.location || m.staging || m.primary || m.backup ? `<div class="kvl">${m.caseNo ? `<div><span>MCSO case #</span>${esc(m.caseNo)}</div>` : ''}${m.location ? `<div><span>Location</span>${esc(m.location)}</div>` : ''}
+        : (m.caseNo || m.location || m.staging || m.primary || m.backup ? `<div class="kvl">${m.caseNo ? `<div><span>MCSO case #</span>${esc(m.caseNo)}</div>` : ''}${m.location ? `<div><span>Incident Location</span>${esc(m.location)}</div>` : ''}
             ${m.staging ? `<div><span>Staging Point</span>${esc(m.staging)}</div>` : ''}${m.primary ? `<div><span>Primary Ch</span>${esc(m.primary)}</div>` : ''}${m.backup ? `<div><span>Backup Ch</span>${esc(m.backup)}</div>` : ''}</div>` : '');
       const exps = m.expenses || [];
       const etotal = exps.reduce((a, x) => a + (x.amount || 0), 0);
@@ -1871,9 +1906,9 @@ function renderMissions() {
       const p = {};
       if (q('.mno') && q('.mno').value.trim() !== String(m.notes || '').trim()) p.notes = q('.mno').value;
       if (q('.mcs') && q('.mcs').value.trim() !== (m.caseNo || '')) p.caseNo = q('.mcs').value;
-      if (q('.mlc') && q('.mlc').value.trim() !== (m.location || '')) p.location = q('.mlc').value;
+      if (q('.mlc') && placeValue(q('.mlc')) !== (m.location || '')) p.location = placeValue(q('.mlc'));
       if (q('.mml') && q('.mml').value.trim()) p.mapUrl = q('.mml').value;
-      if (q('.mst') && q('.mst').value.trim() !== (m.staging || '')) p.staging = q('.mst').value;
+      if (q('.mst') && placeValue(q('.mst')) !== (m.staging || '')) p.staging = placeValue(q('.mst'));
       const i = card.dataset.i;
       if ($('cp' + i)) { const v = channelValue('cp' + i, 'cpo' + i); if (v !== (m.primary || '')) p.primary = v; }
       if ($('cb' + i)) { const v = channelValue('cb' + i, 'cbo' + i); if (v !== (m.backup || '')) p.backup = v; }
@@ -1931,8 +1966,8 @@ function renderMissions() {
     });
     if (!q('.msave')) return;
     hookChannel('cp' + card.dataset.i, 'cpo' + card.dataset.i); hookChannel('cb' + card.dataset.i, 'cbo' + card.dataset.i);
-    q('.mpk').onclick = () => pickStaging(q('.mst'), q('.mlc').value.trim() || m.location || '');
-    q('.mlpk').onclick = () => pickStaging(q('.mlc'), '', null, 'Tap the map to place the Location');
+    q('.mpk').onclick = () => pickStaging(q('.mst'), splitPlace(placeValue(q('.mlc'))).pt || q('.mlc').value.trim() || m.location || '');
+    q('.mlpk').onclick = () => pickStaging(q('.mlc'), '', null, 'Tap the map to place the Incident Location');
     q('.msave').onclick = () => { const p = detailPatch(); if (Object.keys(p).length) save(p, 'Saved.'); else toast('Nothing to save.'); };
     q('.mtype').onchange = ev => save({ type: ev.target.value }, 'Type changed.');
     q('.mjt').onchange = ev => {
@@ -2001,7 +2036,7 @@ function renderMissionReport() {
       <div class="mtitle">Mission Report: ${esc(r.name)}</div>
       <div class="facts"><div><b>Type</b>${esc(r.type)}</div><div><b>Dates</b>${esc(fmtRange(r.first, r.last))}</div>
         <div><b>Teams</b>${esc(r.teams.join(', '))}</div><div><b>Report #</b>${esc(r.reportNo || '—')}</div>
-        ${r.caseNo ? `<div><b>MCSO case #</b>${esc(r.caseNo)}</div>` : ''}${r.location ? `<div><b>Location</b>${esc(r.location)}</div>` : ''}
+        ${r.caseNo ? `<div><b>MCSO case #</b>${esc(r.caseNo)}</div>` : ''}${r.location ? `<div><b>Incident Location</b>${esc(r.location)}</div>` : ''}
         ${r.staging ? `<div><b>Staging Point</b>${esc(r.staging)}</div>` : ''}${r.primary || r.backup ? `<div><b>Comms Plan</b>${r.primary ? 'Primary Ch: ' + esc(r.primary) : ''}${r.primary && r.backup ? ' · ' : ''}${r.backup ? 'Backup Ch: ' + esc(r.backup) : ''}</div>` : ''}</div>
       <div class="kv4"><div><span>Members</span><b>${r.people.length}</b></div><div><span>Man hours</span><b>${n1(tot.h)}</b></div>
         <div><span>Miles</span><b>${n1(tot.mi)}</b></div><div><span>Expenses</span><b>${money2(etot)}</b></div></div>
@@ -2492,7 +2527,7 @@ function renderSettings() {
   hookChannel('cmp', 'cmpo'); hookChannel('cmb', 'cmbo');
   const reload = () => { const y = window.scrollY; render(); window.scrollTo(0, y); };
   document.querySelectorAll('.plmv').forEach(b => b.onclick = () => { const p = places[+b.dataset.k];
-    openPicker(p.point, '', reload, { saveName: p.name, saveLabel: 'Save the new spot for “' + p.name + '”', saveChecked: true }); });
+    openPicker(p.point, '', reload, { name: p.name, lockName: true, saveChecked: true, hint: 'Drag the pin or tap the new spot for ' + p.name }); });
   document.querySelectorAll('.plrn').forEach(b => b.onclick = async () => { const p = places[+b.dataset.k];
     const nn = (prompt('New name for ' + p.name + ':', p.name) || '').trim(); if (!nn || nn === p.name) return;
     try { const r = await run('apiSavePlace', S.creds, { name: nn, oldName: p.name, point: p.point }); S.d.places = r.places; cacheData(); reload(); toast('Renamed.'); }
@@ -2502,7 +2537,7 @@ function renderSettings() {
     try { setData(await run('apiDeletePlace', S.creds, p.name)); toast('Deleted.'); } catch (e) { toast(clean(e), true); } });
   $('pladd').onclick = () => { const nn = (prompt('Name of the place (e.g. Posse Shed):') || '').trim(); if (!nn) return;
     if (places.some(p => p.name.toLowerCase() === nn.toLowerCase())) { toast('That place is already saved. Use Move to change its spot.', true); return; }
-    openPicker('', '', reload, { saveName: nn, saveChecked: true }); };
+    openPicker('', '', reload, { name: nn, lockName: true, saveChecked: true, hint: 'Tap the spot for ' + nn }); };
   $('cmf').onsubmit = async ev => {
     ev.preventDefault(); $('cmsb').disabled = true;
     try { setData(await run('apiSaveComms', S.creds, { primary: channelValue('cmp', 'cmpo'), backup: channelValue('cmb', 'cmbo'), channels: $('cml').value })); toast('Comms plan saved.'); }
