@@ -329,6 +329,10 @@
     font: inherit; font-weight: 700; font-size: 14px; box-shadow: 0 1px 4px rgba(0,0,0,.35); cursor: pointer; }
   .mpicker .pkfoot { padding: 12px 14px 16px; border-top: 3px solid var(--gold); }
   .mpicker .pkpt { font-size: 20px; font-weight: 700; margin: 2px 0 10px; }
+  .mpicker .pksave { display: flex; gap: 10px; align-items: center; font-weight: 600; font-size: 16px; margin: 0 0 12px; cursor: pointer; }
+  .mpicker .pksave input { width: 22px; height: 22px; accent-color: var(--navy); }
+  .plc { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 9px 0; border-bottom: 1px solid var(--line); }
+  .plc small { display: block; color: var(--muted); font-size: 13px; }
 </style>
 </head>
 <body>
@@ -348,9 +352,15 @@ const POSSE_INFO = {"key":"west","short":"West Posse","header":"West Millard She
 </script>
 <script>
 /* ================= Duty Log: core (shared by the East and West posses) ================= */
-const APP_VERSION = 'V1.5.1';
+const APP_VERSION = 'V1.5.2';
 const APP_DATE = 'October 25, 2026';
 const CHANGELOG = [
+  { v: 'V1.5.2', date: 'October 25, 2026', items: [
+    'Staging Point can be a known place name (like Kanosh Park or Posse Shed) as well as coordinates picked on the map.',
+    'After an update, the app loads fresh data once instead of showing numbers saved by the older version.',
+    'Add Mission has a Clear button to start the form over.',
+    'Known places: admins can save places like the Posse Shed with their exact spot on the map (while adding a mission, or under Settings > Known places). They show as suggestions in the Staging Point box and put the CalTopo marker in the right spot. Each posse keeps its own list.'
+  ] },
   { v: 'V1.5.1', date: 'October 25, 2026', items: [
     'Staging Point on each mission: pick it on a topo map (or type coordinates). It becomes the Staging Point marker on the new CalTopo map and goes in the GroupMe message.',
     'Comms plan on each mission: Primary and Backup channel dropdowns, starting with the posse\'s standard plan, with “Other…” to type any channel. It goes in the GroupMe message and the Mission Report.',
@@ -681,7 +691,7 @@ setInterval(() => keepCurrent(true), 15 * 60000);
 
 async function init() {
   const c = load('posseCreds'), saved = load('posseData'), boot = load('posseBoot');
-  if (c && saved && saved.unit === c.unit && saved.d && saved.d.me) {
+  if (c && saved && saved.unit === c.unit && saved.v === APP_VERSION && saved.d && saved.d.me) {
     /* Show the numbers from last time right away, then refresh them in the background */
     S.boot = boot || { units: [] };
     S.creds = c;
@@ -1480,7 +1490,8 @@ function parsePoint(s) {
 function fmtPoint(lat, lon) { return lat.toFixed(5) + ', ' + lon.toFixed(5); }
 
 /** Full-screen topo map: search a place, use my location, tap to drop the pin, then "Use this point". */
-async function openPicker(current, place, done) {
+async function openPicker(current, place, done, opts) {
+  opts = opts || {};
   const old = $('mpicker'); if (old) old.remove();
   document.body.insertAdjacentHTML('beforeend', `<div id="mpicker" class="mpicker" role="dialog" aria-modal="true" aria-label="Pick the Staging Point">
     <form class="pkbar" id="pkf"><input id="pkq" placeholder="Search a place" value="${esc(place || '')}" autocomplete="off">
@@ -1490,6 +1501,7 @@ async function openPicker(current, place, done) {
       <button class="pkme" type="button" id="pkme">📍 My location</button></div>
     <div class="pkfoot"><div class="muted small">Tap the map to place the Staging Point</div>
       <div class="pkpt" id="pkpt">No point yet</div>
+      ${opts.saveName ? `<label class="pksave"><input type="checkbox" id="pksv" ${opts.saveChecked ? 'checked' : ''}> ${esc(opts.saveLabel || 'Save “' + opts.saveName + '” as a known place')}</label>` : ''}
       <div class="btnrow"><button class="btn" type="button" id="pkuse" disabled style="flex:1;width:auto">Use this point</button>
         <button class="btn ghost" type="button" id="pkcancel" style="width:auto">Cancel</button></div></div></div>`);
   document.body.style.overflow = 'hidden';
@@ -1520,7 +1532,20 @@ async function openPicker(current, place, done) {
   };
   if (start) place2(start[0], start[1]);
   map.on('click', ev => place2(ev.latlng.lat, ev.latlng.lng));
-  $('pkuse').onclick = () => { if (pt) { done(pt); close(); } };
+  $('pkuse').onclick = async () => {
+    if (!pt) return;
+    if (opts.saveName && $('pksv') && $('pksv').checked) {
+      $('pkuse').disabled = true;
+      try {
+        const r = await run('apiSavePlace', S.creds, { name: opts.saveName, oldName: opts.oldName, point: pt });
+        S.d.places = r.places; cacheData();
+        toast('Saved “' + opts.saveName + '”.');
+        done(opts.saveName, pt, true); close();
+      } catch (e) { $('pkuse').disabled = false; toast(clean(e), true); }
+      return;
+    }
+    done(pt, pt, false); close();
+  };
   $('pkme').onclick = () => {
     if (!navigator.geolocation) { toast("This device can't share its location.", true); return; }
     navigator.geolocation.getCurrentPosition(p => place2(p.coords.latitude, p.coords.longitude, 15),
@@ -1537,6 +1562,33 @@ async function openPicker(current, place, done) {
   setTimeout(() => map.invalidateSize(), 200);
 }
 
+/* ---------------- Known places (admins; each posse keeps its own list) ---------------- */
+
+function placeList() { return ''; } /* the shared <datalist id="kpl"> is added by refreshPlaceList() */
+function knownPlace(name) {
+  const k = String(name || '').trim().toLowerCase();
+  return (S.d.places || []).find(p => p.name.toLowerCase() === k) || null;
+}
+/** Keeps one <datalist id="kpl"> of this posse's known places on the page (suggestions for the Staging Point boxes). */
+function refreshPlaceList() {
+  const old = $('kpl'); if (old) old.remove();
+  document.body.insertAdjacentHTML('beforeend', `<datalist id="kpl">${(S.d.places || []).map(p => `<option value="${esc(p.name)}">${esc(p.point)}</option>`).join('')}</datalist>`);
+}
+/**
+ * "Pick on map" for a Staging Point box. A known place opens at its saved spot (with an option to update it);
+ * a new name opens a search for it and offers to save it as a known place; coordinates open right there.
+ */
+function pickStaging(input, near, after) {
+  const v = input.value.trim();
+  const fin = val => { input.value = val; refreshPlaceList(); if (after) after(); };
+  if (parsePoint(v)) return openPicker(v, '', val => fin(val));
+  const kp = knownPlace(v);
+  if (kp) return openPicker(kp.point, '', (val, pt, saved) => fin(saved ? kp.name : val),
+    { saveName: kp.name, saveLabel: 'Update the saved spot for “' + kp.name + '”', saveChecked: false });
+  if (v) return openPicker('', v, (val, pt, saved) => fin(saved ? v : val), { saveName: v, saveChecked: true });
+  return openPicker('', near, val => fin(val));
+}
+
 function addMissionForm() {
   const d = S.d, c = d.conn || {};
   const folder = c.ctFolder || (d.posse && d.posse.short) || '';
@@ -1548,8 +1600,8 @@ function addMissionForm() {
       </div>
       <label>Location (optional)<span class="locrow"><input id="mloc" maxlength="200" placeholder="Place name or coordinates"><button class="btn small ghost" type="button" id="mgeo">📍 Use mine</button></span>
         <span class="hint">A place name or coordinates. A new CalTopo map opens centered here with a marker.</span></label>
-      <label>Staging Point (optional)<span class="locrow"><input id="mstg" maxlength="40" placeholder="Coordinates, e.g. 38.97012, -112.30455" inputmode="decimal"><button class="btn small ghost" type="button" id="mpick">🗺 Pick on map</button></span>
-        <span class="hint">Tap the spot on a map, or type coordinates. It becomes the Staging Point marker on the CalTopo map.</span></label>
+      <label>Staging Point (optional)<span class="locrow"><input id="mstg" maxlength="100" placeholder="e.g. Posse Shed, or coordinates" list="kpl" autocomplete="off">${placeList()}<button class="btn small ghost" type="button" id="mpick">🗺 Pick on map</button></span>
+        <span class="hint">Type a known place (Kanosh Park, Posse Shed), or pick the spot on a map for exact coordinates. It becomes the Staging Point marker on the CalTopo map.</span></label>
       <label>MCSO case #<input id="mcase" maxlength="40" placeholder="Optional, add it later if you don't have it" style="max-width:300px"></label>
       <div class="row2">
         <label>Primary${channelSelect('mpri', (d.comms || {}).primary)}<input id="mprio" class="hidden chother" maxlength="60" placeholder="Type the channel"></label>
@@ -1566,7 +1618,8 @@ function addMissionForm() {
           <span class="hint">${c.groupme ? 'Check the message before it goes out. The map link fills in automatically.' : 'GroupMe is not connected yet. Set it up under Settings > Connections.'}</span></label>
         <textarea id="mmsg" class="msg hidden" rows="6" maxlength="1000" aria-label="GroupMe message"></textarea>
       </div>
-      <button class="btn" type="submit" id="mb">Add mission</button>
+      <div class="btnrow"><button class="btn" type="submit" id="mb" style="flex:1;width:auto">Add mission</button>
+        <button class="btn ghost" type="button" id="mclr" style="width:auto">Clear</button></div>
       <p class="muted small">It shows up right away in every member's Mission list on the Log page.${c.caltopo || c.groupme ? ' Map and GroupMe are checked for Callouts, Trainings and Events / Parades. Uncheck either one to skip it.' : ''}</p>
     </form>`);
 }
@@ -1586,7 +1639,7 @@ function hookAddMission() {
   };
   ['mn', 'md', 'mloc', 'mstg', 'mprio', 'mbako'].forEach(id => $(id).addEventListener('input', sync));
   hookChannel('mpri', 'mprio', sync); hookChannel('mbak', 'mbako', sync);
-  $('mpick').onclick = () => openPicker($('mstg').value || '', $('mloc').value.trim(), pt => { $('mstg').value = pt; sync(); });
+  $('mpick').onclick = () => pickStaging($('mstg'), $('mloc').value.trim(), sync);
   $('mt').addEventListener('change', sync);
   $('mmap').addEventListener('change', () => { st.mapTouched = true; sync(); });
   $('mpost').addEventListener('change', () => { st.postTouched = true; sync(); });
@@ -1596,6 +1649,11 @@ function hookAddMission() {
     $('mdw').classList.toggle('hidden', on); $('md').required = !on;
     if (on && $('mt').value === 'Callout') $('mt').value = 'Maintenance';
     sync();
+  };
+  $('mclr').onclick = () => {
+    if (($('mn').value.trim() || $('mloc').value.trim() || $('mstg').value.trim() || $('mnotes').value.trim()) && !confirm('Clear the form and start over?')) return;
+    const y = window.scrollY; render(); window.scrollTo(0, y);
+    if ($('mn')) $('mn').focus();
   };
   $('mgeo').onclick = () => {
     if (!navigator.geolocation) { toast("This device can't share its location.", true); return; }
@@ -1717,7 +1775,7 @@ function renderMissions() {
       const details = edit ? `<div class="row2">
             <label>MCSO case #<input class="mcs" maxlength="40" value="${esc(m.caseNo || '')}"></label>
             <label>Location<input class="mlc" maxlength="200" value="${esc(m.location || '')}"></label></div>
-          <label>Staging Point<span class="locrow"><input class="mst" maxlength="40" value="${esc(m.staging || '')}" placeholder="Coordinates" inputmode="decimal"><button class="btn small ghost mpk" type="button">🗺 Pick on map</button></span></label>
+          <label>Staging Point<span class="locrow"><input class="mst" maxlength="100" value="${esc(m.staging || '')}" placeholder="Place name or coordinates" list="kpl" autocomplete="off">${placeList()}<button class="btn small ghost mpk" type="button">🗺 Pick on map</button></span></label>
           <div class="row2">
             <label>Primary${channelSelect('cp' + i, m.primary, true)}<input id="cpo${i}" class="hidden chother" maxlength="60" placeholder="Type the channel"></label>
             <label>Backup${channelSelect('cb' + i, m.backup, true)}<input id="cbo${i}" class="hidden chother" maxlength="60" placeholder="Type the channel"></label></div>
@@ -1784,6 +1842,7 @@ function renderMissions() {
   main(html);
 
   $('mfil').onchange = ev => { S.mFilter = ev.target.value; S.openMission = null; render(); };
+  if (admin) refreshPlaceList();
   hookAddResult();
   loadThumbs();
   if (admin) {
@@ -1875,7 +1934,7 @@ function renderMissions() {
     });
     if (!q('.msave')) return;
     hookChannel('cp' + card.dataset.i, 'cpo' + card.dataset.i); hookChannel('cb' + card.dataset.i, 'cbo' + card.dataset.i);
-    q('.mpk').onclick = () => openPicker(q('.mst').value || '', q('.mlc').value.trim() || m.location || '', pt => { q('.mst').value = pt; });
+    q('.mpk').onclick = () => pickStaging(q('.mst'), q('.mlc').value.trim() || m.location || '');
     q('.msave').onclick = () => { const p = detailPatch(); if (Object.keys(p).length) save(p, 'Saved.'); else toast('Nothing to save.'); };
     q('.mtype').onchange = ev => save({ type: ev.target.value }, 'Type changed.');
     q('.mjt').onchange = ev => {
@@ -2364,6 +2423,13 @@ function renderSettings() {
         <span class="hint">End each name with (700) or (VHF) to group it in the dropdowns. Changes show for both posses.</span></label>
       <button class="btn" type="submit" id="cmsb">Save comms plan</button>
     </form>`);
+  const places = S.d.places || [];
+  html += section('Known Places', `${places.map((p, k) => `<div class="plc"><div><b>${esc(p.name)}</b><small>${esc(p.point)}</small></div>
+      <div class="btnrow"><button class="btn small ghost plmv" type="button" data-k="${k}">Move</button><button class="btn small ghost plrn" type="button" data-k="${k}">Rename</button>
+      <button class="xdel pldl" type="button" data-k="${k}" aria-label="Delete">✕</button></div></div>`).join('') || '<p class="muted" style="margin-top:0">No saved places yet.</p>'}
+    <button class="btn small" type="button" id="pladd" style="margin-top:12px">+ Add a place on the map</button>
+    <p class="muted small">Saved places show as suggestions in the Staging Point box, and put the CalTopo marker on their exact spot.
+    You can also save one while adding a mission: type its name, then Pick on map. ${esc((S.d.posse || {}).short || '')} keeps its own list.</p>`);
   const c = S.d.conn || {};
   const saved = (on, tail) => on ? `Saved${tail ? ' (' + esc(tail) + ')' : ''}. Leave blank to keep it.` : '';
   html += section('Connections', `<form id="cf" class="form" autocomplete="off">
@@ -2426,6 +2492,19 @@ function renderSettings() {
   };
   $('mps').onchange = ev => { S.memberSel = ev.target.value; render(); };
   hookChannel('cmp', 'cmpo'); hookChannel('cmb', 'cmbo');
+  const reload = () => { const y = window.scrollY; render(); window.scrollTo(0, y); };
+  document.querySelectorAll('.plmv').forEach(b => b.onclick = () => { const p = places[+b.dataset.k];
+    openPicker(p.point, '', reload, { saveName: p.name, saveLabel: 'Save the new spot for “' + p.name + '”', saveChecked: true }); });
+  document.querySelectorAll('.plrn').forEach(b => b.onclick = async () => { const p = places[+b.dataset.k];
+    const nn = (prompt('New name for ' + p.name + ':', p.name) || '').trim(); if (!nn || nn === p.name) return;
+    try { const r = await run('apiSavePlace', S.creds, { name: nn, oldName: p.name, point: p.point }); S.d.places = r.places; cacheData(); reload(); toast('Renamed.'); }
+    catch (e) { toast(clean(e), true); } });
+  document.querySelectorAll('.pldl').forEach(b => b.onclick = async () => { const p = places[+b.dataset.k];
+    if (!confirm('Delete the saved place “' + p.name + '”? Missions that used it keep their Staging Point name.')) return;
+    try { setData(await run('apiDeletePlace', S.creds, p.name)); toast('Deleted.'); } catch (e) { toast(clean(e), true); } });
+  $('pladd').onclick = () => { const nn = (prompt('Name of the place (e.g. Posse Shed):') || '').trim(); if (!nn) return;
+    if (places.some(p => p.name.toLowerCase() === nn.toLowerCase())) { toast('That place is already saved. Use Move to change its spot.', true); return; }
+    openPicker('', '', reload, { saveName: nn, saveChecked: true }); };
   $('cmf').onsubmit = async ev => {
     ev.preventDefault(); $('cmsb').disabled = true;
     try { setData(await run('apiSaveComms', S.creds, { primary: channelValue('cmp', 'cmpo'), backup: channelValue('cmb', 'cmbo'), channels: $('cml').value })); toast('Comms plan saved.'); }
