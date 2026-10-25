@@ -359,6 +359,7 @@ const CHANGELOG = [
     'Staging Point can be a known place name (like Kanosh Park or Posse Shed) as well as coordinates picked on the map.',
     'After an update, the app loads fresh data once instead of showing numbers saved by the older version.',
     'Add Mission has a Clear button to start the form over.',
+    'Add Mission has a Message note box for anything else the team should know; it goes on its own line in the GroupMe message.',
     'Known places: admins can save places like the Posse Shed with their exact spot on the map (while adding a mission, or under Settings > Known places). They show as suggestions in the Staging Point box and put the CalTopo marker in the right spot. Each posse keeps its own list.'
   ] },
   { v: 'V1.5.1', date: 'October 25, 2026', items: [
@@ -1440,6 +1441,7 @@ function alertMessage(f) {
     if (f.primary) lines.push('Primary Ch: ' + f.primary);
     if (f.backup) lines.push('Backup Ch: ' + f.backup);
   }
+  if (f.extra) lines.push(f.extra);
   if (f.map) lines.push('Map: ' + MAP_PLACEHOLDER);
   lines.push('Log your time: ' + ((S.d.conn && S.d.conn.appUrl) || POSSE_INFO.appUrl || ''));
   return lines.filter(Boolean).join('\n');
@@ -1499,7 +1501,7 @@ async function openPicker(current, place, done, opts) {
       <button class="pkx" type="button" aria-label="Close">✕</button></form>
     <div class="pkmap" id="pkmap"><div class="pkload" id="pkload">Loading the map…</div>
       <button class="pkme" type="button" id="pkme">📍 My location</button></div>
-    <div class="pkfoot"><div class="muted small">Tap the map to place the Staging Point</div>
+    <div class="pkfoot"><div class="muted small">${esc(opts.hint || 'Tap the map to place the Staging Point')}</div>
       <div class="pkpt" id="pkpt">No point yet</div>
       ${opts.saveName ? `<label class="pksave"><input type="checkbox" id="pksv" ${opts.saveChecked ? 'checked' : ''}> ${esc(opts.saveLabel || 'Save “' + opts.saveName + '” as a known place')}</label>` : ''}
       <div class="btnrow"><button class="btn" type="button" id="pkuse" disabled style="flex:1;width:auto">Use this point</button>
@@ -1578,15 +1580,15 @@ function refreshPlaceList() {
  * "Pick on map" for a Staging Point box. A known place opens at its saved spot (with an option to update it);
  * a new name opens a search for it and offers to save it as a known place; coordinates open right there.
  */
-function pickStaging(input, near, after) {
+function pickStaging(input, near, after, hint) {
   const v = input.value.trim();
   const fin = val => { input.value = val; refreshPlaceList(); if (after) after(); };
-  if (parsePoint(v)) return openPicker(v, '', val => fin(val));
   const kp = knownPlace(v);
-  if (kp) return openPicker(kp.point, '', (val, pt, saved) => fin(saved ? kp.name : val),
-    { saveName: kp.name, saveLabel: 'Update the saved spot for “' + kp.name + '”', saveChecked: false });
-  if (v) return openPicker('', v, (val, pt, saved) => fin(saved ? v : val), { saveName: v, saveChecked: true });
-  return openPicker('', near, val => fin(val));
+  if (parsePoint(v)) return openPicker(v, '', val => fin(val), { hint: hint });
+  if (kp) return openPicker(kp.point, '', (val, pt, saved) => fin(saved || pt === kp.point ? kp.name : val),
+    { saveName: kp.name, saveLabel: 'Update the saved spot for “' + kp.name + '”', saveChecked: false, hint: hint });
+  if (v) return openPicker('', v, (val, pt, saved) => fin(saved ? v : val), { saveName: v, saveChecked: true, hint: hint });
+  return openPicker('', near, val => fin(val), { hint: hint });
 }
 
 function addMissionForm() {
@@ -1598,8 +1600,8 @@ function addMissionForm() {
         <label id="mdw">Start date<input type="date" id="md" value="${todayStr()}" required></label>
         <label>Type<select id="mt">${typeOptions('Callout')}</select></label>
       </div>
-      <label>Location (optional)<span class="locrow"><input id="mloc" maxlength="200" placeholder="Place name or coordinates"><button class="btn small ghost" type="button" id="mgeo">📍 Use mine</button></span>
-        <span class="hint">A place name or coordinates. A new CalTopo map opens centered here with a marker.</span></label>
+      <label>Location (optional)<span class="locrow"><input id="mloc" maxlength="200" placeholder="Place name or coordinates" list="kpl" autocomplete="off"><button class="btn small ghost" type="button" id="mgeo">🗺 Pick on map</button></span>
+        <span class="hint">Where the mission is: a place name, or pick the spot on a map. If there's no Staging Point, the new CalTopo map gets a marker here.</span></label>
       <label>Staging Point (optional)<span class="locrow"><input id="mstg" maxlength="100" placeholder="e.g. Posse Shed, or coordinates" list="kpl" autocomplete="off">${placeList()}<button class="btn small ghost" type="button" id="mpick">🗺 Pick on map</button></span>
         <span class="hint">Type a known place (Kanosh Park, Posse Shed), or pick the spot on a map for exact coordinates. It becomes the Staging Point marker on the CalTopo map.</span></label>
       <label>MCSO case #<input id="mcase" maxlength="40" placeholder="Optional, add it later if you don't have it" style="max-width:300px"></label>
@@ -1608,6 +1610,8 @@ function addMissionForm() {
         <label>Backup${channelSelect('mbak', (d.comms || {}).backup)}<input id="mbako" class="hidden chother" maxlength="60" placeholder="Type the channel"></label>
       </div>
       <span class="hint" style="display:block;margin:-6px 0 12px">Comms plan. Starts with the standard plan from Settings; pick “Other…” to type a channel for this mission.</span>
+      <label>Message note (optional)<textarea id="mxtra" rows="2" maxlength="500" placeholder="e.g. Bring night gear and 24-hr pack. Reply with your ETA."></textarea>
+        <span class="hint">Goes on its own line in the GroupMe message, below the comms plan.</span></label>
       <label class="chk"><input type="checkbox" id="mjoint"> Joint mission (East &amp; West) <span class="hint">Shows up for both posses, so everyone logs time to the same mission.</span></label>
       <label class="chk"><input type="checkbox" id="mong"> Ongoing (no end date) <span class="hint">For recurring work like meetings or maintenance. It stays at the top of the Log list until you close it.</span></label>
       <label>Operational notes (optional)<textarea id="mnotes" rows="3" maxlength="5000" placeholder="Agencies involved, outcome…"></textarea></label>
@@ -1629,7 +1633,7 @@ function hookAddMission() {
   const st = { mapTouched: false, postTouched: false, msgEdited: false };
   const fields = () => ({ name: $('mn').value.trim(), date: $('mong').checked ? '' : $('md').value, type: $('mt').value,
     location: $('mloc').value.trim(), map: $('mmap').checked, staging: $('mstg').value.trim(),
-    primary: channelValue('mpri', 'mprio'), backup: channelValue('mbak', 'mbako') });
+    primary: channelValue('mpri', 'mprio'), backup: channelValue('mbak', 'mbako'), extra: $('mxtra').value.trim() });
   const sync = () => {
     const def = (d.mapTypes || []).indexOf($('mt').value) >= 0 && !$('mong').checked;
     if (!st.mapTouched) $('mmap').checked = !!c.caltopo && def;
@@ -1637,7 +1641,7 @@ function hookAddMission() {
     $('mmsg').classList.toggle('hidden', !$('mpost').checked);
     if (!st.msgEdited) $('mmsg').value = alertMessage(fields());
   };
-  ['mn', 'md', 'mloc', 'mstg', 'mprio', 'mbako'].forEach(id => $(id).addEventListener('input', sync));
+  ['mn', 'md', 'mloc', 'mstg', 'mprio', 'mbako', 'mxtra'].forEach(id => $(id).addEventListener('input', sync));
   hookChannel('mpri', 'mprio', sync); hookChannel('mbak', 'mbako', sync);
   $('mpick').onclick = () => pickStaging($('mstg'), $('mloc').value.trim(), sync);
   $('mt').addEventListener('change', sync);
@@ -1651,18 +1655,11 @@ function hookAddMission() {
     sync();
   };
   $('mclr').onclick = () => {
-    if (($('mn').value.trim() || $('mloc').value.trim() || $('mstg').value.trim() || $('mnotes').value.trim()) && !confirm('Clear the form and start over?')) return;
+    if (($('mn').value.trim() || $('mloc').value.trim() || $('mstg').value.trim() || $('mnotes').value.trim() || $('mxtra').value.trim()) && !confirm('Clear the form and start over?')) return;
     const y = window.scrollY; render(); window.scrollTo(0, y);
     if ($('mn')) $('mn').focus();
   };
-  $('mgeo').onclick = () => {
-    if (!navigator.geolocation) { toast("This device can't share its location.", true); return; }
-    $('mgeo').disabled = true;
-    navigator.geolocation.getCurrentPosition(p => {
-      $('mgeo').disabled = false;
-      $('mloc').value = p.coords.latitude.toFixed(5) + ', ' + p.coords.longitude.toFixed(5); sync();
-    }, () => { $('mgeo').disabled = false; toast("Couldn't get your location. Type a place name instead.", true); }, { enableHighAccuracy: true, timeout: 15000 });
-  };
+  $('mgeo').onclick = () => pickStaging($('mloc'), '', sync, 'Tap the map to place the Location');
   sync();
   $('mf').onsubmit = async ev => {
     ev.preventDefault();
@@ -1774,7 +1771,7 @@ function renderMissions() {
         : edit && conn.caltopo ? `<button class="btn small ghost mmk" type="button">🗺 Create CalTopo map</button>` : '';
       const details = edit ? `<div class="row2">
             <label>MCSO case #<input class="mcs" maxlength="40" value="${esc(m.caseNo || '')}"></label>
-            <label>Location<input class="mlc" maxlength="200" value="${esc(m.location || '')}"></label></div>
+            <label>Location<span class="locrow"><input class="mlc" maxlength="200" value="${esc(m.location || '')}" list="kpl" autocomplete="off"><button class="btn small ghost mlpk" type="button" aria-label="Pick the location on a map">🗺</button></span></label></div>
           <label>Staging Point<span class="locrow"><input class="mst" maxlength="100" value="${esc(m.staging || '')}" placeholder="Place name or coordinates" list="kpl" autocomplete="off">${placeList()}<button class="btn small ghost mpk" type="button">🗺 Pick on map</button></span></label>
           <div class="row2">
             <label>Primary${channelSelect('cp' + i, m.primary, true)}<input id="cpo${i}" class="hidden chother" maxlength="60" placeholder="Type the channel"></label>
@@ -1935,6 +1932,7 @@ function renderMissions() {
     if (!q('.msave')) return;
     hookChannel('cp' + card.dataset.i, 'cpo' + card.dataset.i); hookChannel('cb' + card.dataset.i, 'cbo' + card.dataset.i);
     q('.mpk').onclick = () => pickStaging(q('.mst'), q('.mlc').value.trim() || m.location || '');
+    q('.mlpk').onclick = () => pickStaging(q('.mlc'), '', null, 'Tap the map to place the Location');
     q('.msave').onclick = () => { const p = detailPatch(); if (Object.keys(p).length) save(p, 'Saved.'); else toast('Nothing to save.'); };
     q('.mtype').onchange = ev => save({ type: ev.target.value }, 'Type changed.');
     q('.mjt').onchange = ev => {
