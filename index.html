@@ -1,9 +1,8 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>West Millard Sheriff Posse | Duty Log</title>
 <meta name="theme-color" content="#1e4d36">
 <meta name="robots" content="noindex">
 <link rel="icon" href="favicon.png">
@@ -11,14 +10,2296 @@
 <link rel="manifest" href="manifest.json">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Duty Log">
+<title>West Millard Sheriff Posse | Duty Log</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
-  html, body { margin: 0; height: 100%; background: #dfe7e1; }
-  iframe { position: fixed; inset: 0; width: 100%; height: 100%; border: 0; display: block; }
+  :root {
+    --navy: #1e4d36; --navy2: #163a29; --bg: #f1f4f1; --card: #ffffff;
+    --text: #1a1f1c; --muted: #5b665f; --line: #d9e2dc;
+    --good: #2f855a; --warn: #b7791f; --bad: #c53030; --soft: #e8f1eb; --gold: #d4a93c;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text);
+    font: 15px/1.45 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; }
+  .wrap { max-width: 980px; margin: 0 auto; padding: 0 16px; }
+  .top { background: var(--navy); color: #fff; padding: 14px 0 10px; border-bottom: 3px solid var(--gold); }
+  .top .wrap { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 6px; }
+  .brand { display: flex; align-items: center; gap: 10px; }
+  .brand img { width: 46px; height: 46px; border-radius: 50%; box-shadow: 0 0 0 2px rgba(212,169,60,.6); }
+  .signlogo { display: block; width: 116px; height: 116px; margin: 4px auto 16px; border-radius: 50%; box-shadow: 0 2px 10px rgba(0,0,0,.18); }
+  .title { font-size: 20px; font-weight: 700; letter-spacing: .3px; }
+  .title small { display: block; font-size: 12px; font-weight: 400; opacity: .8; }
+  .who { font-size: 13px; opacity: .95; }
+  .link { background: none; border: 0; color: #f3d9a4; text-decoration: underline; cursor: pointer; font: inherit; padding: 0 0 0 8px; }
+  .tabs { background: var(--navy2); display: flex; gap: 2px; overflow-x: auto; padding: 0 8px; }
+  .tabs button { background: none; border: 0; color: #cfe3d7; padding: 11px 14px; font: inherit; font-weight: 600;
+    cursor: pointer; white-space: nowrap; border-bottom: 3px solid transparent; }
+  .tabs button.on { color: #fff; border-bottom-color: var(--gold); }
+  .hidden { display: none !important; }
+  main { padding-top: 16px; padding-bottom: 40px; }
+  .sec { background: var(--card); border-radius: 10px; box-shadow: 0 1px 3px rgba(0,0,0,.08); margin-bottom: 16px; overflow: hidden; }
+  .bar { background: var(--navy); color: #fff; font-weight: 700; padding: 9px 14px; display: flex;
+    justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .body { padding: 14px; }
+  .tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; }
+  .tile { background: var(--soft); border-radius: 8px; padding: 10px 12px; text-align: center; }
+  .tile .lbl { font-size: 12px; text-transform: uppercase; letter-spacing: .5px; color: var(--muted); font-weight: 600; }
+  .tile .val { font-size: 24px; font-weight: 700; color: var(--navy); }
+  .tile .sub { font-size: 12px; color: var(--muted); }
+  .goal { margin-top: 14px; }
+  .goalhead { margin-bottom: 6px; }
+  .pbar { height: 14px; background: var(--line); border-radius: 7px; overflow: hidden; }
+  .pbar div { height: 100%; background: var(--good); border-radius: 7px; }
+  .ok { color: var(--good); font-weight: 700; }
+  .form label { display: block; font-weight: 600; font-size: 13px; color: var(--muted); margin-bottom: 12px; }
+  .form input, .form select, .form textarea { display: block; width: 100%; margin-top: 4px; padding: 10px;
+    font: inherit; color: var(--text); border: 1px solid var(--line); border-radius: 7px; background: #fff; }
+  .form textarea { resize: vertical; }
+  .form input[type=file] { padding: 8px; background: var(--soft); }
+  .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .hint { display: block; font-weight: 400; font-size: 12px; margin-top: 3px; }
+  .btn { background: var(--navy); color: #fff; border: 0; border-radius: 7px; padding: 12px 18px; font: inherit;
+    font-weight: 700; cursor: pointer; width: 100%; }
+  .btn:disabled { opacity: .6; }
+  .btn.small { width: auto; padding: 7px 12px; font-size: 13px; }
+  .btn.gray { background: #8a948f; }
+  .btn.ghost { background: #fff; color: var(--navy); border: 1px solid var(--line); }
+  select.mini { font: inherit; font-size: 13px; padding: 3px 6px; border-radius: 5px; border: 0; }
+  /* Keyboard focus: a clear gold border on whatever you're on */
+  .form input:focus, .form select:focus, .form textarea:focus { outline: none; border-color: var(--gold); box-shadow: 0 0 0 3px rgba(212,169,60,.45); }
+  button:focus-visible, select.mini:focus-visible, a:focus-visible, input[type=checkbox]:focus-visible, input[type=radio]:focus-visible,
+  tr.click:focus-visible, .mcard:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
+  .seg { display: inline-flex; background: rgba(255,255,255,.15); border-radius: 6px; overflow: hidden; }
+  .seg button { background: none; border: 0; color: #fff; padding: 4px 10px; font: inherit; font-size: 13px; cursor: pointer; }
+  .seg button.on { background: #fff; color: var(--navy); font-weight: 700; }
+  .tblwrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  th, td { padding: 7px 8px; border-bottom: 1px solid var(--line); text-align: right; white-space: nowrap; }
+  th { background: var(--soft); color: var(--navy); font-size: 12px; text-transform: uppercase; letter-spacing: .4px; }
+  th:first-child, td:first-child, th.l, td.l { text-align: left; }
+  tr.tot td { font-weight: 700; background: var(--soft); }
+  tr.dim td { color: #9aa59f; }
+  tr.click { cursor: pointer; }
+  tr.click:hover td { background: #f3f8f4; }
+  .entry { display: flex; justify-content: space-between; gap: 10px; padding: 9px 0; border-bottom: 1px solid var(--line); }
+  .entry:last-child { border-bottom: 0; }
+  .entry .what { font-weight: 600; }
+  .entry .meta { font-size: 13px; color: var(--muted); }
+  .entry .nums { text-align: right; font-size: 13px; white-space: nowrap; }
+  .simbox { background: #fdf2dc; border: 1px solid #f0d9a8; border-radius: 8px; padding: 10px 12px; margin: -4px 0 12px; font-size: 14px; }
+  .simbox .opt { display: block; width: 100%; text-align: left; background: #fff; border: 1px solid var(--line); border-radius: 6px;
+    padding: 8px 10px; margin-top: 6px; font: inherit; font-weight: 600; color: var(--navy); cursor: pointer; }
+  .simbox .keep { background: none; border: 0; color: var(--muted); font: inherit; font-size: 13px; text-decoration: underline; cursor: pointer; padding: 8px 0 0; }
+  .chev { display: inline-block; width: 14px; color: var(--navy2); font-weight: 700; }
+  td.detail { white-space: normal; text-align: left; background: #f3f8f4; padding: 4px 12px 10px; }
+  td.detail > * { max-width: calc(100vw - 64px); }
+  .addm { background: none; border: 0; color: var(--navy2); font: inherit; font-size: 13px; font-weight: 600; cursor: pointer; padding: 8px 0 0; }
+  .del { background: none; border: 0; color: var(--bad); cursor: pointer; font-size: 12px; padding: 2px 0 0 8px; }
+  .edt { background: none; border: 0; color: var(--navy2); cursor: pointer; font-size: 12px; padding: 2px 0 0; font-weight: 600; }
+  .tag { display: inline-block; font-size: 11px; padding: 1px 6px; border-radius: 4px; background: var(--soft); color: var(--muted); margin-left: 4px; font-weight: 600; }
+  .tag.warn { background: #fdf2dc; color: var(--warn); }
+  .tag.bad { background: #fde8e8; color: var(--bad); }
+  .tag.good { background: #e3f4ea; color: var(--good); }
+  .muted { color: var(--muted); }
+  .small { font-size: 13px; }
+  .err { color: var(--bad); font-weight: 600; margin-bottom: 10px; }
+  .grp { border: 1px solid var(--line); border-radius: 8px; margin-bottom: 10px; overflow: hidden; }
+  .grp h4 { margin: 0; padding: 8px 10px; background: var(--soft); font-size: 14px; color: var(--navy); }
+  .grp .r { display: flex; align-items: center; gap: 10px; padding: 7px 10px; border-top: 1px solid var(--line); font-size: 14px; }
+  .grp .r .t { flex: 1; }
+  .grp .r.x { color: #9aa59f; text-decoration: line-through; }
+  .chartbox { position: relative; height: 280px; }
+  .thumbs { display: flex; flex-wrap: wrap; gap: 8px; margin: -4px 0 12px; }
+  .thumbs img { width: 72px; height: 72px; object-fit: cover; border-radius: 6px; border: 1px solid var(--line); background: var(--soft); }
+  .mcard { border: 1px solid var(--line); border-radius: 8px; margin-bottom: 10px; overflow: hidden; }
+  .mcard .mhead { display: flex; justify-content: space-between; gap: 10px; padding: 10px 12px; cursor: pointer; }
+  .mcard .mhead:hover { background: #f3f8f4; }
+  .mcard .mname { font-weight: 700; }
+  .mcard .mbody { border-top: 1px solid var(--line); background: #f8fbf9; padding: 10px 12px; font-size: 14px; }
+  .mcard .mbody h5 { margin: 12px 0 4px; font-size: 12px; text-transform: uppercase; letter-spacing: .4px; color: var(--navy); }
+  .mcard .mbody h5:first-child { margin-top: 0; }
+  .btnrow { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+  .about p { margin: 6px 0; }
+  .changelog { margin: 8px 0 0; padding-left: 20px; }
+  .changelog li { margin: 4px 0; }
+  .toast { position: fixed; left: 50%; bottom: 20px; transform: translateX(-50%); background: #2b2422; color: #fff;
+    padding: 10px 16px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,.2); opacity: 0; transition: opacity .25s;
+    pointer-events: none; max-width: 90%; z-index: 10; }
+  .toast.show { opacity: 1; }
+  .toast.bad { background: var(--bad); }
+  .center { text-align: center; padding: 30px; }
+
+  /* Year-end report (looks like a printed letter-size page) */
+  .rtools { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
+  .rtools .btn { width: auto; }
+  .rpage { background: #fff; color: #111; max-width: 8.5in; margin: 0 auto 24px; padding: .6in .65in; box-shadow: 0 1px 6px rgba(0,0,0,.15);
+    font: 12.5px/1.45 Georgia, "Times New Roman", serif; }
+  .rpage .rhead { display: flex; align-items: center; gap: 18px; border-bottom: 3px double #1e4d36; padding-bottom: 12px; margin-bottom: 14px; }
+  .rpage .rhead img { width: 84px; height: 84px; border-radius: 50%; }
+  .rpage .org { font-size: 23px; font-weight: 700; letter-spacing: .6px; color: #1e4d36; text-transform: uppercase; }
+  .rpage .rtitle { font-size: 16px; font-weight: 700; margin-top: 2px; }
+  .rpage .rsub { font-size: 12.5px; color: #444; }
+  .rpage h3 { font-size: 13.5px; text-transform: uppercase; letter-spacing: .5px; color: #1e4d36; margin: 18px 0 6px; border-bottom: 1px solid #c9d6ce; padding-bottom: 3px; }
+  .rpage table { font-size: 12px; font-family: inherit; }
+  .rpage th { background: #eef4f0; color: #1e4d36; font-size: 10.5px; }
+  .rpage th, .rpage td { padding: 4px 6px; border-bottom: 1px solid #dde5e0; white-space: normal; }
+  .rpage .kv { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .rpage .kv div { border: 1px solid #dde5e0; border-radius: 4px; padding: 6px 8px; }
+  .rpage .kv b { display: block; font-size: 17px; color: #1e4d36; }
+  .rpage .kv span { font-size: 10.5px; text-transform: uppercase; letter-spacing: .4px; color: #555; }
+  .rpage .fine { font-size: 10.5px; color: #555; margin-top: 10px; }
+  .rpage .sig { margin-top: 40px; display: grid; grid-template-columns: 2fr 1fr; gap: 40px; page-break-inside: avoid; }
+  .rpage .sig .line { border-top: 1px solid #111; padding-top: 4px; margin-top: 34px; }
+  .rpage .sig .name { font-weight: 700; }
+  @media (max-width: 560px) {
+    .title { font-size: 17px; line-height: 1.2; }
+    .brand img { width: 42px; height: 42px; }
+    .row2 { grid-template-columns: 1fr; gap: 0; }
+    .tile .val { font-size: 21px; }
+    .tiles { grid-template-columns: repeat(2, 1fr); }
+    table { font-size: 13px; }
+    th, td { padding: 7px 5px; }
+    th { font-size: 10.5px; letter-spacing: 0; }
+    td.detail { padding: 4px 8px 10px; }
+    .rpage { padding: .35in .3in; }
+    .rpage .kv { grid-template-columns: repeat(2, 1fr); }
+    .rpage .org { font-size: 18px; }
+    .rpage .rhead img { width: 64px; height: 64px; }
+  }
+  /* PDF capture always uses the full letter-size layout, even on a phone */
+  .rpage.pdf { width: 7.6in; max-width: none; padding: 0; box-shadow: none; margin: 0; font-size: 12.5px; }
+  .rpage.pdf .kv { grid-template-columns: repeat(3, 1fr); }
+  .rpage.pdf .org { font-size: 23px; }
+  .rpage.pdf .rhead img { width: 84px; height: 84px; }
+  .rpage.pdf th, .rpage.pdf td { padding: 4px 6px; font-size: 12px; }
+  .rpage.pdf th { font-size: 10.5px; }
+  @media print {
+    @page { size: letter; margin: .5in; }
+    body { background: #fff; }
+    .top, .tabs, .rtools, .toast, .noprint { display: none !important; }
+    main { padding: 0; }
+    .wrap { max-width: none; padding: 0; }
+    .rpage { box-shadow: none; margin: 0; padding: 0; max-width: none; }
+  }
+  /* ===== Easier reading (V1.3, option C): bigger text, firm outlines, boxes sized to what goes in them ===== */
+  body { font-size: 18px; background: #dfe7e1; }
+  .form label { font-size: 16px; color: #2c3a32; margin-bottom: 18px; }
+  .form input, .form select, .form textarea { font-size: 19px; padding: 12px 14px; background: #fff;
+    border: 2px solid #8fa597; border-radius: 10px; margin-top: 6px; max-width: 520px; }
+  .form input[type=file] { font-size: 16px; background: #f3f7f4; }
+  .form input[type=checkbox], .form input[type=radio] { display: inline-block; width: auto; max-width: none; margin: 0 6px 0 0; }
+  .form input[type=number] { -moz-appearance: textfield; }
+  .form input[type=number]::-webkit-inner-spin-button, .form input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+  #ed { max-width: 210px; } #et { max-width: 240px; }
+  #eh, #ei { max-width: 130px; font-size: 22px; font-weight: 700; }
+  .hint { font-size: 14.5px; color: #4d5a52; font-weight: 400; max-width: 520px; }
+  .form .btn:not(.small) { display: block; width: auto; min-width: 220px; font-size: 19px; padding: 15px 40px; border-radius: 10px; }
+  .form select.mini { display: inline-block; width: auto; font-size: 16px; padding: 7px 10px; margin: 0; }
+  .row2 { display: flex; flex-wrap: wrap; column-gap: 14px; }
+  .row2 > label { flex: 0 1 240px; min-width: 0; }
+  .row2 > label:has(#eh), .row2 > label:has(#ei), .row2 > label:has(.btn) { flex: 0 1 auto; }
+  .form .btn { white-space: nowrap; }
+  .small, .entry .meta, .entry .nums { font-size: 15px; }
+  .tabs button { font-size: 17px; }
+  /* V1.3: one-line bold white name, and the ribbon + tabs stay at the top while scrolling */
+  .stick { position: sticky; top: 0; z-index: 20; box-shadow: 0 2px 6px rgba(0,0,0,.18); }
+  .top { padding: 10px 0; }
+  .title { font-size: 21px; font-weight: 700; color: #fff; letter-spacing: .2px; line-height: 1.2; }
+  .title span { white-space: nowrap; }
+  .brand img { width: 42px; height: 42px; }
+  .form label.chk { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 0; font-size: 17px; color: var(--text); }
+  .form label.chk input { width: 22px; height: 22px; margin: 0 10px 0 0; }
+  .form label.chk .hint { flex-basis: 100%; }
+  .slide-l { animation: slideL .18s ease-out; } .slide-r { animation: slideR .18s ease-out; }
+  @keyframes slideL { from { transform: translateX(28px); opacity: .4; } to { transform: none; opacity: 1; } }
+  @keyframes slideR { from { transform: translateX(-28px); opacity: .4; } to { transform: none; opacity: 1; } }
+  @media (prefers-reduced-motion: reduce) { .slide-l, .slide-r { animation: none; } }
+  .mdone { margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--line); }
+  .tag.joint { background: #f6ecd2; color: #7a5a12; }
+  .jline { font-size: 15px; color: var(--muted); margin-top: 4px; display: flex; flex-wrap: wrap; gap: 2px 16px; }
+  .jline span { white-space: nowrap; }
+  .form label.chk input, input[type=checkbox] { accent-color: var(--navy); }
+  .jline b { color: var(--text); }
+  .upbar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 60; border: 0; width: 100%; background: var(--gold); color: #1a1f1c;
+    font: inherit; font-size: 16px; padding: 14px 16px; text-align: center; cursor: pointer; box-shadow: 0 -2px 8px rgba(0,0,0,.2); }
+  .upbar b { text-decoration: underline; }
+  /* Photo viewer + Photos tab */
+  .thumb { padding: 0; border: 0; background: none; cursor: zoom-in; }
+  .pview { position: fixed; inset: 0; z-index: 70; background: #000; color: #fff; display: flex; flex-direction: column; }
+  .pvtop, .pvbot { display: flex; align-items: center; gap: 12px; padding: 10px 14px; }
+  .pvtop { justify-content: space-between; } .pvcap { font-size: 15px; line-height: 1.35; }
+  .pvx { background: rgba(255,255,255,.15); color: #fff; border: 0; border-radius: 50%; width: 44px; height: 44px; font-size: 22px; cursor: pointer; flex: none; }
+  .pvstage { flex: 1; position: relative; display: flex; align-items: center; justify-content: center; min-height: 0; }
+  .pvstage img { max-width: 100%; max-height: 100%; object-fit: contain; }
+  .pvload { position: absolute; color: #ccc; font-size: 16px; text-align: center; padding: 0 60px; }
+  .pvnav { position: absolute; top: 50%; transform: translateY(-50%); z-index: 2; width: 48px; height: 64px; border: 0; border-radius: 10px;
+    background: rgba(255,255,255,.15); color: #fff; font-size: 40px; line-height: 1; cursor: pointer; }
+  .pvprev { left: 8px; } .pvnext { right: 8px; } .pvnav:disabled { opacity: .2; cursor: default; }
+  .pvbot { justify-content: center; flex-wrap: wrap; font-size: 15px; }
+  .pvbtn { background: var(--gold); color: #1a1f1c; font-weight: 700; padding: 10px 18px; border-radius: 8px; text-decoration: none; }
+  .pvbtn.ghost { background: rgba(255,255,255,.15); color: #fff; }
+  .pvx:focus-visible, .pvnav:focus-visible, .pvbtn:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
+  .pgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
+  .pcell { padding: 0; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; background: #fff; cursor: zoom-in; text-align: left; font: inherit; }
+  .pcell img { display: block; width: 100%; aspect-ratio: 1; object-fit: cover; background: var(--soft); }
+  .pcell span { display: block; padding: 6px 8px; font-size: 13px; line-height: 1.3; color: var(--muted); }
+  @media (max-width: 560px) { .pgrid { grid-template-columns: repeat(2, 1fr); } .pvnav { width: 40px; height: 56px; font-size: 34px; } }
+  .acct { display: grid; grid-template-columns: max-content 1fr; gap: 6px 16px; margin: 0 0 16px; }
+  .acct dt { color: var(--muted); } .acct dd { margin: 0; font-weight: 700; }
+  @media (max-width: 560px) {
+    .title { font-size: 16px; letter-spacing: 0; }
+    .brand img { width: 36px; height: 36px; }
+    .top { padding: 8px 0 6px; }
+  }
+  @media print { .stick { position: static; box-shadow: none; } }
+  .who { font-size: 15px; }
+  @media (max-width: 560px) {
+    .row2 { display: flex; gap: 0 14px; }
+    #ed, #et { width: 210px; }
+  }
+
+  /* V1.5: missions for everyone, expenses, lock, map, report, connections */
+  .sync { position: fixed; top: 8px; right: 10px; z-index: 55; background: rgba(255,255,255,.95); color: var(--navy); border-radius: 14px;
+    padding: 4px 12px; font-size: 13px; font-weight: 600; box-shadow: 0 1px 4px rgba(0,0,0,.25); }
+  .sync.bad { color: var(--bad); }
+  .tag.lock { background: #f6ecd2; color: #7a5a12; }
+  .lockbar { background: #f6ecd2; border: 1px solid #e3cf98; color: #5c4510; border-radius: 8px; padding: 10px 12px; font-size: 15px; margin-bottom: 12px; }
+  .lockbar b { display: block; font-size: 16px; color: #3f2f09; margin-bottom: 2px; }
+  .mapbtn { display: flex; align-items: center; justify-content: center; gap: 8px; background: #fff; border: 2px solid var(--navy); color: var(--navy);
+    border-radius: 8px; padding: 11px; font-weight: 700; text-decoration: none; }
+  .mapbtn:hover { background: var(--soft); }
+  .mcard .mbody .row2 { margin-top: 4px; }
+  .kvl { display: flex; flex-wrap: wrap; gap: 6px 22px; margin: 4px 0 2px; }
+  .kvl span { display: block; font-size: 12px; text-transform: uppercase; letter-spacing: .4px; color: var(--navy); font-weight: 700; }
+  .ro { background: #fff; border: 1px solid var(--line); border-radius: 7px; padding: 9px; white-space: pre-wrap; overflow-wrap: anywhere; }
+  .xtbl { table-layout: fixed; width: 100%; border-collapse: collapse; font-size: 15px; margin: 2px 0 6px; }
+  .xtbl td { white-space: normal; text-align: left; padding: 7px 4px; border-bottom: 1px solid var(--line); vertical-align: top; background: none; }
+  .xtbl td.r { text-align: right; }
+  .xtbl .cat { display: block; font-size: 13px; color: var(--muted); }
+  .xtot { display: flex; justify-content: space-between; font-weight: 700; padding: 4px 4px 0; }
+  .xdel { border: 0; background: none; color: var(--bad); font-size: 17px; cursor: pointer; padding: 0 4px; }
+  .rcpt { border: 0; background: none; padding: 0; font: inherit; color: var(--navy2); text-decoration: underline; cursor: pointer; }
+  .addx { border: 1px dashed #b8c6bd; border-radius: 8px; padding: 10px; background: #fff; margin-top: 10px; }
+  .addx label { margin-bottom: 8px; }
+  .lbl2 { font-weight: 600; font-size: 13px; color: var(--muted); margin-bottom: 10px; }
+  .filebtn { position: relative; overflow: hidden; display: inline-block; margin: 0 !important; color: var(--navy) !important; }
+  .filebtn input { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100% !important; margin: 0 !important; padding: 0 !important; }
+  .rpt { border: 1px solid var(--line); background: #fff; border-radius: 8px; padding: 12px; }
+  .box { border: 1px solid var(--line); background: #f8fbf9; border-radius: 9px; padding: 10px 12px; margin-bottom: 14px; }
+  .box h6 { margin: 0 0 8px; font-size: 12px; text-transform: uppercase; letter-spacing: .4px; color: var(--navy); }
+  .box label.chk { margin-bottom: 10px; }
+  .form textarea.msg { font-size: 15px; line-height: 1.45; }
+  .locrow { display: flex; gap: 8px; align-items: center; }
+  .locrow input { flex: 1; min-width: 0; }
+  .locrow .btn { margin-top: 4px; white-space: nowrap; }
+  .prog > div { padding: 8px 0; border-bottom: 1px solid var(--line); font-size: 16px; }
+  .prog > div:last-child { border: 0; }
+  .prog .ck { color: var(--good); font-weight: 700; margin-right: 8px; }
+  .prog .xk { color: var(--bad); font-weight: 700; margin-right: 8px; }
+  .prog + .mapbtn { margin-top: 10px; }
+  h4.ch { margin: 4px 0 6px; font-size: 16px; color: var(--navy); }
+  .rpage.mrep { position: relative; }
+  .rpage.mrep .stamp { position: absolute; top: .6in; right: .65in; border: 2px solid #b7791f; color: #b7791f; font-weight: 700; padding: 3px 9px; border-radius: 4px; font-size: 11.5px; }
+  .rpage.mrep .rhead { border-bottom: 3px solid #d4a93c; }
+  .rpage.mrep .org { text-transform: none; font-size: 21px; letter-spacing: 0; }
+  .rpage .mtitle { font-size: 20px; font-weight: 700; color: #1e4d36; margin: 6px 0 6px; }
+  .rpage .facts { display: flex; flex-wrap: wrap; gap: 6px 26px; font-size: 12.5px; margin-bottom: 12px; }
+  .rpage .facts b { display: block; font-size: 10px; text-transform: uppercase; letter-spacing: .4px; color: #555; }
+  .rpage .kv4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+  .rpage .kv4 div { background: #e8f1eb; border-radius: 5px; padding: 6px 8px; text-align: center; }
+  .rpage .kv4 span { display: block; font-size: 10px; text-transform: uppercase; letter-spacing: .4px; color: #555; font-weight: 700; }
+  .rpage .kv4 b { font-size: 19px; color: #1e4d36; }
+  .rpage.mrep th, .rpage.mrep td { text-align: left; }
+  .rpage td.r, .rpage th.r { text-align: right; }
+  .rpage tr.st td { font-weight: 700; background: #f3f7f4; }
+  .rpage table.cost td { padding: 5px 6px; }
+  .rpage .rfoot { margin-top: 18px; border-top: 1px solid #d9e2dc; padding-top: 6px; font-size: 10.5px; color: #555; }
+  .rpage.pdf .stamp { top: 0; right: 0; }
+  @media (max-width: 560px) { .rpage .kv4 { grid-template-columns: repeat(2, 1fr); } .rpage.mrep .stamp { position: static; display: inline-block; margin-bottom: 8px; } }
+  @media print { .sync { display: none !important; } }
 </style>
 </head>
 <body>
-<!-- The posse's Duty Log app (Google Apps Script), shown full-screen -->
-<iframe src="https://script.google.com/macros/s/AKfycbxFThRjmoVf-DIjqteTdCBKMw3_WwB1CcjQpYVxRdtLiinv1Y3-vq7D2Y01-jT4Dh7P/exec"
-  title="West Millard Sheriff Posse Duty Log" allow="clipboard-write; fullscreen"></iframe>
+<div class="stick">
+<header class="top"><div class="wrap">
+  <div class="brand"><img id="hlogo" class="hidden" alt=""><div class="title"><span>West Millard Sheriff Posse</span> <span>| Duty Log</span></div></div>
+  <div class="who" id="who"></div>
+</div></header>
+<nav id="tabs" class="tabs hidden"></nav>
+</div>
+<main class="wrap" id="main"><div class="sec"><div class="center muted">Loading…</div></div></main>
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+<script>
+const EXEC_URL = "https://script.google.com/macros/s/AKfycbxFThRjmoVf-DIjqteTdCBKMw3_WwB1CcjQpYVxRdtLiinv1Y3-vq7D2Y01-jT4Dh7P/exec";
+const LOGO = "data:image/webp;base64,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";
+const POSSE_INFO = {"key":"west","short":"West Posse","header":"West Millard Sheriff Posse","appUrl":"https://west.millardsar.org"};
+</script>
+<script>
+/* ================= Duty Log: core (shared by the East and West posses) ================= */
+const APP_VERSION = 'V1.5';
+const APP_DATE = 'October 25, 2026';
+const CHANGELOG = [
+  { v: 'V1.5', date: 'October 25, 2026', items: [
+    'Faster: the app now loads from east.millardsar.org / west.millardsar.org directly, and your phone remembers your last numbers so they show instantly while fresh ones load.',
+    'Everyone can open a mission to see its map link, notes, photos, expenses and who logged time. Only admins can change a mission.',
+    'Admins can add expenses to a mission (food, fuel, broken or lost equipment and more), with a photo of the receipt.',
+    'New MCSO case # and location on each mission.',
+    'Mission Report: a PDF for the state with every member\'s hours and miles (both posses on a joint mission), expenses and a cost summary. A copy is saved to the mission\'s Google Drive folder.',
+    'Creating the report locks the mission so nobody can change its time, notes or expenses. Photos can still be added. Admins can unlock it.',
+    'Adding a mission can create its CalTopo map (same name, in the posse\'s folder) and post the map link to GroupMe.',
+    'CalTopo maps are backed up to Google Drive when the report is created, or any time with Back up map now.',
+    'The public website loads its numbers instantly.'
+  ] },
+  { v: 'V1.4.4', date: 'October 24, 2026', items: [
+    'Faster: the app opens in one trip to the server and skips a slow sheet check on most sign-ins.',
+    'Photos: tap a photo to see it full-screen in the app; swipe or use the arrows to move through them, with a Download button.',
+    'New Photos tab for admins: every photo from every mission in one place, filtered by mission or year.',
+    'Changing the rates in Settings shows on the public website right away.'
+  ] },
+  { v: 'V1.4.3', date: 'October 24, 2026', items: [
+    'The app refreshes its numbers when you come back to it, and every 15 minutes while it is open.',
+    'If a newer version has been released, a bar offers to update it with one tap (you stay signed in).'
+  ] },
+  { v: 'V1.4.2', date: 'October 24, 2026', items: [
+    'The public site millardsar.org shows both posses together, with buttons to see the East or West Posse on its own. A joint mission counts once in the combined numbers.'
+  ] },
+  { v: 'V1.4.1', date: 'October 24, 2026', items: [
+    'Team functions now count each mission or event once per day it was worked, instead of once per member. Months from the old monthly form use the highest number any one unit reported.',
+    'New "Member turnouts" number shows how many times members turned out in total.',
+    'Hours are logged in half hours, and every entry counts in half hours (anything in between rounds up), so totals no longer show odd decimals.',
+    'Settings: alert emails can go to several people (separate addresses with commas).',
+    'West Posse: the Wide Mouth 2 Fire entries are split by day (August 1–5), so it counts as 5 functions.'
+  ] },
+  { v: 'V1.4', date: 'October 24, 2026', items: [
+    'West Posse gets its own Duty Log, running the same code as the East with its own roster, admins, missions and photos.',
+    'Joint missions: any admin can mark a mission as joint so both posses log time to the same mission. Everyone sees the combined totals; admins also see who logged time from the other posse.',
+    'Log page: joint missions are marked "Joint" in the Mission / Event list.'
+  ] },
+  { v: 'V1.3.4', date: 'October 24, 2026', items: [
+    'First sign-in needs the sign-in code from the Commander (set it on the Settings tab).',
+    'Tougher lockout: 5 wrong tries locks a unit for 15 minutes; 15 in a day locks it until the Commander unlocks it.',
+    'Email alerts to the Commander when a unit is locked out or a member creates a PIN.',
+    'Settings tab: Member PINs list with Unlock and Reset PIN.',
+    'Missions tab: Merge and Rename open in a pop-up, so open missions are shorter.'
+  ] },
+  { v: 'V1.3.3', date: 'October 24, 2026', items: [
+    'Missions tab: a Done button closes an open mission and returns to the list. Unsaved notes are saved automatically.'
+  ] },
+  { v: 'V1.3.2', date: 'October 24, 2026', items: [
+    'Team totals (numbers only, no names) are shared with the public posse website.',
+    'The app can be shown full-screen at its own short web address.'
+  ] },
+  { v: 'V1.3.1', date: 'October 24, 2026', items: [
+    'Missions tab: "Merge into another mission" now has its own dropdown, so you pick the mission to keep instead of typing its name.',
+    'On a phone, swipe left or right to move between tabs.'
+  ] },
+  { v: 'V1.3', date: 'October 24, 2026', items: [
+    'Easier to read: larger text throughout, input boxes with a firm outline on a slightly darker page, and boxes sized to what goes in them.',
+    'Photo previews now show on the Missions tab (tap one to open it in Google Drive).',
+    '"Mission / Event" capitalized on the Log page.',
+    'Mission / Event list on the Log page is sorted by date, newest first.',
+    'New name: East Millard Sheriff Posse | Duty Log, on one line. The top ribbon and tabs stay in view while you scroll.',
+    'Account page (top right) with your unit, name and access, plus Change PIN and Sign out.',
+    'Ongoing items for recurring work (Posse Meeting, Drone, Command Trailer and General Maintenance) sit at the top of the Log list. Log the date you did the work.',
+    'New Maintenance type.'
+  ] },
+  { v: 'V1.2.1', date: 'October 23, 2026', items: [
+    'Members create their own PIN the first time they sign in. The Commander resets a PIN by clearing it on the Roster tab.',
+    'My Stats shows a Notes link on each entry that opens the notes in a pop-up, so the list stays readable on a phone.',
+    'Fixed a problem where Google cut off web links in the page code and the app would not load.'
+  ] },
+  { v: 'V1.2', date: 'October 23, 2026', items: [
+    'Mission / event is now a dropdown on the Log page, listing open missions of every type (callouts, trainings, meetings, events), so everyone logs time under the same name.',
+    'Missions tab for everyone, with a filter by mission type.',
+    'Commander can add operational notes to any mission, including when creating it.',
+    'Photo uploads on the Log and Edit pages, stored in Google Drive in a folder for each mission.',
+    'Year-end Member Activity Report on the Report tab: all members combined, or one member’s statement for their tax records.',
+    'Members can print their own year-end statement from My Stats.',
+    'Reports include the badge, a Commander signature block, and Print / Download PDF.',
+    'Keyboard friendly: Tab moves through the Log form and the field you’re on gets a gold border.',
+    'New About tab with the version number and this list of changes.'
+  ] },
+  { v: 'V1.1', date: 'October 23, 2026', items: [
+    'Members choose their own PIN (stored scrambled) and can change it any time.',
+    'Edit past entries, tap a month in My Stats to see or add its entries.',
+    'My Stats period picker: this month, last month, year to date, last 12 months, past years.',
+    'Commander can set up missions ahead of time and close them when finished.',
+    'Warnings for look-alike mission names, plus a merge tool for the Commander.',
+    'Badge and Millard County green theme.'
+  ] },
+  { v: 'V1.0', date: 'October 23, 2026', items: [
+    'Log callouts, trainings, meetings and events right after they happen.',
+    'My Stats with progress toward the 20 required functions and volunteer value.',
+    'Team totals and charts; Commander report, review and settings pages.',
+    'Imported monthly reports from the 2024–2026 Google Forms.'
+  ] }
+];
+
+const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const MONTHS_LONG = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+const S = { boot: null, creds: null, d: null, tab: 'log', period: 'ytd', teamYear: null, teamMetric: 'tf',
+  rep: { mode: 'year', year: null, month: null }, openMission: null, chart: null, edit: null,
+  openMonth: null, prefill: null, mFilter: 'all', showLog: false, report: null };
+
+const $ = id => document.getElementById(id);
+function main(html) { $('main').innerHTML = html; }
+if (LOGO) { const l = $('hlogo'); l.src = LOGO; l.classList.remove('hidden'); }
+let useFetch = /\/exec$/.test(EXEC_URL);
+
+function viaScriptRun(fn, args) {
+  if (!(window.google && google.script && google.script.run)) return Promise.reject(new Error("Couldn't reach the server. Check your connection and try again."));
+  return new Promise((res, rej) => {
+    const timer = setTimeout(() => rej(new Error('The server did not answer. Check your connection and reload the page.')), 60000);
+    google.script.run
+      .withSuccessHandler(v => { clearTimeout(timer); res(v); })
+      .withFailureHandler(e => { clearTimeout(timer); rej(e); })[fn](...args);
+  });
+}
+
+async function viaFetch(fn, args) {
+  const ctl = new AbortController();
+  const timer = setTimeout(() => ctl.abort(), 60000);
+  try {
+    const r = await fetch(EXEC_URL, { method: 'POST', body: JSON.stringify({ fn: fn, args: args }), signal: ctl.signal });
+    const j = await r.json();
+    if (!j.ok) { const e = new Error(j.error); e.server = true; throw e; }
+    return j.data;
+  } finally { clearTimeout(timer); }
+}
+
+async function run(fn, ...args) {
+  if (useFetch) {
+    try { return await viaFetch(fn, args); }
+    catch (e) { if (e.server) throw e; useFetch = false; }
+  }
+  return viaScriptRun(fn, args);
+}
+
+window.addEventListener('error', ev => {
+  const m = $('main');
+  if (m && /Loading/.test(m.textContent)) m.innerHTML = '<div class="sec"><div class="center">Page error: ' + String(ev.message).replace(/</g, '&lt;') + '</div></div>';
+});
+function clean(err) { return String((err && err.message) || err).replace(/^(Exception|Error):\s*/, ''); }
+function esc(s) {
+  return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+function n1(x) { return (Math.round((x || 0) * 10) / 10).toLocaleString(); }
+function money(x) { return '$' + Math.round(x || 0).toLocaleString(); }
+function money2(x) { return '$' + (x || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
+function store(k, v) { try { if (v == null) localStorage.removeItem(k); else localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+function load(k) { try { return JSON.parse(localStorage.getItem(k)); } catch (e) { return null; } }
+function pad(n) { return String(n).padStart(2, '0'); }
+function todayStr() { const d = new Date(); return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()); }
+function ym(y, m) { return y + '-' + pad(m + 1); }
+function fmtDate(s) { const p = s.split('-').map(Number); return MONTHS[p[1] - 1] + ' ' + p[2] + ', ' + p[0]; }
+function fmtMonth(s) { const p = s.split('-').map(Number); return MONTHS[p[1] - 1] + ' ' + p[0]; }
+function nameOf(u) { const r = S.d.roster.find(x => x.unit === u); return r && r.name ? r.name : '(vacant)'; }
+function finePointer() { try { return window.matchMedia('(pointer: fine)').matches; } catch (e) { return false; } }
+
+/* ---- Mission name matching ---- */
+const MONTH_WORDS = /^(jan|feb|mar|apr|may|jun|jul|aug|sep|sept|oct|nov|dec|january|february|march|april|june|july|august|september|october|november|december)$/;
+function normName(s) { return String(s || '').toLowerCase().replace(/&/g, ' and ').replace(/[^a-z0-9]+/g, ' ').trim(); }
+function lev(a, b) {
+  const v = Array(b.length + 1).fill(0).map((_, i) => i);
+  for (let i = 1; i <= a.length; i++) {
+    let prev = v[0]; v[0] = i;
+    for (let j = 1; j <= b.length; j++) {
+      const tmp = v[j];
+      v[j] = Math.min(v[j] + 1, v[j - 1] + 1, prev + (a[i - 1] === b[j - 1] ? 0 : 1));
+      prev = tmp;
+    }
+  }
+  return v[b.length];
+}
+function similarName(a, b) {
+  const x = normName(a), y = normName(b);
+  if (!x || !y) return false;
+  if (x === y) return true;
+  const ta = x.split(' '), tb = y.split(' ');
+  const diff = ta.filter(w => tb.indexOf(w) < 0).concat(tb.filter(w => ta.indexOf(w) < 0));
+  if (diff.length && diff.every(w => /^\d+$/.test(w) || MONTH_WORDS.test(w))) return false;
+  if (1 - lev(x, y) / Math.max(x.length, y.length) >= 0.8) return true;
+  const sa = ta.filter(w => w.length > 2), sb = tb.filter(w => w.length > 2);
+  if (sa.length >= 2 && sb.length >= 2) {
+    const shared = sa.filter(w => sb.indexOf(w) >= 0).length;
+    if (shared / Math.min(sa.length, sb.length) >= 0.75) return true;
+  }
+  return Math.min(x.length, y.length) >= 6 && (x.indexOf(y) >= 0 || y.indexOf(x) >= 0);
+}
+
+let toastTimer;
+function toast(msg, bad, ms) {
+  const t = $('toast'); t.textContent = msg; t.className = 'toast show' + (bad ? ' bad' : '');
+  clearTimeout(toastTimer); toastTimer = setTimeout(() => { t.className = 'toast'; }, ms || 3200);
+}
+
+function sum(list) {
+  const s = S.d.settings; let f = 0, h = 0, mi = 0;
+  list.forEach(e => { f += e.f || 0; h += e.h || 0; mi += e.mi || 0; });
+  return { f, h, mi, v: h * s.hourRate + mi * s.mileRate };
+}
+/**
+ * Team functions for a list of entries (same rule as the server): each mission or event counts once per
+ * calendar day anyone logged time on it; months from the old monthly form use the highest number any one
+ * unit reported; a month with both uses the larger. Returns { total, byMonth: { 'yyyy-mm': n }, byType: { type: n } }.
+ */
+function teamFn(list) {
+  const months = {};
+  list.forEach(e => {
+    if (e.exclude) return;
+    const k = e.date.slice(0, 7);
+    const M = months[k] || (months[k] = { keys: {}, byType: {}, n: 0, legacy: {} });
+    if (e.source === 'App') {
+      const key = (e.mission ? 'm:' + e.mission.toLowerCase() : 't:' + e.type) + '|' + e.date;
+      if (!M.keys[key]) { M.keys[key] = 1; M.n++; M.byType[e.type] = (M.byType[e.type] || 0) + 1; }
+    } else {
+      M.legacy[e.unit] = Math.max(M.legacy[e.unit] || 0, e.f || 0);
+    }
+  });
+  const out = { total: 0, byMonth: {}, byType: {} };
+  Object.keys(months).forEach(k => {
+    const M = months[k];
+    const legacy = Math.max(0, ...Object.keys(M.legacy).map(u => M.legacy[u]));
+    const types = legacy > M.n ? { 'Monthly report': legacy } : M.byType;
+    Object.keys(types).forEach(t => { out.byType[t] = (out.byType[t] || 0) + types[t]; });
+    out.byMonth[k] = Math.max(legacy, M.n);
+    out.total += out.byMonth[k];
+  });
+  return out;
+}
+
+/** Team tiles: team functions (missions/events), member turnouts, hours, miles, value. */
+function teamTiles(t, tf, extra) {
+  return `<div class="tiles">${tile('Functions', n1(tf), 'missions &amp; events')}${tile('Member turnouts', n1(t.f))}${tile('Hours', n1(t.h))}${tile('Miles', n1(t.mi))}${tile('Value', money(t.v))}${extra || ''}</div>`;
+}
+
+function tile(label, val, sub) {
+  return `<div class="tile"><div class="lbl">${label}</div><div class="val">${val}</div>${sub ? `<div class="sub">${sub}</div>` : ''}</div>`;
+}
+function tiles(t, extra) {
+  return `<div class="tiles">${tile('Functions', n1(t.f))}${tile('Hours', n1(t.h))}${tile('Miles', n1(t.mi))}${tile('Value', money(t.v))}${extra || ''}</div>`;
+}
+function section(title, body, extra) {
+  return `<section class="sec"><div class="bar"><span>${title}</span>${extra || ''}</div><div class="body">${body}</div></section>`;
+}
+function yearSelect(id, years, y) {
+  return `<select id="${id}" class="mini">${years.map(v => `<option value="${v}" ${v === y ? 'selected' : ''}>${v}</option>`).join('')}</select>`;
+}
+function typeOptions(sel, withAll) {
+  return (withAll ? `<option value="all">All types</option>` : '') +
+    S.d.types.map(t => `<option value="${esc(t)}" ${t === sel ? 'selected' : ''}>${esc(t)}</option>`).join('');
+}
+function setData(d) { S.d = d; buildTabs(); render(); cacheData(); }
+
+/* ---------------- Remembering the last load (shows instantly next time) ---------------- */
+
+function cacheData() {
+  if (!S.creds || !S.d) return;
+  try { localStorage.setItem('posseData', JSON.stringify({ unit: S.creds.unit, at: Date.now(), v: APP_VERSION, d: S.d })); }
+  catch (e) { try { localStorage.removeItem('posseData'); } catch (x) {} }
+}
+
+/** True when redrawing the screen won't wipe anything the member is doing. */
+function safeToRedraw() {
+  const a = document.activeElement;
+  const typing = a && /^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName) && $('main').contains(a);
+  return !typing && !S.touched && !S.report && !$('npop') && !$('pview');
+}
+
+/** Fresh data arrived in the background: show it now if that's safe, otherwise keep it for the next screen. */
+function applyFresh(d) {
+  if (safeToRedraw()) { const y = window.scrollY; setData(d); window.scrollTo(0, y); }
+  else { S.d = d; cacheData(); }
+}
+
+/** A small note under the ribbon while saved numbers are showing ("Updating…"). */
+function syncNote(text, bad) {
+  let n = $('sync');
+  if (!text) { if (n) n.remove(); return; }
+  if (!n) { document.body.insertAdjacentHTML('beforeend', '<div id="sync" class="sync" role="status"></div>'); n = $('sync'); }
+  n.textContent = text; n.classList.toggle('bad', !!bad);
+  if (bad) setTimeout(() => { if ($('sync') === n) n.remove(); }, 6000);
+}
+
+document.addEventListener('input', ev => { if ($('main') && $('main').contains(ev.target)) S.touched = true; }, true);
+document.addEventListener('change', ev => { if ($('main') && $('main').contains(ev.target) && ev.target.id !== 'mfil' && !/mini/.test(ev.target.className)) S.touched = true; }, true);
+
+/* ---------------- Keeping an open page current ---------------- */
+
+/**
+ * When the member comes back to the app (or every 15 minutes while it is open): fetch fresh numbers, and check
+ * whether a newer version has been released. The screen is only redrawn when it is safe (not mid-typing, no
+ * pop-up or open mission), so nothing the member is entering gets wiped.
+ */
+let lastCheck = Date.now();
+async function keepCurrent(force) {
+  if (document.hidden) return;
+  if (!force && Date.now() - lastCheck < 60000) return;
+  lastCheck = Date.now();
+  try {
+    const v = await run('apiVersion');
+    if (v && v.version && v.version !== APP_VERSION) showUpdateBar(v.version);
+  } catch (e) { /* offline or busy: try again later */ }
+  if (!S.creds || !S.d) return;
+  try { applyFresh(await run('apiRefresh', S.creds)); }
+  catch (e) { /* signed out or offline: leave the screen as it is */ }
+}
+
+function showUpdateBar(version) {
+  if ($('upbar')) return;
+  document.body.insertAdjacentHTML('beforeend', `<button id="upbar" class="upbar" type="button">
+    A new version of the Duty Log is available (${esc(version)}). <b>Tap to update.</b></button>`);
+  $('upbar').onclick = () => {
+    /* On the posse's own web address, ask for the new page (not the browser's saved copy) */
+    if (/millardsar\.org$/.test(location.hostname)) location.replace(location.pathname + '?v=' + encodeURIComponent(version));
+    else location.reload();
+  };
+}
+
+document.addEventListener('visibilitychange', () => { if (!document.hidden) keepCurrent(); });
+window.addEventListener('focus', () => keepCurrent());
+setInterval(() => keepCurrent(true), 15 * 60000);
+
+/* ---------------- Sign in ---------------- */
+
+async function init() {
+  const c = load('posseCreds'), saved = load('posseData'), boot = load('posseBoot');
+  if (c && saved && saved.unit === c.unit && saved.d && saved.d.me) {
+    /* Show the numbers from last time right away, then refresh them in the background */
+    S.boot = boot || { units: [] };
+    S.creds = c;
+    resetView();
+    S.tab = 'log';
+    S.d = saved.d; buildTabs(); render();
+    syncNote('Updating…');
+    try {
+      const r = await run('apiStart', c);
+      S.boot = r.boot; store('posseBoot', r.boot);
+      syncNote(null);
+      if (r.data) { applyFresh(r.data); return; }
+      store('posseCreds', null); store('posseData', null); S.creds = null; S.d = null;
+      showLogin(r.error || 'Please sign in again.');
+    } catch (e) { syncNote("Couldn't reach the server. Showing your saved numbers.", true); }
+    return;
+  }
+  if (!c && boot && boot.units && boot.units.length) {
+    /* Sign-in screen right away; refresh the unit list behind it */
+    S.boot = boot; showLogin();
+    run('apiBoot').then(b => {
+      S.boot = b; store('posseBoot', b);
+      if (!S.d && !S.touched && $('lf') && !$('lp').value) showLogin();
+    }).catch(() => {});
+    return;
+  }
+  try {
+    if (c) {
+      /* Saved sign-in: unit list and data in one trip */
+      const r = await run('apiStart', c);
+      S.boot = r.boot; store('posseBoot', r.boot);
+      if (r.data) { finishLogin(c, r.data); return; }
+      store('posseCreds', null);
+    } else {
+      S.boot = await run('apiBoot'); store('posseBoot', S.boot);
+    }
+  } catch (e) { main(section('Error', `<p>Couldn't load the app: ${esc(clean(e))}</p>`)); return; }
+  showLogin();
+}
+
+function resetView() {
+  Object.assign(S, { period: 'ytd', teamYear: null, openMission: null, openMonth: null, mFilter: 'all', edit: null, report: null,
+    addResult: null, rep: { mode: 'year', year: null, month: null } });
+}
+
+function showLogin(msg) {
+  $('tabs').classList.add('hidden'); $('who').innerHTML = '';
+  const opts = S.boot.units.map(u => `<option value="${u.unit}">${u.unit} – ${esc(u.name)}</option>`).join('');
+  main(section('Sign In', `${LOGO ? `<img class="signlogo" src="${LOGO}" alt="Millard County Sheriff Search & Rescue">` : ''}<form id="lf" class="form">
+    <label>Unit<select id="lu" required><option value="">Choose your unit…</option>${opts}</select></label>
+    <p id="lnew" class="hidden" style="margin:0 0 14px">First time signing in? Enter the sign-in code from the Commander, then choose your own 4 to 8 digit PIN. You'll use the PIN every time after this.</p>
+    <label id="lcw" class="hidden">Sign-in code<input id="lc" autocomplete="off" autocapitalize="characters" spellcheck="false" maxlength="20"></label>
+    <label><span id="lpl">PIN</span><input id="lp" type="password" inputmode="numeric" autocomplete="current-password" maxlength="8" required></label>
+    <label id="lp2w" class="hidden">PIN again<input id="lp2" type="password" inputmode="numeric" autocomplete="new-password" maxlength="8"></label>
+    ${msg ? `<div class="err">${esc(msg)}</div>` : ''}
+    <button class="btn" type="submit" id="lb">Sign in</button>
+    <p class="muted small" id="lhelp">Forgot your PIN? Ask the Commander to reset it.</p></form>`));
+  const unitInfo = u => S.boot.units.find(x => x.unit === u);
+  const isNew = () => { const u = unitInfo($('lu').value); return !!(u && u.hasPin === false); };
+  const setMode = () => {
+    const n = isNew();
+    $('lnew').classList.toggle('hidden', !n);
+    $('lp2w').classList.toggle('hidden', !n);
+    $('lp2').required = n;
+    $('lcw').classList.toggle('hidden', !n); $('lc').required = n;
+    $('lpl').textContent = n ? 'New PIN' : 'PIN';
+    $('lp').autocomplete = n ? 'new-password' : 'current-password';
+    $('lb').textContent = n ? 'Create PIN & sign in' : 'Sign in';
+  };
+  const last = load('posseLastUnit'); if (last) $('lu').value = last;
+  if (msg && S.lastTry) $('lu').value = S.lastTry;
+  setMode();
+  $('lu').onchange = setMode;
+  if (finePointer()) ($('lu').value ? $('lp') : $('lu')).focus();
+  $('lf').onsubmit = async ev => {
+    ev.preventDefault();
+    const unit = $('lu').value, pin = $('lp').value.trim();
+    S.lastTry = unit;
+    if (isNew()) {
+      const bad = !$('lc').value.trim() ? 'Enter the sign-in code from the Commander.'
+        : !/^\d{4,8}$/.test(pin) ? 'Your PIN must be 4 to 8 digits.'
+        : pin !== $('lp2').value.trim() ? "The two PINs don't match." : '';
+      if (bad) { toast(bad, true); return; }
+      $('lb').disabled = true; $('lb').textContent = 'Saving…';
+      try {
+        const d = await run('apiFirstPin', unit, pin, $('lc').value.trim());
+        const u = unitInfo(unit); if (u) u.hasPin = true;
+        finishLogin({ unit: unit, pin: pin }, d);
+        toast('PIN saved. Welcome!');
+      } catch (e) {
+        if (/already has a PIN/.test(clean(e))) { const u = unitInfo(unit); if (u) u.hasPin = true; }
+        showLogin(clean(e));
+      }
+      return;
+    }
+    $('lb').disabled = true; $('lb').textContent = 'Signing in…';
+    try { await login({ unit: unit, pin: pin }); }
+    catch (e) { showLogin(clean(e)); }
+  };
+}
+
+async function login(c) {
+  finishLogin(c, await run('apiLogin', c));
+}
+
+function finishLogin(c, d) {
+  S.creds = c; store('posseCreds', c); store('posseLastUnit', c.unit);
+  resetView();
+  S.tab = d.me.mustSetPin ? 'pin' : 'log';
+  setData(d);
+}
+
+/* ---------------- Swipe left / right to change tabs (phones and tablets) ---------------- */
+
+function goTab(k, dir) {
+  S.tab = k; S.report = null; buildTabs(); render(); window.scrollTo(0, 0);
+  const on = document.querySelector('#tabs button.on');
+  if (on && on.scrollIntoView) on.scrollIntoView({ block: 'nearest', inline: 'center' });
+  const mainEl = $('main');
+  mainEl.classList.remove('slide-l', 'slide-r'); void mainEl.offsetWidth;
+  mainEl.classList.add(dir > 0 ? 'slide-l' : 'slide-r');
+}
+
+(function () {
+  let sx = 0, sy = 0, st = 0, ok = false;
+  const blocked = el => !!(el.closest && el.closest('input, select, textarea, button, a, canvas, .tblwrap, .thumbs, .seg, #npop, .rpage, .rtools'));
+  document.addEventListener('touchstart', ev => {
+    ok = false;
+    if (ev.touches.length !== 1 || !S.d || !S.tabList || S.report || $('npop') || $('pview')) return;
+    if (S.tabList.indexOf(S.tab) < 0) return;
+    const t = ev.touches[0];
+    if (t.clientX < 24 || t.clientX > window.innerWidth - 24) return;
+    if (!$('main').contains(ev.target) || blocked(ev.target)) return;
+    sx = t.clientX; sy = t.clientY; st = Date.now(); ok = true;
+  }, { passive: true });
+  document.addEventListener('touchend', ev => {
+    if (!ok) return; ok = false;
+    const t = ev.changedTouches[0], dx = t.clientX - sx, dy = t.clientY - sy;
+    if (Date.now() - st > 700 || Math.abs(dx) < 70 || Math.abs(dx) < Math.abs(dy) * 1.8) return;
+    if (window.getSelection && String(window.getSelection()).length) return;
+    const i = S.tabList.indexOf(S.tab), j = i + (dx < 0 ? 1 : -1);
+    if (j < 0 || j >= S.tabList.length) return;
+    goTab(S.tabList[j], dx < 0 ? 1 : -1);
+  }, { passive: true });
+})();
+
+function buildTabs() {
+  const t = [['log', 'Log'], ['stats', 'My Stats'], ['team', 'Team'], ['missions', 'Missions']];
+  if (S.d.me.admin) t.push(['photos', 'Photos'], ['report', 'Report'], ['review', 'Review'], ['settings', 'Settings']);
+  t.push(['about', 'About']);
+  S.tabList = t.map(x => x[0]);
+  $('tabs').innerHTML = t.map(([k, l]) => `<button data-t="${k}" class="${S.tab === k ? 'on' : ''}">${l}</button>`).join('');
+  $('tabs').classList.remove('hidden');
+  $('tabs').querySelectorAll('button').forEach(b => b.onclick = () => { S.tab = b.dataset.t; S.report = null; buildTabs(); render(); window.scrollTo(0, 0); });
+  $('who').innerHTML = `${esc(S.d.me.unit)} · ${esc(S.d.me.name)}<button class="link" id="cp">Account</button><button class="link" id="so">Sign out</button>`;
+  $('so').onclick = () => { store('posseCreds', null); store('posseData', null); S.creds = null; S.d = null; showLogin(); };
+  $('cp').onclick = () => { S.tab = 'pin'; buildTabs(); render(); window.scrollTo(0, 0); };
+  if (S.tab === 'pin' && S.d.me.mustSetPin) $('tabs').classList.add('hidden');
+}
+
+function render() {
+  if (S.chart) { S.chart.destroy(); S.chart = null; }
+  S.touched = false;
+  if (S.report) { if (S.report.kind === 'mission') renderMissionReport(); else renderYearEnd(); return; }
+  const fn = { log: renderLog, stats: renderStats, team: renderTeam, report: renderReport, missions: renderMissions,
+    review: renderReview, settings: renderSettings, photos: renderPhotos, edit: renderEdit, pin: renderPin, about: renderAbout }[S.tab] || renderLog;
+  fn();
+}
+
+function renderPin() {
+  const first = S.d.me.mustSetPin, me = S.d.me;
+  const acct = first ? '' : section('Account', `<dl class="acct">
+      <dt>Unit</dt><dd>${esc(me.unit)}</dd>
+      <dt>Name</dt><dd>${esc(me.name)}</dd>
+      <dt>Access</dt><dd>${me.admin ? 'Admin (Commander tools)' : 'Member'}</dd></dl>
+      <button class="btn small ghost" type="button" id="aso">Sign out</button>`);
+  main(acct + section(first ? 'Choose Your Own PIN' : 'Change PIN', `<form id="pf" class="form">
+      ${first ? `<p style="margin-top:0">Welcome, ${esc(me.name)}. The PIN you just used was a starting PIN. Pick your own 4 to 8 digit PIN to finish setting up.</p>` : ''}
+      <label>New PIN<input id="p1" type="password" inputmode="numeric" autocomplete="new-password" maxlength="8" required></label>
+      <label>New PIN again<input id="p2" type="password" inputmode="numeric" autocomplete="new-password" maxlength="8" required></label>
+      <button class="btn" type="submit" id="pb">Save PIN</button>
+      <p class="muted small">Your PIN is stored scrambled, so nobody can read it from the sheet. If you forget it, ask the Commander to reset it.</p>
+    </form>`));
+  if ($('aso')) $('aso').onclick = () => $('so').click();
+  if (first && finePointer()) $('p1').focus();
+  $('pf').onsubmit = async ev => {
+    ev.preventDefault();
+    const p1 = $('p1').value.trim(), p2 = $('p2').value.trim();
+    if (!/^\d{4,8}$/.test(p1)) { toast('Your PIN must be 4 to 8 digits.', true); return; }
+    if (p1 !== p2) { toast("The two PINs don't match.", true); return; }
+    $('pb').disabled = true; $('pb').textContent = 'Saving…';
+    try {
+      const d = await run('apiChangePin', S.creds, p1);
+      S.creds = { unit: S.creds.unit, pin: p1 }; store('posseCreds', S.creds);
+      S.tab = 'log'; setData(d);
+      toast('PIN saved.');
+    } catch (e) { $('pb').disabled = false; $('pb').textContent = 'Save PIN'; toast(clean(e), true); }
+  };
+}
+
+/* ---------------- Log form ---------------- */
+
+/** The Mission / event dropdown: open missions of every type, recent names, and "+ New". */
+function missionSelect(current) {
+  const d = S.d;
+  const ongoing = d.missions.filter(m => m.ongoing).sort((a, b) => a.name.localeCompare(b.name));
+  const dated = d.missions.filter(m => !m.ongoing).sort((a, b) => b.date.localeCompare(a.date) || a.name.localeCompare(b.name));
+  const all = d.missions.map(m => m.name);
+  const cur = current && all.indexOf(current) < 0
+    ? `<option value="${esc(current)}" selected>${esc(current)}</option>` : '';
+  const sel = m => m.name === current ? 'selected' : '';
+  const jt = m => m.joint ? ' · Joint' : '';
+  const lk = m => m.locked ? (m.name === current ? '' : ' disabled') : '';
+  const lt = m => m.locked ? ' · 🔒 Locked' : '';
+  const optO = m => `<option value="${esc(m.name)}" ${sel(m)}${lk(m)}>${esc(m.name)} · ${esc(m.type)}${jt(m)}${lt(m)}</option>`;
+  const optD = m => `<option value="${esc(m.name)}" ${sel(m)}${lk(m)}>${esc(fmtDate(m.date))} · ${esc(m.name)} · ${esc(m.type)}${jt(m)}${lt(m)}</option>`;
+  return `<select id="ems">
+      <option value="">${current ? '— None —' : '— Pick a Mission or Event —'}</option>${cur}
+      ${ongoing.length ? `<optgroup label="Ongoing">${ongoing.map(optO).join('')}</optgroup>` : ''}
+      ${dated.length ? `<optgroup label="Missions & events, newest first">${dated.map(optD).join('')}</optgroup>` : ''}
+      <option value="__new">+ New Mission / Event…</option>
+    </select>`;
+}
+
+function entryForm(e, button, cancel) {
+  const d = S.d;
+  const types = d.types.map(t => `<option ${e && e.type === t ? 'selected' : ''}>${esc(t)}</option>`).join('');
+  return `<form id="ef" class="form">
+      <div class="row2">
+        <label>Date<input type="date" id="ed" value="${e ? e.date : todayStr()}" max="${todayStr()}" required></label>
+        <label>Type<select id="et">${types}</select></label>
+      </div>
+      <label>Mission / Event${missionSelect(e ? e.mission : '')}
+        <span class="hint">Pick from the list so everyone's time lands on the same mission. Can't find it? Choose “+ New”.${(S.d.missions || []).some(m => m.locked) ? ' Locked missions have been reported. Ask an admin if you need to add time.' : ''}</span></label>
+      <label id="emwrap" class="hidden">New Mission / Event name<input id="em" maxlength="80" autocomplete="off" placeholder="e.g. Lost hiker – Chalk Creek"></label>
+      <div id="simbox" class="simbox hidden"></div>
+      <div class="row2">
+        <label>Hours (include travel)<input type="number" id="eh" min="0.5" max="72" step="0.5" inputmode="decimal" required value="${e ? e.h : ''}"></label>
+        <label>Miles driven<input type="number" id="ei" min="0" max="2000" step="1" inputmode="numeric" required value="${e ? e.mi : ''}"></label>
+      </div>
+      <label>Notes (optional)<textarea id="en" rows="2" maxlength="500">${e ? esc(e.notes) : ''}</textarea></label>
+      <label>Add photos (optional)<input type="file" id="ep" accept="image/*" multiple>
+        <span class="hint">Saved to the mission's photo folder. Everyone in the posse can see them on the Missions tab.</span></label>
+      <div id="pprev" class="thumbs"></div>
+      <button class="btn" type="submit" id="eb">${button}</button>
+      ${cancel ? '<button class="btn gray" type="button" id="ec" style="margin-top:8px">Cancel</button>' : ''}
+    </form>`;
+}
+
+function missionValue() {
+  return $('ems').value === '__new' ? $('em').value.trim() : $('ems').value;
+}
+
+function knownMissions() { return S.d.missions.map(m => m.name); }
+
+/** Existing names that look like `name` but aren't exactly it. */
+function lookalikes(name) {
+  const n = name.trim();
+  if (!n) return [];
+  if (knownMissions().some(k => k === n)) return [];
+  return knownMissions().filter(k => similarName(k, n)).slice(0, 3);
+}
+
+function pickMission(name) {
+  const sel = $('ems');
+  if ([].some.call(sel.options, o => o.value === name)) sel.value = name;
+  $('emwrap').classList.toggle('hidden', sel.value !== '__new');
+  const m = S.d.missions.find(x => x.name === name);
+  if (m) $('et').value = m.type;
+}
+
+function showSim(force) {
+  const box = $('simbox'); if (!box) return;
+  const v = $('ems').value === '__new' ? $('em').value.trim() : '';
+  if (force) S.simForced = v; else if (S.simForced === v) force = true;
+  const sims = lookalikes(v);
+  if (!sims.length || (S.simOk && S.simOk === v)) { box.classList.add('hidden'); box.innerHTML = ''; return; }
+  box.innerHTML = `<b>${force ? 'Is this the same mission?' : 'Similar mission already exists:'}</b>
+    ${sims.map(s => `<button type="button" class="opt" data-n="${esc(s)}">Use “${esc(s)}”</button>`).join('')}
+    ${force ? `<button type="button" class="keep">No, “${esc(v)}” is a different mission. Save it as new.</button>` : ''}`;
+  box.classList.remove('hidden');
+  box.querySelectorAll('.opt').forEach(b => b.onclick = () => { pickMission(b.dataset.n); box.classList.add('hidden'); $('eh').focus(); });
+  const k = box.querySelector('.keep');
+  if (k) k.onclick = () => { S.simOk = v; box.classList.add('hidden'); $('ef').requestSubmit(); };
+}
+
+/** Before saving: fix case/punctuation-only differences, and stop if a look-alike exists. */
+function checkMissionName() {
+  if ($('ems').value !== '__new') return true;
+  const v = $('em').value.trim();
+  if (!v) { toast('Type a name for the new mission, or pick one from the list.', true); $('em').focus(); return false; }
+  const same = knownMissions().find(k => normName(k) === normName(v));
+  if (same) { pickMission(same); return true; }
+  if (S.simOk === v || !lookalikes(v).length) return true;
+  clearTimeout(S.simTimer);
+  showSim(true);
+  $('simbox').scrollIntoView({ block: 'center', behavior: 'smooth' });
+  return false;
+}
+
+function hookEntryForm() {
+  S.simOk = null; S.simForced = null;
+  $('ems').addEventListener('change', () => {
+    const v = $('ems').value;
+    $('emwrap').classList.toggle('hidden', v !== '__new');
+    if (v === '__new') { $('em').focus(); return; }
+    $('simbox').classList.add('hidden');
+    const m = S.d.missions.find(x => x.name === v);
+    if (m) $('et').value = m.type;
+  });
+  $('em').addEventListener('input', () => { clearTimeout(S.simTimer); S.simTimer = setTimeout(() => showSim(false), 400); });
+  $('em').addEventListener('change', () => showSim(false));
+  $('ep').addEventListener('change', () => {
+    const files = [].slice.call($('ep').files || []);
+    $('pprev').innerHTML = files.map(f => `<img alt="" src="${URL.createObjectURL(f)}">`).join('');
+  });
+}
+
+function entryValues() {
+  return { date: $('ed').value, type: $('et').value, mission: missionValue(),
+    hours: $('eh').value, miles: $('ei').value, notes: $('en').value.trim() };
+}
+
+function renderLog() {
+  const d = S.d, now = new Date();
+  const live = d.mine.filter(e => !e.exclude);
+  const mtd = sum(live.filter(e => e.date.slice(0, 7) === ym(now.getFullYear(), now.getMonth())));
+  const pre = S.prefill ? { date: S.prefill, type: d.types[0], mission: '', h: '', mi: '', notes: '' } : null;
+  S.prefill = null;
+  main(section('Log Activity', entryForm(pre, 'Save entry', false))
+    + section(`This Month · ${MONTHS_LONG[now.getMonth()]}`, tiles(mtd)));
+  hookEntryForm();
+  if (finePointer()) $('ed').focus();
+  $('ef').onsubmit = ev => { ev.preventDefault(); saveEntry(false); };
+}
+
+function renderEdit() {
+  const e = S.edit;
+  if (!e) { S.tab = 'stats'; render(); return; }
+  const back = () => { S.edit = null; S.tab = 'stats'; buildTabs(); render(); };
+  if (e.source === 'App') {
+    main(section('Edit Entry', entryForm(e, 'Save changes', true)));
+    hookEntryForm();
+  } else {
+    main(section(`Edit Monthly Report · ${fmtMonth(e.date)}`, `<form id="ef" class="form">
+        <div class="row2">
+          <label>Functions<input type="number" id="ef_f" min="0" max="100" step="1" required value="${e.f == null ? '' : e.f}"></label>
+          <label>Hours<input type="number" id="eh" min="0" max="744" step="0.5" required value="${e.h == null ? '' : e.h}"></label>
+        </div>
+        <label>Miles<input type="number" id="ei" min="0" max="20000" step="1" required value="${e.mi == null ? '' : e.mi}"></label>
+        <label>Notes (optional)<textarea id="en" rows="2" maxlength="500">${esc(e.notes)}</textarea></label>
+        <button class="btn" type="submit" id="eb">Save changes</button>
+        <button class="btn gray" type="button" id="ec" style="margin-top:8px">Cancel</button>
+      </form>`));
+  }
+  if (finePointer()) ($('ed') || $('ef_f')).focus();
+  $('ec').onclick = back;
+  $('ef').onsubmit = async ev => {
+    ev.preventDefault();
+    if (e.source === 'App' && !checkMissionName()) return;
+    const vals = e.source === 'App' ? entryValues()
+      : { functions: $('ef_f').value, hours: $('eh').value, miles: $('ei').value, notes: $('en').value.trim() };
+    if (e.source === 'App' && vals.type === 'Callout' && !vals.mission) { toast('Pick the mission for a callout.', true); return; }
+    const files = $('ep') ? [].slice.call($('ep').files || []) : [];
+    const b = $('eb'); b.disabled = true; b.textContent = 'Saving…';
+    try {
+      let d = await run('apiUpdateEntry', S.creds, e.id, vals);
+      S.edit = null; S.tab = 'stats';
+      setData(d);
+      toast('Changes saved.');
+      if (files.length) await uploadPhotos(files, { entryId: e.id, mission: vals.mission, date: vals.date });
+    } catch (err) {
+      b.disabled = false; b.textContent = 'Save changes';
+      toast(clean(err), true);
+    }
+  };
+}
+
+async function saveEntry(force) {
+  if (!checkMissionName()) return;
+  const e = entryValues();
+  if (e.type === 'Callout' && !e.mission) { toast('Pick the mission for a callout.', true); $('ems').focus(); return; }
+  if (!force && Number(e.hours) > 16 && !confirm(e.hours + ' hours is a long stretch. Save it?')) return;
+  const files = [].slice.call($('ep').files || []);
+  const b = $('eb'); b.disabled = true; b.textContent = 'Saving…';
+  try {
+    const r = await run('apiAddEntry', S.creds, e, force);
+    if (r.dup) {
+      b.disabled = false; b.textContent = 'Save entry';
+      if (confirm('You already logged this mission on this date. Save another entry anyway?')) saveEntry(true);
+      return;
+    }
+    setData(r.data);
+    toast('Saved. Thanks!');
+    if (files.length) await uploadPhotos(files, { entryId: r.id, mission: e.mission, date: e.date });
+  } catch (err) {
+    b.disabled = false; b.textContent = 'Save entry';
+    toast(clean(err), true);
+  }
+}
+
+/* ---------------- Photos ---------------- */
+
+/** Shrinks a photo to at most 1600 px on the long side, as a JPEG. Returns base64 (no prefix). */
+function shrinkPhoto(file) {
+  return new Promise((res, rej) => {
+    const url = URL.createObjectURL(file);
+    const img = new Image();
+    img.onload = () => {
+      const max = 1600, sc = Math.min(1, max / Math.max(img.naturalWidth, img.naturalHeight));
+      const c = document.createElement('canvas');
+      c.width = Math.round(img.naturalWidth * sc); c.height = Math.round(img.naturalHeight * sc);
+      c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+      URL.revokeObjectURL(url);
+      res(c.toDataURL('image/jpeg', 0.82).split(',')[1]);
+    };
+    img.onerror = () => { URL.revokeObjectURL(url); rej(new Error(file.name + " couldn't be read. Try a JPG or PNG.")); };
+    img.src = url;
+  });
+}
+
+async function uploadPhotos(files, info) {
+  let ok = 0;
+  for (let i = 0; i < files.length; i++) {
+    toast(`Uploading photo ${i + 1} of ${files.length}…`, false, 60000);
+    try {
+      const data = await shrinkPhoto(files[i]);
+      await run('apiUploadPhoto', S.creds, { entryId: info.entryId, mission: info.mission, date: info.date, mime: 'image/jpeg', data: data });
+      ok++;
+    } catch (err) { toast(clean(err), true, 5000); await new Promise(r => setTimeout(r, 1500)); }
+  }
+  try { setData(await run('apiRefresh', S.creds)); } catch (e) {}
+  toast(ok === files.length ? `${ok} photo${ok === 1 ? '' : 's'} uploaded.` : `${ok} of ${files.length} photos uploaded.`, ok !== files.length, 4000);
+}
+
+/* ---------------- About ---------------- */
+
+function renderAbout() {
+  const cur = CHANGELOG[0];
+  const list = v => `<ul class="changelog">${v.items.map(i => `<li>${esc(i)}</li>`).join('')}</ul>`;
+  main(section('About', `<div class="about">
+      ${LOGO ? `<img class="signlogo" src="${LOGO}" alt="" style="width:96px;height:96px">` : ''}
+      <p style="text-align:center;font-weight:700;font-size:17px;margin-top:0">${esc(POSSE_INFO.header)} | Duty Log</p>
+      <p><b>Version:</b> ${APP_VERSION}</p>
+      <p><b>Released:</b> ${APP_DATE}</p>
+      <p><button class="link" id="showlog" style="padding:0;color:var(--navy2);font-weight:600">${S.showLog ? 'Hide' : 'See'} what's new in ${APP_VERSION}</button></p>
+      ${S.showLog ? list(cur) : ''}
+    </div>`)
+    + (S.showLog ? CHANGELOG.slice(1).map(v => section(`${v.v} · ${esc(v.date)}`, list(v))).join('') : ''));
+  $('showlog').onclick = () => { S.showLog = !S.showLog; render(); };
+}
+</script>
+
+<script>
+/* ================= My Stats, Team, Missions ================= */
+
+function statPeriods(years) {
+  const now = new Date(), cy = now.getFullYear(), cm = now.getMonth();
+  const lm = new Date(cy, cm - 1, 1);
+  const from12 = new Date(cy, cm - 11, 1);
+  const p = [
+    { k: 'month', label: 'This month', sub: MONTHS_LONG[cm] + ' ' + cy, year: cy, test: e => e.date.slice(0, 7) === ym(cy, cm) },
+    { k: 'last', label: 'Last month', sub: MONTHS_LONG[lm.getMonth()] + ' ' + lm.getFullYear(), year: lm.getFullYear(),
+      test: e => e.date.slice(0, 7) === ym(lm.getFullYear(), lm.getMonth()) },
+    { k: 'ytd', label: 'Year to date', sub: 'Jan 1 – today, ' + cy, year: cy, goal: true, test: e => +e.date.slice(0, 4) === cy },
+    { k: '12', label: 'Last 12 months', sub: MONTHS[from12.getMonth()] + ' ' + from12.getFullYear() + ' – ' + MONTHS[cm] + ' ' + cy, year: cy,
+      test: e => e.date.slice(0, 7) >= ym(from12.getFullYear(), from12.getMonth()) }
+  ];
+  years.filter(y => y < cy).forEach(y => p.push({ k: 'y' + y, label: String(y), sub: 'Full year', year: y, goal: true, test: e => +e.date.slice(0, 4) === y }));
+  return p;
+}
+
+function renderStats() {
+  const d = S.d, s = d.settings, live = d.mine.filter(e => !e.exclude);
+  const cy = new Date().getFullYear();
+  const years = [...new Set(d.mine.map(e => +e.date.slice(0, 4)).concat(cy))].sort((a, b) => b - a);
+  const periods = statPeriods(years);
+  const P = periods.find(x => x.k === S.period) || periods.find(x => x.k === 'ytd');
+  const t = sum(live.filter(P.test));
+  const pct = s.required ? Math.min(100, t.f / s.required * 100) : 0;
+
+  const picker = `<select id="sp" class="mini" aria-label="Period">${periods.map(x => `<option value="${x.k}" ${x.k === P.k ? 'selected' : ''}>${x.label}</option>`).join('')}</select>`;
+  const goal = P.goal ? `<div class="goal"><div class="goalhead"><b>${n1(t.f)} of ${n1(s.required)}</b> required functions
+      ${t.f >= s.required ? '<span class="ok">✓ Goal met</span>' : `<span class="muted small">(${n1(s.required - t.f)} to go)</span>`}</div>
+      <div class="pbar"><div style="width:${pct}%"></div></div></div>` : '';
+  let html = section('My Stats', `<p class="muted small" style="margin:0 0 10px">${esc(P.label)} · ${esc(P.sub)}</p>` + tiles(t) + goal, picker);
+
+  const y = P.year;
+  const ytdT = sum(live.filter(e => +e.date.slice(0, 4) === y));
+  const byNewest = (a, b) => b.date.localeCompare(a.date) || b.logged.localeCompare(a.logged);
+  const lastM = y === cy ? new Date().getMonth() : 11;
+  let rows = '';
+  for (let m = 0; m <= lastM; m++) {
+    const key = ym(y, m);
+    const mt = sum(live.filter(e => e.date.slice(0, 7) === key));
+    const open = S.openMonth === key;
+    rows += `<tr class="click ${mt.f || mt.h ? '' : 'dim'}" data-ym="${key}" tabindex="0"><td><span class="chev">${open ? '▾' : '▸'}</span>${MONTHS_LONG[m]}</td><td>${n1(mt.f)}</td><td>${n1(mt.h)}</td><td>${n1(mt.mi)}</td><td>${money(mt.v)}</td></tr>`;
+    if (open) {
+      const mine = d.mine.filter(e => e.date.slice(0, 7) === key).sort(byNewest);
+      rows += `<tr><td colspan="5" class="detail">${mine.map(entryItem).join('') || '<p class="muted small" style="margin:8px 0 0">Nothing logged this month.</p>'}
+        <button class="addm" data-ym="${key}">+ Add an entry for ${MONTHS_LONG[m]}</button></td></tr>`;
+    }
+  }
+  html += section(`By Month · ${y}`, `<div class="tblwrap"><table><tr><th>Month</th><th>Functions</th><th>Hours</th><th>Miles</th><th>Value</th></tr>${rows}
+      <tr class="tot"><td>Total</td><td>${n1(ytdT.f)}</td><td>${n1(ytdT.h)}</td><td>${n1(ytdT.mi)}</td><td>${money(ytdT.v)}</td></tr></table></div>
+      <p class="muted small">Tap a month to see, edit or add its entries.</p>`);
+
+  const list = d.mine.filter(P.test).sort(byNewest);
+  html += section(`Entries · ${esc(P.label)}`, list.map(entryItem).join('') || '<p class="muted">No entries for this period.</p>');
+
+  const stYears = years.filter(v => v <= cy);
+  html += section('Year-End Statement', `<div class="form"><div class="row2">
+      <label>Year<select id="ysy">${stYears.map(v => `<option ${v === (cy - (new Date().getMonth() < 2 ? 1 : 0)) ? 'selected' : ''}>${v}</option>`).join('')}</select></label>
+      <label>&nbsp;<button class="btn" id="ysb" type="button">View my statement</button></label></div>
+      <p class="muted small" style="margin:0">A printable summary of your volunteer service for the year, for your tax records. You can print it or save it as a PDF.</p></div>`);
+
+  main(html);
+  $('sp').onchange = ev => { S.period = ev.target.value; S.openMonth = null; render(); };
+  document.querySelectorAll('tr.click[data-ym]').forEach(r => {
+    const go = () => { S.openMonth = S.openMonth === r.dataset.ym ? null : r.dataset.ym; render(); };
+    r.onclick = go;
+    r.onkeydown = ev => { if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); go(); } };
+  });
+  document.querySelectorAll('.addm').forEach(b => b.onclick = () => {
+    const first = b.dataset.ym + '-01';
+    S.prefill = b.dataset.ym === todayStr().slice(0, 7) ? todayStr() : first;
+    S.tab = 'log'; buildTabs(); render(); window.scrollTo(0, 0);
+  });
+  document.querySelectorAll('.del').forEach(b => b.onclick = () => delEntry(b.dataset.id));
+  document.querySelectorAll('.edt').forEach(b => b.onclick = () => {
+    S.edit = d.mine.find(x => x.id === b.dataset.id);
+    S.tab = 'edit'; buildTabs(); render(); window.scrollTo(0, 0);
+  });
+  $('ysb').onclick = () => openYearEnd(+$('ysy').value, d.me.unit);
+}
+
+function entryItem(e) {
+  const legacy = e.source !== 'App';
+  const pc = (S.d.myPhotos || {})[e.id];
+  const title = legacy ? `Monthly report · ${fmtMonth(e.date)}` : `${esc(e.type)}${e.mission ? ' · ' + esc(e.mission) : ''}`;
+  const lock = !legacy && e.mission && isLockedName(e.mission);
+  return `<div class="entry"><div><div class="what">${title}${lock ? '<span class="tag lock">🔒 Locked</span>' : ''}${e.exclude ? '<span class="tag bad">excluded</span>' : ''}${pc ? `<span class="tag">📷 ${pc}</span>` : ''}</div>
+      <div class="meta">${legacy ? 'Submitted ' + esc(e.logged.slice(0, 10)) : esc(fmtDate(e.date))}${e.notes ? ` · <button class="nt" type="button" data-id="${esc(e.id)}">Notes</button>` : ''}</div></div>
+      <div class="nums">${legacy ? n1(e.f) + ' fn · ' : ''}${n1(e.h)} hr · ${n1(e.mi)} mi
+      ${lock ? '' : `<br><button class="edt" data-id="${esc(e.id)}">Edit</button>${legacy ? '' : ` <button class="del" data-id="${esc(e.id)}">Delete</button>`}`}</div></div>`;
+}
+
+/* Notes pop-up: a "Notes" link on each entry instead of the full text in the list */
+function showNotes(id) {
+  const e = (S.d.mine || []).find(x => x.id === id);
+  if (!e) return;
+  const old = $('npop'); if (old) old.remove();
+  const title = e.source !== 'App' ? 'Monthly report · ' + fmtMonth(e.date) : e.type + (e.mission ? ' · ' + e.mission : '');
+  document.body.insertAdjacentHTML('beforeend', `<div id="npop" class="npop" role="dialog" aria-modal="true" aria-labelledby="npt">
+    <div class="nbox"><div class="nhead"><div><div id="npt" class="what">${esc(title)}</div><div class="meta">${esc(fmtDate(e.date))}</div></div>
+    <button class="nclose" type="button" aria-label="Close">✕</button></div>
+    <div class="ntext">${esc(e.notes)}</div>
+    <button class="btn small ndone" type="button">Close</button></div></div>`);
+  const pop = $('npop'), back = document.activeElement;
+  const close = () => { pop.remove(); document.removeEventListener('keydown', key); if (back && back.focus) back.focus(); };
+  const key = ev => { if (ev.key === 'Escape') close(); };
+  pop.onclick = ev => { if (ev.target === pop) close(); };
+  pop.querySelector('.nclose').onclick = close;
+  pop.querySelector('.ndone').onclick = close;
+  document.addEventListener('keydown', key);
+  pop.querySelector('.ndone').focus();
+}
+document.addEventListener('click', ev => {
+  const b = ev.target.closest && ev.target.closest('.nt');
+  if (b) { ev.preventDefault(); ev.stopPropagation(); showNotes(b.dataset.id); }
+});
+(function () {
+  const st = document.createElement('style');
+  st.textContent = `
+  .nt { background: none; border: 0; padding: 0; font: inherit; color: var(--navy2); font-weight: 600; text-decoration: underline; cursor: pointer; }
+  .entry .meta { overflow-wrap: anywhere; }
+  .npop { position: fixed; inset: 0; background: rgba(0,0,0,.45); display: flex; align-items: center; justify-content: center; padding: 16px; z-index: 50; }
+  .nbox { background: #fff; border-radius: 12px; width: 100%; max-width: 460px; max-height: 80vh; overflow: auto; padding: 16px; box-shadow: 0 10px 30px rgba(0,0,0,.3); }
+  .nhead { display: flex; justify-content: space-between; gap: 10px; align-items: flex-start; margin-bottom: 10px; }
+  .nhead .what { font-weight: 700; }
+  .nhead .meta { font-size: 13px; color: var(--muted); }
+  .nclose { background: none; border: 0; font-size: 18px; cursor: pointer; color: var(--muted); padding: 0 4px; }
+  .ntext { white-space: pre-wrap; overflow-wrap: anywhere; font-size: 15px; line-height: 1.45; margin-bottom: 14px; }`;
+  document.head.appendChild(st);
+})();
+
+async function delEntry(id) {
+  if (!confirm('Delete this entry? Any photos you added stay in the mission folder.')) return;
+  try { setData(await run('apiDeleteEntry', S.creds, id)); toast('Deleted.'); }
+  catch (e) { toast(clean(e), true); }
+}
+
+/* ---------------- Team ---------------- */
+
+function renderTeam() {
+  const d = S.d, cy = new Date().getFullYear();
+  const years = [...new Set(d.team.map(t => +t.ym.slice(0, 4)).concat(cy))].sort((a, b) => b - a);
+  const y = S.teamYear || cy;
+  const items = d.team.filter(t => +t.ym.slice(0, 4) === y);
+  const tot = sum(items);
+  const tfOf = list => list.reduce((a, t) => a + (t.tf != null ? t.tf : t.f || 0), 0);
+  const members = new Set(items.flatMap(t => t.units)).size;
+  let html = section(y === cy ? 'Team · Year to Date' : `Team · ${y}`,
+    teamTiles(tot, tfOf(items), tile('Members reporting', members)) +
+    '<p class="muted small" style="margin:10px 0 0">Functions count each mission or event once per day it was worked. Member turnouts count every member who took part.</p>',
+    yearSelect('ty', years, y));
+
+  const mlabel = { tf: 'Functions', h: 'Hours', mi: 'Miles' };
+  if (!mlabel[S.teamMetric]) S.teamMetric = 'tf';
+  const seg = `<div class="seg">${Object.keys(mlabel).map(k => `<button data-m="${k}" class="${S.teamMetric === k ? 'on' : ''}">${mlabel[k]}</button>`).join('')}</div>`;
+  html += section(`${mlabel[S.teamMetric]} by Month`, `<div class="chartbox"><canvas id="tc"></canvas></div>`, seg);
+
+  const byType = {};
+  items.forEach(t => { const b = byType[t.type] || (byType[t.type] = []); b.push(t); });
+  const order = d.types.concat(['Monthly report']);
+  const rows = Object.keys(byType).sort((a, b) => order.indexOf(a) - order.indexOf(b)).map(k => {
+    const t = sum(byType[k]);
+    return `<tr><td>${esc(k)}</td><td>${n1(tfOf(byType[k]))}</td><td>${n1(t.f)}</td><td>${n1(t.h)}</td><td>${n1(t.mi)}</td><td>${money(t.v)}</td></tr>`;
+  }).join('');
+  html += section('By Type', rows
+    ? `<div class="tblwrap"><table><tr><th>Type</th><th>Functions</th><th>Turnouts</th><th>Hours</th><th>Miles</th><th>Value</th></tr>${rows}</table></div>
+       <p class="muted small">"Monthly report" is activity from the old monthly form.</p>`
+    : '<p class="muted">No activity yet.</p>');
+
+  main(html);
+  $('ty').onchange = ev => { S.teamYear = +ev.target.value; render(); };
+  document.querySelectorAll('.seg button').forEach(b => b.onclick = () => { S.teamMetric = b.dataset.m; render(); });
+
+  const series = yr => MONTHS.map((_, m) => {
+    const list = d.team.filter(t => t.ym === ym(yr, m));
+    return S.teamMetric === 'tf' ? tfOf(list) : list.reduce((a, t) => a + (t[S.teamMetric] || 0), 0);
+  });
+  if (window.Chart) {
+    S.chart = new Chart($('tc'), {
+      type: 'bar',
+      data: { labels: MONTHS, datasets: [
+        { label: String(y - 1), data: series(y - 1), backgroundColor: '#a9c7b5' },
+        { label: String(y), data: series(y), backgroundColor: '#1e4d36' }
+      ] },
+      options: { maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } },
+        scales: { y: { beginAtZero: true, title: { display: true, text: mlabel[S.teamMetric] } } } }
+    });
+  }
+}
+
+/* ---------------- Missions (everyone; Commander tools for admins) ---------------- */
+
+function similarGroups(list) {
+  const names = list.map(m => m.name);
+  const parent = names.map((_, i) => i);
+  const find = i => parent[i] === i ? i : (parent[i] = find(parent[i]));
+  for (let i = 0; i < names.length; i++) for (let j = i + 1; j < names.length; j++)
+    if (similarName(names[i], names[j])) parent[find(i)] = find(j);
+  const groups = {};
+  list.forEach((m, i) => { (groups[find(i)] = groups[find(i)] || []).push(m); });
+  return Object.values(groups).filter(g => g.length > 1);
+}
+
+/** Fills in photo previews on the open mission card (fetched from the server once, then remembered). */
+async function loadThumbs() {
+  S.thumbs = S.thumbs || {};
+  const imgs = [].slice.call(document.querySelectorAll('img[data-fid]'));
+  const need = imgs.map(i => i.dataset.fid).filter(id => !(id in S.thumbs));
+  if (need.length) {
+    try {
+      const got = await run('apiPhotoThumbs', S.creds, need);
+      need.forEach(id => { S.thumbs[id] = got[id] || ''; });
+    } catch (e) { return; }
+  }
+  imgs.forEach(i => {
+    const src = S.thumbs[i.dataset.fid];
+    if (src) i.src = src; else i.title = 'Preview not available. Tap to open in Google Drive.';
+  });
+}
+
+/** Pop-up for merging a mission into another one, or renaming it (Commander tools). */
+function missionDialog(m, mode) {
+  const old = $('npop'); if (old) old.remove();
+  const others = S.d.missionList.filter(x => x.name !== m.name);
+  const label = x => x.status === 'Ongoing' ? x.name + ' · Ongoing' : (x.last ? fmtDate(x.last) + ' · ' : '') + x.name;
+  const facts = [m.status === 'Ongoing' ? 'Ongoing' : m.last ? fmtDate(m.last) : '',
+    m.members ? `${m.members} member${m.members === 1 ? '' : 's'} · ${n1(m.h)} hr` : 'No time logged yet'].filter(Boolean).join(' · ');
+  const body = mode === 'merge'
+    ? `<p style="margin:0 0 12px;font-size:16px">Every entry, note and photo moves into the mission you pick. “${esc(m.name)}” is then removed.</p>
+       <label>Merge into<select id="mdsel"><option value="">Pick the mission to keep…</option>
+         ${others.map(x => `<option value="${esc(x.name)}">${esc(label(x))}</option>`).join('')}</select></label>`
+    : `<p style="margin:0 0 12px;font-size:16px">Changes the name everywhere: every entry, the Log list and the photo folder.</p>
+       <label>New name<input id="mdname" maxlength="80" value="${esc(m.name)}"></label>`;
+  document.body.insertAdjacentHTML('beforeend', `<div id="npop" class="npop" role="dialog" aria-modal="true" aria-labelledby="mdt">
+    <div class="nbox form"><div class="nhead"><div><div id="mdt" class="what">${mode === 'merge' ? 'Merge mission' : 'Rename mission'}</div>
+      <div class="meta">${esc(m.name)}${facts ? ' · ' + esc(facts) : ''}</div></div>
+      <button class="nclose" type="button" aria-label="Close">✕</button></div>
+    ${body}
+    <div class="btnrow" style="gap:10px"><button class="btn mdgo" type="button" style="min-width:0;padding:13px 26px">${mode === 'merge' ? 'Merge' : 'Save'}</button>
+      <button class="btn ghost mdcancel" type="button" style="min-width:0;padding:13px 22px">Cancel</button></div></div></div>`);
+  const pop = $('npop'), back = document.activeElement;
+  const close = () => { pop.remove(); document.removeEventListener('keydown', key); if (back && back.focus) back.focus(); };
+  const key = ev => { if (ev.key === 'Escape') close(); };
+  document.addEventListener('keydown', key);
+  pop.onclick = ev => { if (ev.target === pop) close(); };
+  pop.querySelector('.nclose').onclick = close;
+  pop.querySelector('.mdcancel').onclick = close;
+  (mode === 'merge' ? $('mdsel') : $('mdname')).focus();
+  pop.querySelector('.mdgo').onclick = async () => {
+    const to = mode === 'merge' ? $('mdsel').value : $('mdname').value.trim();
+    if (!to) { toast(mode === 'merge' ? 'Pick the mission to keep.' : 'Enter a name.', true); return; }
+    if (to === m.name) { close(); return; }
+    const btn = pop.querySelector('.mdgo'); btn.disabled = true;
+    try {
+      S.openMission = mode === 'merge' ? null : to;
+      setData(await run('apiMergeMissions', S.creds, [m.name], to));
+      close(); toast(mode === 'merge' ? 'Merged into “' + to + '”.' : 'Renamed.');
+    } catch (e) { btn.disabled = false; toast(clean(e), true); }
+  };
+}
+
+const MAP_PLACEHOLDER = '(map link added when the map is ready)';
+function mapLink(id) { return id ? 'https:\/\/caltopo.com/m/' + encodeURIComponent(id) : ''; }
+function isLockedName(n) { const k = String(n || '').toLowerCase(); return (S.d.locked || []).some(x => x.toLowerCase() === k); }
+function lockedWhen(t) {
+  const m = /^(\d{4}-\d{2}-\d{2})\s+(\d{1,2}):(\d{2})\s+by\s+(.*)$/.exec(String(t || ''));
+  if (!m) return esc(t);
+  const h = +m[2], ap = h < 12 ? 'AM' : 'PM';
+  return esc(fmtDate(m[1]) + ' ' + ((h % 12) || 12) + ':' + m[3] + ' ' + ap + ' by ' + m[4]);
+}
+function fmtRange(a, b) {
+  if (!a) return '';
+  if (!b || a === b) return fmtDate(a);
+  const pa = a.split('-'), pb = b.split('-');
+  if (pa[0] === pb[0] && pa[1] === pb[1]) return MONTHS[+pa[1] - 1] + ' ' + (+pa[2]) + '–' + (+pb[2]) + ', ' + pa[0];
+  return fmtDate(a) + ' – ' + fmtDate(b);
+}
+async function copyText(t) {
+  try { await navigator.clipboard.writeText(t); toast('Link copied.'); }
+  catch (e) { window.prompt('Copy this link:', t); }
+}
+function missionEmoji(type) { return { Callout: '🚨', Training: '📘', 'Event / Parade': '📣' }[type] || '📌'; }
+
+/** Default GroupMe message for a new mission (the admin can edit it before it goes out). */
+function alertMessage(f) {
+  const lines = [missionEmoji(f.type) + ' ' + f.type + ': ' + (f.name || '(mission name)')];
+  lines.push([f.date ? fmtDate(f.date) : '', f.location].filter(Boolean).join(' · '));
+  if (f.map) lines.push('Map: ' + MAP_PLACEHOLDER);
+  lines.push('Log your time: ' + ((S.d.conn && S.d.conn.appUrl) || POSSE_INFO.appUrl || ''));
+  return lines.filter(Boolean).join('\n');
+}
+
+function addMissionForm() {
+  const d = S.d, c = d.conn || {};
+  const folder = c.ctFolder || (d.posse && d.posse.short) || '';
+  return section('Add Mission / Event', `<form id="mf" class="form">
+      <label>Mission / Event name<input id="mn" maxlength="80" required placeholder="e.g. Lost hiker – Chalk Creek, or Nov 2026 Meeting"></label>
+      <div class="row2">
+        <label id="mdw">Start date<input type="date" id="md" value="${todayStr()}" required></label>
+        <label>Type<select id="mt">${typeOptions('Callout')}</select></label>
+      </div>
+      <label>Location (optional)<span class="locrow"><input id="mloc" maxlength="200" placeholder="Place name or coordinates"><button class="btn small ghost" type="button" id="mgeo">📍 Use mine</button></span>
+        <span class="hint">A place name or coordinates. A new CalTopo map opens centered here with a marker.</span></label>
+      <label>MCSO case #<input id="mcase" maxlength="40" placeholder="Optional, add it later if you don't have it" style="max-width:300px"></label>
+      <label class="chk"><input type="checkbox" id="mjoint"> Joint mission (East &amp; West) <span class="hint">Shows up for both posses, so everyone logs time to the same mission.</span></label>
+      <label class="chk"><input type="checkbox" id="mong"> Ongoing (no end date) <span class="hint">For recurring work like meetings or maintenance. It stays at the top of the Log list until you close it.</span></label>
+      <label>Operational notes (optional)<textarea id="mnotes" rows="3" maxlength="5000" placeholder="Agencies involved, outcome…"></textarea></label>
+      <div class="box"><h6>Map &amp; team alert</h6>
+        <label class="chk"><input type="checkbox" id="mmap" ${c.caltopo ? '' : 'disabled'}> Create CalTopo map
+          <span class="hint">${c.caltopo ? `Same name as the mission, in the <b>${esc(folder)}</b> folder. Anyone with the link can view.` : 'CalTopo is not connected yet. Set it up under Settings > Connections.'}</span></label>
+        <label class="chk"><input type="checkbox" id="mpost" ${c.groupme ? '' : 'disabled'}> Post to GroupMe
+          <span class="hint">${c.groupme ? 'Check the message before it goes out. The map link fills in automatically.' : 'GroupMe is not connected yet. Set it up under Settings > Connections.'}</span></label>
+        <textarea id="mmsg" class="msg hidden" rows="6" maxlength="1000" aria-label="GroupMe message"></textarea>
+      </div>
+      <button class="btn" type="submit" id="mb">Add mission</button>
+      <p class="muted small">It shows up right away in every member's Mission list on the Log page.${c.caltopo || c.groupme ? ' Map and GroupMe are checked for Callouts, Trainings and Events / Parades. Uncheck either one to skip it.' : ''}</p>
+    </form>`);
+}
+
+function hookAddMission() {
+  const d = S.d, c = d.conn || {};
+  const st = { mapTouched: false, postTouched: false, msgEdited: false };
+  const fields = () => ({ name: $('mn').value.trim(), date: $('mong').checked ? '' : $('md').value, type: $('mt').value,
+    location: $('mloc').value.trim(), map: $('mmap').checked });
+  const sync = () => {
+    const def = (d.mapTypes || []).indexOf($('mt').value) >= 0 && !$('mong').checked;
+    if (!st.mapTouched) $('mmap').checked = !!c.caltopo && def;
+    if (!st.postTouched) $('mpost').checked = !!c.groupme && def;
+    $('mmsg').classList.toggle('hidden', !$('mpost').checked);
+    if (!st.msgEdited) $('mmsg').value = alertMessage(fields());
+  };
+  ['mn', 'md', 'mloc'].forEach(id => $(id).addEventListener('input', sync));
+  $('mt').addEventListener('change', sync);
+  $('mmap').addEventListener('change', () => { st.mapTouched = true; sync(); });
+  $('mpost').addEventListener('change', () => { st.postTouched = true; sync(); });
+  $('mmsg').addEventListener('input', () => { st.msgEdited = true; });
+  $('mong').onchange = () => {
+    const on = $('mong').checked;
+    $('mdw').classList.toggle('hidden', on); $('md').required = !on;
+    if (on && $('mt').value === 'Callout') $('mt').value = 'Maintenance';
+    sync();
+  };
+  $('mgeo').onclick = () => {
+    if (!navigator.geolocation) { toast("This device can't share its location.", true); return; }
+    $('mgeo').disabled = true;
+    navigator.geolocation.getCurrentPosition(p => {
+      $('mgeo').disabled = false;
+      $('mloc').value = p.coords.latitude.toFixed(5) + ', ' + p.coords.longitude.toFixed(5); sync();
+    }, () => { $('mgeo').disabled = false; toast("Couldn't get your location. Type a place name instead.", true); }, { enableHighAccuracy: true, timeout: 15000 });
+  };
+  sync();
+  $('mf').onsubmit = async ev => {
+    ev.preventDefault();
+    const f = fields();
+    const post = $('mpost').checked, msg = $('mmsg').value.trim();
+    if (post && !msg) { toast('Write the GroupMe message, or uncheck Post to GroupMe.', true); return; }
+    $('mb').disabled = true; $('mb').textContent = f.map || post ? 'Adding (and setting up the map and post)…' : 'Adding…';
+    try {
+      const r = await run('apiAddMission', S.creds, { name: f.name, date: $('md').value, type: f.type, notes: $('mnotes').value,
+        ongoing: $('mong').checked, joint: $('mjoint').checked, location: f.location, caseNo: $('mcase').value.trim(),
+        makeMap: f.map, post: post, message: post ? msg : '' });
+      if (r && r.results) {
+        S.addResult = { name: r.name, results: r.results, message: msg, wantMap: f.map, wantPost: post };
+        setData(r.data); window.scrollTo(0, 0);
+      } else { setData(r); toast('Mission added.'); }
+    } catch (e) { $('mb').disabled = false; $('mb').textContent = 'Add mission'; toast(clean(e), true); }
+  };
+}
+
+/** After Add mission with a map or GroupMe post: what happened, with Try again for a step that failed. */
+function addResultPanel() {
+  const A = S.addResult; if (!A) return '';
+  const m = S.d.missionList.find(x => x.name === A.name) || {};
+  const r = A.results || {};
+  const line = (ok, text, err, retry) => `<div><span class="${ok ? 'ck' : 'xk'}">${ok ? '✓' : '!'}</span>${text}${err ? `<div class="muted small">${esc(err)}</div>` : ''}${retry ? ` <button class="btn small ghost" type="button" id="${retry}">Try again</button>` : ''}</div>`;
+  let rows = line(true, "Mission added. It's on everyone's Log list.");
+  if (A.wantMap) rows += r.map && r.map.ok ? line(true, 'CalTopo map created' + (S.d.conn && S.d.conn.ctFolder ? ' in ' + esc(S.d.conn.ctFolder) : ''))
+    : line(false, "The CalTopo map wasn't created.", r.map && r.map.error, 'rrmap');
+  if (A.wantPost) rows += r.post && r.post.ok ? line(true, 'Posted to GroupMe') : line(false, "The GroupMe post didn't go out.", r.post && r.post.error, 'rrpost');
+  const url = mapLink(m.mapId);
+  return section(esc(A.name), `<div class="prog">${rows}</div>
+    ${url ? `<a class="mapbtn" href="${url}" target="_blank" rel="noopener">🗺 Open CalTopo map</a>` : ''}
+    <div class="btnrow" style="margin-top:10px">${url ? '<button class="btn small ghost" type="button" id="rrcopy">Copy map link</button>' : ''}
+      <button class="btn small ghost" type="button" id="rropen">Open mission</button>
+      <button class="btn small ghost" type="button" id="rrclose">Close</button></div>`);
+}
+
+function hookAddResult() {
+  const A = S.addResult; if (!A || !$('rropen')) return;
+  const m = S.d.missionList.find(x => x.name === A.name) || {};
+  $('rropen').onclick = () => { S.openMission = A.name; S.addResult = null; render(); };
+  $('rrclose').onclick = () => { S.addResult = null; render(); };
+  if ($('rrcopy')) $('rrcopy').onclick = () => copyText(mapLink(m.mapId));
+  if ($('rrmap')) $('rrmap').onclick = async () => {
+    $('rrmap').disabled = true;
+    try { const r = await run('apiCreateMap', S.creds, A.name); A.results.map = { ok: true, url: r.url }; setData(r.data); }
+    catch (e) { A.results.map = { ok: false, error: clean(e) }; render(); }
+  };
+  if ($('rrpost')) $('rrpost').onclick = async () => {
+    $('rrpost').disabled = true;
+    try { await run('apiPostGroupMe', S.creds, A.message, A.name); A.results.post = { ok: true }; render(); }
+    catch (e) { A.results.post = { ok: false, error: clean(e) }; render(); }
+  };
+}
+
+function renderMissions() {
+  const d = S.d, admin = d.me.admin, conn = d.conn || {};
+  const list = d.missionList.filter(m => S.mFilter === 'all' || m.type === S.mFilter);
+  const filter = `<select id="mfil" class="mini" aria-label="Filter by type">${typeOptions(S.mFilter, true)}</select>`;
+  let html = addResultPanel();
+
+  if (admin) {
+    html += addMissionForm();
+    const sims = similarGroups(d.missionList);
+    S.sims = sims;
+    if (sims.length) {
+      html += section('Similar Mission Names', `<p class="muted small" style="margin-top:0">These names look alike. Pick the one to keep and merge: every entry, note and photo moves to that name. Leave a group alone if they really are different missions.</p>` +
+        sims.map((g, gi) => {
+          g.sort((a, b) => (b.planned - a.planned) || b.members - a.members);
+          return `<div class="grp"><h4>Possible duplicates</h4>
+            ${g.map((m, i) => `<label class="r"><input type="radio" name="sg${gi}" value="${esc(m.name)}" ${i === 0 ? 'checked' : ''}>
+              <span class="t">${esc(m.name)} <span class="muted small">· ${m.members} member${m.members === 1 ? '' : 's'}${m.planned ? ' · on your list' : ''}</span></span></label>`).join('')}
+            <div class="r"><button class="btn small mg" data-g="${gi}">Merge into the selected name</button></div></div>`;
+        }).join(''));
+    }
+  }
+
+  const me = d.posse ? d.posse.short : 'This posse';
+  const cards = list.map((m, i) => {
+    const open = S.openMission === m.name;
+    const og = m.status === 'Ongoing';
+    const locked = !!m.locked;
+    const edit = admin && !locked;
+    const dates = og ? (m.last ? 'Last logged ' + fmtDate(m.last) : '')
+      : !m.first ? '' : m.first === m.last ? fmtDate(m.first) : fmtDate(m.first) + ' – ' + fmtDate(m.last);
+    const status = locked ? '<span class="tag lock">🔒 Locked</span>' : m.status === 'Open' ? '<span class="tag good">Open</span>' : og ? '<span class="tag good">Ongoing</span>'
+      : m.status === 'Closed' ? '<span class="tag">Closed</span>' : '';
+    const nums = m.members ? `${m.members} member${m.members === 1 ? '' : 's'} · ${n1(m.h)} hr · ${n1(m.mi)} mi` : 'No time logged yet';
+    const ot = m.other || null;
+    const pl = k => `${k} member${k === 1 ? '' : 's'}`;
+    const jline = m.joint ? `<div class="jline"><span>${esc(me)}: <b>${pl(m.members)}</b> · ${n1(m.h)} hr</span>
+      <span>${esc(ot.short)}: <b>${pl(ot.members)}</b> · ${n1(ot.h)} hr</span>
+      <span>Total: <b>${pl(m.members + ot.members)}</b> · ${n1(m.h + ot.h)} hr · ${n1(m.mi + ot.mi)} mi</span></div>` : '';
+    const mine = m.myH ? ` · <b>You: ${n1(m.myH)} hr</b>` : '';
+    let body = '';
+    if (open) {
+      const whoLine = w => `${esc(w.unit)} ${esc(w.name || '')}: ${n1(w.h)} hr, ${n1(w.mi)} mi`;
+      const who = (m.who || []).map(whoLine).join('<br>');
+      const photos = (m.photos || []).map((p, k) => `<button type="button" class="thumb" data-pk="${k}" title="${esc(p.unit)} · ${esc(p.date)}"><img alt="Photo from ${esc(p.unit)}" data-fid="${esc(p.fileId)}" ${(S.thumbs || {})[p.fileId] ? `src="${S.thumbs[p.fileId]}"` : ''}></button>`).join('');
+      const url = mapLink(m.mapId);
+      const lockbar = locked ? `<div class="lockbar"><b>🔒 Locked for reporting</b>${m.reportNo ? 'Report ' + esc(m.reportNo) + ' · ' : ''}Locked ${lockedWhen(m.locked)}.
+          Time, notes and expenses can't be changed. Photos can still be added.
+          ${admin ? `<div class="btnrow" style="margin-top:10px">${m.reportNo ? '<button class="btn small mrdl" type="button">Download report</button>' : '<button class="btn small mrep" type="button">Create report</button>'}
+            <button class="btn small ghost munlock" type="button">Unlock to edit</button></div>` : ''}</div>` : '';
+      const mapPart = url ? `<a class="mapbtn" href="${url}" target="_blank" rel="noopener">🗺 Open CalTopo map</a>
+          <div class="btnrow" style="margin-top:8px"><button class="btn small ghost mcopy" type="button">Copy map link</button>
+          ${admin && conn.caltopo ? '<button class="btn small ghost mbak" type="button">Back up map now</button>' : ''}</div>`
+        : edit && conn.caltopo ? `<button class="btn small ghost mmk" type="button">🗺 Create CalTopo map</button>` : '';
+      const details = edit ? `<div class="row2">
+            <label>MCSO case #<input class="mcs" maxlength="40" value="${esc(m.caseNo || '')}"></label>
+            <label>Location<input class="mlc" maxlength="200" value="${esc(m.location || '')}"></label></div>
+          ${url ? '' : `<label>CalTopo map link<input class="mml" placeholder="Paste a link like https:\/\/caltopo.com/m/AB12C" value=""></label>`}`
+        : (m.caseNo || m.location ? `<div class="kvl">${m.caseNo ? `<div><span>MCSO case #</span>${esc(m.caseNo)}</div>` : ''}${m.location ? `<div><span>Location</span>${esc(m.location)}</div>` : ''}</div>` : '');
+      const exps = m.expenses || [];
+      const etotal = exps.reduce((a, x) => a + (x.amount || 0), 0);
+      const erows = exps.map((x, k) => `<tr><td>${esc(fmtDate(x.date).replace(/, \d{4}$/, ''))}</td>
+          <td>${esc(x.desc)}<span class="cat">${esc(x.cat)} · paid by ${esc(x.paidBy)}${m.joint ? ' · ' + esc(x.team) : ''}${x.receipt ? ` · <button class="rcpt" type="button" data-k="${k}">🧾 Receipt</button>` : ''}</span></td>
+          <td class="r">${money2(x.amount)}</td>${edit ? `<td class="r">${x.team === me ? `<button class="xdel" type="button" data-id="${esc(x.id)}" aria-label="Delete expense">✕</button>` : ''}</td>` : ''}</tr>`).join('');
+      const expPart = (exps.length ? `<table class="xtbl"><col style="width:58px"><col><col style="width:84px">${edit ? '<col style="width:30px">' : ''}${erows}</table>
+          <div class="xtot"><span>Expenses total</span><span>${money2(etotal)}</span></div>` : '<span class="muted">No expenses.</span>')
+        + (edit ? `<div class="addx"><div class="row2"><label>Date<input type="date" class="xd" value="${esc(m.last || m.first || todayStr())}" max="${todayStr()}"></label>
+            <label>Amount<input class="xa" inputmode="decimal" placeholder="$0.00"></label></div>
+            <label>Category<select class="xc">${(d.expenseCats || []).map(c => `<option>${esc(c)}</option>`).join('')}</select></label>
+            <label>What was it?<input class="xs" maxlength="200" placeholder="e.g. Headlamp lost on scree slope"></label>
+            <label>Paid by<input class="xp" maxlength="60" value="Posse" list="xpl"></label>
+            <datalist id="xpl"><option value="Posse">${d.roster.filter(r => r.name).map(r => `<option value="${esc(r.unit)}">${esc(r.name)}</option>`).join('')}</datalist>
+            <div class="lbl2">Receipt (optional)<div class="btnrow" style="margin-top:4px">
+              <label class="btn small ghost filebtn">📷 Take photo<input type="file" class="xr1" accept="image/*" capture="environment"></label>
+              <label class="btn small ghost filebtn">🖼 Choose from photos<input type="file" class="xr2" accept="image/*"></label></div>
+              <span class="xrp muted small"></span></div>
+            <button class="btn small xadd" type="button">Add expense</button></div>` : '');
+      body = `<div class="mbody form">${lockbar}
+        ${mapPart ? `<div style="margin-bottom:6px">${mapPart}</div>` : ''}
+        ${details}
+        <h5>Who logged time${m.joint ? ' · ' + esc(me) : ''}</h5>${who || '<span class="muted">Nobody yet.</span>'}
+        ${m.joint ? `<h5>Who logged time · ${esc(ot.short)}</h5>${(ot.who || []).map(whoLine).join('<br>') || '<span class="muted">Nobody yet.</span>'}` : ''}
+        <h5>Operational notes</h5>
+        ${edit ? `<textarea class="mno" rows="4" maxlength="5000" placeholder="Location, agencies involved, outcome…">${esc(m.notes || '')}</textarea>
+        <div class="btnrow" style="margin-top:8px">
+          <button class="btn small msave" type="button">Save</button>
+          <select class="mtype mini" style="border:1px solid var(--line)" aria-label="Type">${typeOptions(m.type)}</select>
+          <select class="mstat mini" style="border:1px solid var(--line)" aria-label="Status">
+            ${m.status === 'Unlisted' ? '<option value="" selected disabled>Not on the list</option>' : ''}
+            ${[['Open', 'Open'], ['Ongoing', 'Ongoing (no end date)'], ['Closed', 'Closed']].map(([v, l]) => `<option value="${v}" ${m.status === v ? 'selected' : ''}>${l}</option>`).join('')}
+          </select>
+        </div>
+        <label class="chk" style="margin:12px 0 0"><input type="checkbox" class="mjt" ${m.joint ? 'checked' : ''}> Joint mission (East &amp; West)</label>`
+        : (m.notes ? `<div class="ro">${esc(m.notes)}</div>` : '<span class="muted">None.</span>')}
+        <h5>Photos (${m.photoCount || 0})</h5>
+        ${photos ? `<div class="thumbs" style="margin:0 0 6px">${photos}</div>` : '<span class="muted">No photos yet.</span>'}
+        ${admin && m.folderId ? `<div><a href="https:\/\/drive.google.com/drive/folders/${esc(m.folderId)}" target="_blank" rel="noopener">Open the mission folder in Google Drive ↗</a></div>` : ''}
+        <h5>Expenses</h5>${expPart}
+        ${edit ? `<h5>Mission report</h5><div class="rpt"><button class="btn mrep" type="button">Create Mission Report (PDF)</button>
+          <p class="muted small" style="margin:8px 0 0">Creating the report <b>locks the mission</b>: no new time, edits or expenses. Photos can still be added. An admin can unlock it.</p>
+          <p class="small" style="margin:8px 0 0">🔓 Unlocked · <button class="link mlock" type="button" style="color:var(--navy);padding:0">Lock now without a report</button></p></div>
+        <div class="btnrow" style="margin-top:16px"><button class="btn small ghost mgo" type="button">Merge…</button>
+          <button class="btn small ghost rno" type="button">Rename…</button></div>` : ''}
+        ${admin ? '' : '<p class="muted small" style="margin:14px 0 0">Only admins can change a mission. Add your time and photos on the Log tab.</p>'}
+        <div class="mdone"><button class="btn mclose" type="button">Done</button></div>
+      </div>`;
+    }
+    return `<div class="mcard" data-i="${i}">
+      <div class="mhead" tabindex="0" role="button" aria-expanded="${open}"><div><div class="mname">${esc(m.name)}<span class="tag">${esc(m.type)}</span>${m.joint ? '<span class="tag joint">Joint</span>' : ''}${status}${m.mapId ? '<span class="tag">🗺 Map</span>' : ''}${m.photoCount ? `<span class="tag">📷 ${m.photoCount}</span>` : ''}</div>
+        <div class="meta small muted">${dates ? esc(dates) + (m.joint ? '' : ' · ') : ''}${m.joint ? '' : nums}${mine}</div>${jline}</div>
+        <div class="chev">${open ? '▾' : '▸'}</div></div>${body}</div>`;
+  }).join('');
+
+  html += section(`Missions & Events${S.mFilter === 'all' ? '' : ' · ' + esc(S.mFilter)}`,
+    (cards || '<p class="muted">No missions of this type yet.</p>') +
+    `<p class="muted small">Tap a mission for its map, notes, photos, expenses and who logged time${admin ? ', or to close, lock, merge or rename it' : ''}.</p>`, filter);
+  main(html);
+
+  $('mfil').onchange = ev => { S.mFilter = ev.target.value; S.openMission = null; render(); };
+  hookAddResult();
+  loadThumbs();
+  if (admin) {
+    hookAddMission();
+    document.querySelectorAll('.mg').forEach(b => b.onclick = async () => {
+      const g = S.sims[+b.dataset.g];
+      const keep = document.querySelector(`input[name="sg${b.dataset.g}"]:checked`).value;
+      if (!confirm(`Rename ${g.length - 1} other name(s) to “${keep}”?`)) return;
+      b.disabled = true;
+      try { setData(await run('apiMergeMissions', S.creds, g.map(m => m.name).filter(n => n !== keep), keep)); toast('Merged.'); }
+      catch (e) { b.disabled = false; toast(clean(e), true); }
+    });
+  }
+  document.querySelectorAll('.mcard').forEach(card => {
+    const m = list[+card.dataset.i];
+    const head = card.querySelector('.mhead');
+    const toggle = () => { S.openMission = S.openMission === m.name ? null : m.name; render(); };
+    head.onclick = toggle;
+    head.onkeydown = ev => { if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); toggle(); } };
+    const body = card.querySelector('.mbody');
+    if (!body) return;
+    const q = sel => body.querySelector(sel);
+    const busy = async (btn, fn) => { if (btn) btn.disabled = true; try { await fn(); } catch (e) { toast(clean(e), true); } finally { if (btn && document.body.contains(btn)) btn.disabled = false; } };
+    const save = async (patch, msg) => {
+      try { setData(await run('apiSaveMission', S.creds, Object.assign({ name: m.name, date: m.first, type: m.type }, patch))); if (msg) toast(msg); }
+      catch (e) { toast(clean(e), true); }
+    };
+    const detailPatch = () => {
+      const p = {};
+      if (q('.mno') && q('.mno').value.trim() !== String(m.notes || '').trim()) p.notes = q('.mno').value;
+      if (q('.mcs') && q('.mcs').value.trim() !== (m.caseNo || '')) p.caseNo = q('.mcs').value;
+      if (q('.mlc') && q('.mlc').value.trim() !== (m.location || '')) p.location = q('.mlc').value;
+      if (q('.mml') && q('.mml').value.trim()) p.mapUrl = q('.mml').value;
+      return p;
+    };
+    q('.mclose').onclick = async () => {
+      const p = detailPatch();
+      S.openMission = null;
+      if (Object.keys(p).length) await save(p, 'Saved.'); else render();
+      const c = [].find.call(document.querySelectorAll('.mcard'), x => (x.querySelector('.mname') || {}).firstChild && x.querySelector('.mname').firstChild.textContent === m.name);
+      if (c && c.scrollIntoView) c.scrollIntoView({ block: 'center' });
+    };
+    body.querySelectorAll('.thumb').forEach(b => b.onclick = () =>
+      openViewer((m.photos || []).map(p => Object.assign({ mission: m.name }, p)), +b.dataset.pk));
+    body.querySelectorAll('.rcpt').forEach(b => b.onclick = () => {
+      const x = (m.expenses || [])[+b.dataset.k];
+      openViewer([{ fileId: x.receipt, unit: x.paidBy, date: x.date, mission: m.name + ' · Receipt: ' + x.desc }], 0);
+    });
+    if (q('.mcopy')) q('.mcopy').onclick = () => copyText(mapLink(m.mapId));
+    if (q('.mbak')) q('.mbak').onclick = ev => busy(ev.target, async () => {
+      toast('Backing up the map…', false, 30000);
+      const r = await run('apiBackupMap', S.creds, m.name);
+      toast('Map saved to Google Drive: ' + r.file, false, 6000);
+    });
+    if (q('.mmk')) q('.mmk').onclick = ev => busy(ev.target, async () => {
+      toast('Creating the CalTopo map…', false, 30000);
+      const r = await run('apiCreateMap', S.creds, m.name);
+      setData(r.data); toast('CalTopo map created.');
+    });
+    if (q('.munlock')) q('.munlock').onclick = ev => {
+      if (!confirm(`Unlock “${m.name}”? Members can change their time on it again until it is locked.`)) return;
+      busy(ev.target, async () => { setData(await run('apiSetLock', S.creds, m.name, false)); toast('Unlocked. Create the report again when you are done.', false, 5000); });
+    };
+    if (q('.mlock')) q('.mlock').onclick = ev => {
+      if (!confirm(`Lock “${m.name}”? Nobody can add or change time, notes or expenses until an admin unlocks it.`)) return;
+      busy(ev.target, async () => { setData(await run('apiSetLock', S.creds, m.name, true)); toast('Mission locked.'); });
+    };
+    body.querySelectorAll('.mrep').forEach(b => b.onclick = ev => {
+      const p = detailPatch();
+      if (!confirm(`Create the Mission Report for “${m.name}”? This locks the mission: no new time, edits or expenses until an admin unlocks it.`)) return;
+      busy(ev.target, async () => {
+        if (Object.keys(p).length) await save(p);
+        toast('Creating the report…', false, 30000);
+        const r = await run('apiCreateReport', S.creds, m.name);
+        S.d = r.data;
+        S.report = { kind: 'mission', rep: r.report, back: 'missions', saveCopy: true, backup: r.backup };
+        render(); window.scrollTo(0, 0);
+        toast(r.backup && r.backup.ok ? 'Mission locked. The CalTopo map was backed up to Google Drive.' : 'Mission locked.', false, 5000);
+      });
+    });
+    if (q('.mrdl')) q('.mrdl').onclick = ev => busy(ev.target, async () => {
+      const rep = await run('apiReportData', S.creds, m.name);
+      S.report = { kind: 'mission', rep: rep, back: 'missions' };
+      render(); window.scrollTo(0, 0);
+    });
+    if (!q('.msave')) return;
+    q('.msave').onclick = () => { const p = detailPatch(); if (Object.keys(p).length) save(p, 'Saved.'); else toast('Nothing to save.'); };
+    q('.mtype').onchange = ev => save({ type: ev.target.value }, 'Type changed.');
+    q('.mjt').onchange = ev => {
+      const on = ev.target.checked;
+      if (!on && !confirm(`Make “${m.name}” this posse's mission only? The other posse will no longer see it in their list.`)) { ev.target.checked = true; return; }
+      save({ joint: on }, on ? 'Now a joint mission.' : 'No longer joint.');
+    };
+    q('.mstat').onchange = ev => save({ status: ev.target.value },
+      { Open: 'Mission is open.', Ongoing: 'Marked ongoing.', Closed: 'Mission closed.' }[ev.target.value]);
+    q('.mgo').onclick = () => missionDialog(m, 'merge');
+    q('.rno').onclick = () => missionDialog(m, 'rename');
+    body.querySelectorAll('.xdel').forEach(b => b.onclick = () => {
+      if (!confirm('Delete this expense?')) return;
+      busy(b, async () => { setData(await run('apiDeleteExpense', S.creds, b.dataset.id)); toast('Expense deleted.'); });
+    });
+    let receipt = null;
+    const pickReceipt = inp => async () => {
+      const f = inp.files && inp.files[0]; if (!f) return;
+      try { receipt = await shrinkPhoto(f); q('.xrp').textContent = '🧾 Receipt attached: ' + f.name; }
+      catch (e) { toast(clean(e), true); }
+    };
+    q('.xr1').onchange = pickReceipt(q('.xr1'));
+    q('.xr2').onchange = pickReceipt(q('.xr2'));
+    q('.xadd').onclick = ev => busy(ev.target, async () => {
+      const x = { date: q('.xd').value, amount: q('.xa').value, cat: q('.xc').value, desc: q('.xs').value.trim(), paidBy: q('.xp').value.trim() };
+      if (!x.desc) { toast('Say what the expense was for.', true); return; }
+      if (receipt) x.receipt = { data: receipt };
+      const p = detailPatch();
+      if (Object.keys(p).length) await save(p);
+      setData(await run('apiAddExpense', S.creds, m.name, x));
+      toast('Expense added.');
+    });
+  });
+}
+
+/* ---------------- Mission Report (admins) ---------------- */
+
+function renderMissionReport() {
+  const R = S.report, r = R.rep;
+  const joint = r.teams.length > 1;
+  const byTeam = {};
+  r.people.forEach(p => { const t = byTeam[p.team] || (byTeam[p.team] = { n: 0, h: 0, mi: 0 }); t.n++; t.h += p.h; t.mi += p.mi; });
+  const tot = r.people.reduce((a, p) => ({ h: a.h + p.h, mi: a.mi + p.mi }), { h: 0, mi: 0 });
+  const etot = r.expenses.reduce((a, x) => a + x.amount, 0);
+  const rate = t => r.rates[t] || { hourRate: 0, mileRate: 0 };
+  const cost = [];
+  r.teams.forEach(t => { const x = byTeam[t]; if (x && x.h) cost.push([`Volunteer hours · ${t} ${n1(x.h)} hr @ ${money2(rate(t).hourRate)}/hr`, x.h * rate(t).hourRate]); });
+  r.teams.forEach(t => { const x = byTeam[t]; if (x && x.mi) cost.push([`Mileage${joint ? ' · ' + t : ''} ${n1(x.mi)} mi @ ${money2(rate(t).mileRate)}/mi`, x.mi * rate(t).mileRate]); });
+  if (etot) cost.push(['Expenses', etot]);
+  const total = cost.reduce((a, c) => a + c[1], 0);
+  const locked = /^(\d{4}-\d{2}-\d{2})/.exec(r.locked || '');
+  const people = r.people.map(p => `<tr><td>${esc(p.team)}</td><td>${esc(p.unit)}</td><td class="l">${esc(p.name)}</td><td>${esc(fmtRange(p.first, p.last).replace(/, \d{4}$/, ''))}</td><td class="r">${n1(p.h)}</td><td class="r">${n1(p.mi)}</td></tr>`).join('');
+  const subs = joint ? r.teams.filter(t => byTeam[t]).map(t => `<tr class="st"><td colspan="4">${esc(t)} subtotal (${byTeam[t].n})</td><td class="r">${n1(byTeam[t].h)}</td><td class="r">${n1(byTeam[t].mi)}</td></tr>`).join('') : '';
+  const exps = r.expenses.map(x => `<tr><td>${esc(fmtDate(x.date).replace(/, \d{4}$/, ''))}</td>${joint ? `<td>${esc(x.team)}</td>` : ''}<td>${esc(x.cat)}</td><td class="l">${esc(x.desc)}</td><td>${esc(x.paidBy)}</td><td class="r">${money2(x.amount)}</td></tr>`).join('');
+  const fname = `Mission Report ${r.reportNo || ''} ${r.name}`.replace(/[\\/:*?"<>|#%]+/g, '-').trim() + '.pdf';
+  main(`<div class="rtools">
+      <button class="btn gray" id="rback" type="button">← Back</button>
+      <button class="btn" id="rprint" type="button">Print</button>
+      <button class="btn" id="rpdf" type="button">Download PDF</button>
+    </div>
+    <div class="rpage mrep" id="rpage">
+      ${locked ? `<div class="stamp">🔒 LOCKED · ${esc(fmtDate(locked[1]).toUpperCase())}</div>` : ''}
+      <div class="rhead">${LOGO ? `<img src="${LOGO}" alt="">` : ''}
+        <div><div class="org">Millard County Sheriff Search &amp; Rescue</div>
+        <div class="rsub">${esc(r.teams.join(' & '))} · Millard County Sheriff's Office</div></div></div>
+      <div class="mtitle">Mission Report: ${esc(r.name)}</div>
+      <div class="facts"><div><b>Type</b>${esc(r.type)}</div><div><b>Dates</b>${esc(fmtRange(r.first, r.last))}</div>
+        <div><b>Teams</b>${esc(r.teams.join(', '))}</div><div><b>Report #</b>${esc(r.reportNo || '—')}</div>
+        ${r.caseNo ? `<div><b>MCSO case #</b>${esc(r.caseNo)}</div>` : ''}${r.location ? `<div><b>Location</b>${esc(r.location)}</div>` : ''}</div>
+      <div class="kv4"><div><span>Members</span><b>${r.people.length}</b></div><div><span>Man hours</span><b>${n1(tot.h)}</b></div>
+        <div><span>Miles</span><b>${n1(tot.mi)}</b></div><div><span>Expenses</span><b>${money2(etot)}</b></div></div>
+      <h3>Personnel</h3>
+      ${people ? `<table><tr><th>Team</th><th>Unit</th><th class="l">Name</th><th>Dates</th><th class="r">Hours</th><th class="r">Miles</th></tr>${people}${subs}
+        <tr class="tot"><td colspan="4">Total (${r.people.length} member${r.people.length === 1 ? '' : 's'})</td><td class="r">${n1(tot.h)}</td><td class="r">${n1(tot.mi)}</td></tr></table>` : '<p>No time logged.</p>'}
+      <h3>Expenses</h3>
+      ${exps ? `<table><tr><th>Date</th>${joint ? '<th>Team</th>' : ''}<th>Category</th><th class="l">Description</th><th>Paid by</th><th class="r">Amount</th></tr>${exps}
+        <tr class="tot"><td colspan="${joint ? 5 : 4}">Total expenses</td><td class="r">${money2(etot)}</td></tr></table>` : '<p>No expenses recorded.</p>'}
+      <h3>Cost summary</h3>
+      <table class="cost">${cost.map(c => `<tr><td class="l">${esc(c[0])}</td><td class="r">${money2(c[1])}</td></tr>`).join('')}
+        <tr class="tot"><td class="l">Total value of response</td><td class="r">${money2(total)}</td></tr></table>
+      ${r.notes ? `<h3>Operational notes</h3><p style="white-space:pre-wrap;margin:0">${esc(r.notes)}</p>` : ''}
+      <p class="fine">${r.mapUrl ? `CalTopo map: ${esc(r.mapUrl)}<br>` : ''}Photos on file: ${r.photoCount} · Receipts on file: ${r.receiptCount} (kept in Google Drive).
+        Hours are counted in half hours. Volunteer value uses each posse's hourly and mileage rates.</p>
+      <div class="sig">
+        <div><div class="line"></div><div class="name">${esc(r.cmdrName)}</div><div>${esc(r.cmdrTitle)}</div></div>
+        <div><div class="line"></div><div>Date</div></div>
+      </div>
+      <div class="rfoot">Created ${esc(r.createdAt)} by ${esc(r.createdBy)} · Duty Log ${APP_VERSION}</div>
+    </div>`);
+  $('rback').onclick = () => { S.tab = R.back || 'missions'; S.report = null; buildTabs(); render(); };
+  $('rprint').onclick = () => window.print();
+  $('rpdf').onclick = () => downloadPdf($('rpage'), fname);
+  if (R.saveCopy) { R.saveCopy = false; saveReportCopy($('rpage'), r.name); }
+}
+
+/** Keeps a copy of a new Mission Report in the mission's Google Drive folder (quietly; the report is on screen either way). */
+async function saveReportCopy(el, name) {
+  try {
+    if (!window.html2pdf) await loadScript('https:\/\/cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js');
+    el.classList.add('pdf');
+    const uri = await window.html2pdf().set(pdfOptions('report.pdf')).from(el).outputPdf('datauristring');
+    el.classList.remove('pdf');
+    await run('apiSaveReportFile', S.creds, name, String(uri).split(',')[1]);
+    toast('A copy of the report was saved to the mission folder in Google Drive.', false, 5000);
+  } catch (e) { el.classList.remove('pdf'); console.log('Report copy not saved: ' + clean(e)); }
+}
+
+/* ---------------- Full-screen photo viewer (everyone) ---------------- */
+
+/** Shows photos full-screen: swipe or arrows to move, Download, Esc / ✕ to close. list: [{ fileId, unit, date, mission }] */
+function openViewer(list, start) {
+  if (!list.length) return;
+  const old = $('pview'); if (old) old.remove();
+  S.photoCache = S.photoCache || {};
+  let i = Math.max(0, Math.min(start || 0, list.length - 1));
+  document.body.insertAdjacentHTML('beforeend', `<div id="pview" class="pview" role="dialog" aria-modal="true" aria-label="Photo viewer">
+    <div class="pvtop"><div class="pvcap" id="pvcap"></div><button class="pvx" type="button" aria-label="Close">✕</button></div>
+    <div class="pvstage"><button class="pvnav pvprev" type="button" aria-label="Previous photo">‹</button>
+      <img id="pvimg" alt=""><div class="pvload" id="pvload">Loading…</div>
+      <button class="pvnav pvnext" type="button" aria-label="Next photo">›</button></div>
+    <div class="pvbot"><span id="pvcount"></span>
+      <a id="pvdl" class="pvbtn" download>Download</a>
+      <a id="pvdrive" class="pvbtn ghost" target="_blank" rel="noopener">Open in Drive</a></div></div>`);
+  const view = $('pview'), img = $('pvimg');
+  document.body.style.overflow = 'hidden';
+  const fetchPhoto = async p => {
+    if (S.photoCache[p.fileId]) return S.photoCache[p.fileId];
+    const r = await run('apiPhoto', S.creds, p.fileId);
+    const keys = Object.keys(S.photoCache);
+    if (keys.length > 25) delete S.photoCache[keys[0]]; /* keep memory use modest */
+    return (S.photoCache[p.fileId] = r);
+  };
+  const show = async () => {
+    const p = list[i];
+    $('pvcap').innerHTML = `<b>${esc(p.mission || '')}</b><br>${esc(p.unit)}${p.unit && nameOf(p.unit) !== '(vacant)' ? ' ' + esc(nameOf(p.unit)) : ''} · ${esc(p.date ? fmtDate(p.date) : '')}`;
+    $('pvcount').textContent = (i + 1) + ' of ' + list.length;
+    $('pvdrive').href = 'https:\/\/drive.google.com/file/d/' + encodeURIComponent(p.fileId) + '/view';
+    $('pvdrive').classList.toggle('hidden', !S.d.me.admin);
+    view.querySelector('.pvprev').disabled = i === 0;
+    view.querySelector('.pvnext').disabled = i === list.length - 1;
+    img.removeAttribute('src'); $('pvload').textContent = 'Loading…'; $('pvload').style.display = '';
+    $('pvdl').removeAttribute('href');
+    const want = i;
+    try {
+      const r = await fetchPhoto(p);
+      if (want !== i || !$('pview')) return;
+      img.src = r.data; img.alt = 'Photo from ' + p.unit;
+      $('pvload').style.display = 'none';
+      $('pvdl').href = r.data; $('pvdl').setAttribute('download', r.name || 'photo.jpg');
+      if (list[i + 1]) fetchPhoto(list[i + 1]).catch(() => {}); /* get the next one ready */
+    } catch (e) { if (want === i) $('pvload').textContent = clean(e); }
+  };
+  const go = d => { const n = i + d; if (n < 0 || n >= list.length) return; i = n; show(); };
+  const close = () => { view.remove(); document.body.style.overflow = ''; document.removeEventListener('keydown', key); };
+  const key = ev => {
+    if (ev.key === 'Escape') close();
+    else if (ev.key === 'ArrowLeft') go(-1);
+    else if (ev.key === 'ArrowRight') go(1);
+  };
+  document.addEventListener('keydown', key);
+  view.querySelector('.pvx').onclick = close;
+  view.querySelector('.pvprev').onclick = () => go(-1);
+  view.querySelector('.pvnext').onclick = () => go(1);
+  let sx = 0, sy = 0;
+  const stage = view.querySelector('.pvstage');
+  stage.addEventListener('touchstart', ev => { sx = ev.touches[0].clientX; sy = ev.touches[0].clientY; }, { passive: true });
+  stage.addEventListener('touchend', ev => {
+    const dx = ev.changedTouches[0].clientX - sx, dy = ev.changedTouches[0].clientY - sy;
+    if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.5) go(dx < 0 ? 1 : -1);
+    else if (dy > 90 && Math.abs(dy) > Math.abs(dx) * 1.5) close(); /* swipe down to close */
+  }, { passive: true });
+  view.querySelector('.pvx').focus();
+  show();
+}
+
+/* ---------------- Photos tab (admins): every photo, every mission ---------------- */
+
+function renderPhotos() {
+  const d = S.d;
+  const all = [];
+  (d.missionList || []).forEach(m => (m.photos || []).forEach(p => all.push(Object.assign({ mission: m.name }, p))));
+  all.sort((a, b) => (b.date || '').localeCompare(a.date || '') || a.mission.localeCompare(b.mission));
+  const years = [...new Set(all.map(p => (p.date || '').slice(0, 4)).filter(Boolean))].sort().reverse();
+  const missions = [...new Set(all.map(p => p.mission))].sort((a, b) => a.localeCompare(b));
+  const F = S.photoFilter || (S.photoFilter = { year: 'all', mission: 'all' });
+  if (F.year !== 'all' && years.indexOf(F.year) < 0) F.year = 'all';
+  if (F.mission !== 'all' && missions.indexOf(F.mission) < 0) F.mission = 'all';
+  const list = all.filter(p => (F.year === 'all' || (p.date || '').slice(0, 4) === F.year) && (F.mission === 'all' || p.mission === F.mission));
+  S.photoList = list;
+  const filters = `<div class="form"><div class="row2">
+      <label>Mission / Event<select id="pfm"><option value="all">All missions &amp; events</option>
+        ${missions.map(m => `<option ${m === F.mission ? 'selected' : ''}>${esc(m)}</option>`).join('')}</select></label>
+      <label>Year<select id="pfy"><option value="all">All years</option>
+        ${years.map(y => `<option ${y === F.year ? 'selected' : ''}>${y}</option>`).join('')}</select></label>
+    </div></div>`;
+  const grid = list.map((p, k) => `<button type="button" class="pcell" data-k="${k}">
+      <img alt="Photo from ${esc(p.unit)}" data-fid="${esc(p.fileId)}" ${(S.thumbs || {})[p.fileId] ? `src="${S.thumbs[p.fileId]}"` : ''}>
+      <span>${esc(p.mission)}<br>${esc(p.unit)} · ${esc(p.date ? fmtDate(p.date) : '')}</span></button>`).join('');
+  main(section('Photos', filters + `<p class="muted small" style="margin:0 0 12px">${list.length} photo${list.length === 1 ? '' : 's'}${all.length !== list.length ? ' of ' + all.length : ''}. Tap one to see it full-size.</p>
+    ${grid ? `<div class="pgrid">${grid}</div>` : '<p class="muted">No photos yet. Members can add photos when they log activity.</p>'}`));
+  $('pfm').onchange = ev => { F.mission = ev.target.value; render(); };
+  $('pfy').onchange = ev => { F.year = ev.target.value; render(); };
+  document.querySelectorAll('.pcell').forEach(b => b.onclick = () => openViewer(S.photoList, +b.dataset.k));
+  loadThumbs();
+}
+</script>
+
+<script>
+/* ================= Report tab, year-end report, Review, Settings ================= */
+
+function renderReport() {
+  const d = S.d, s = d.settings, all = d.all.filter(e => !e.exclude);
+  const now = new Date(), cy = now.getFullYear(), R = S.rep;
+  if (R.year == null) { R.year = cy; R.month = now.getMonth(); }
+  const years = [...new Set(all.map(e => +e.date.slice(0, 4)).concat(cy))].sort((a, b) => b - a);
+  const inPeriod = e => R.mode === 'year' ? +e.date.slice(0, 4) === R.year : e.date.slice(0, 7) === ym(R.year, R.month);
+  const list = all.filter(inPeriod);
+
+  const defYear = now.getMonth() < 2 ? cy - 1 : cy;
+  const members = d.roster.filter(r => r.name);
+  const yeCard = section('Year-End Report', `<div class="form">
+      <div class="row2">
+        <label>Year<select id="yey">${years.map(v => `<option ${v === defYear ? 'selected' : ''}>${v}</option>`).join('')}</select></label>
+        <label>Report for<select id="yem"><option value="ALL">All members combined</option>
+          ${members.map(r => `<option value="${r.unit}">${r.unit} – ${esc(r.name)} (member statement)</option>`).join('')}</select></label>
+      </div>
+      <button class="btn" type="button" id="yeb">Create report</button>
+      <p class="muted small" style="margin-bottom:0">Opens a printable Member Activity Report with the badge and a signature line. From there you can print it or download a PDF.</p>
+    </div>`);
+
+  const units = [...new Set(d.roster.map(r => r.unit).concat(list.map(e => e.unit)))].sort();
+  const pace = R.year === cy ? s.required * (now.getMonth() + 1) / 12 : s.required;
+  let rows = '', tot = { f: 0, h: 0, mi: 0, v: 0 };
+  units.forEach(u => {
+    const t = sum(list.filter(e => e.unit === u));
+    const name = nameOf(u);
+    if (name === '(vacant)' && !t.f && !t.h && !t.mi) return;
+    tot.f += t.f; tot.h += t.h; tot.mi += t.mi; tot.v += t.v;
+    let goal = '';
+    if (R.mode === 'year') {
+      const tag = t.f >= s.required ? '<span class="tag good">✓ met</span>'
+        : t.f >= pace ? '<span class="tag">on pace</span>' : '<span class="tag warn">behind</span>';
+      goal = `<td>${n1(t.f)} / ${n1(s.required)} ${tag}</td>`;
+    }
+    rows += `<tr class="${t.f || t.h ? '' : 'dim'}"><td>${u}</td><td class="l">${esc(name)}</td><td>${n1(t.f)}</td><td>${n1(t.h)}</td><td>${n1(t.mi)}</td><td>${money(t.v)}</td>${goal}</tr>`;
+  });
+
+  const ctl = `<select id="rm" class="mini"><option value="year" ${R.mode === 'year' ? 'selected' : ''}>Year</option><option value="month" ${R.mode === 'month' ? 'selected' : ''}>Month</option></select>
+    ${R.mode === 'month' ? `<select id="rmo" class="mini">${MONTHS_LONG.map((m, i) => `<option value="${i}" ${i === R.month ? 'selected' : ''}>${m}</option>`).join('')}</select>` : ''}
+    ${yearSelect('ry', years, R.year)}`;
+  const title = R.mode === 'year' ? `Member Report · ${R.year}` : `Member Report · ${MONTHS_LONG[R.month]} ${R.year}`;
+  main(yeCard + section('Totals', teamTiles(tot, teamFn(list).total, tile('Members reporting', new Set(list.map(e => e.unit)).size)) +
+      '<p class="muted small" style="margin:10px 0 0">Functions count each mission or event once per day it was worked. Member turnouts (the total in the Functions column below) count every member who took part.</p>', ctl)
+    + section(title, `<div class="tblwrap"><table><tr><th>Unit</th><th class="l">Name</th><th>Functions</th><th>Hours</th><th>Miles</th><th>Value</th>${R.mode === 'year' ? '<th>Goal</th>' : ''}</tr>
+      ${rows}<tr class="tot"><td>Total</td><td class="l">Turnouts</td><td>${n1(tot.f)}</td><td>${n1(tot.h)}</td><td>${n1(tot.mi)}</td><td>${money(tot.v)}</td>${R.mode === 'year' ? '<td></td>' : ''}</tr></table></div>
+      ${R.mode === 'year' && R.year === cy ? `<p class="muted small">"On pace" means at least ${n1(pace)} functions by the end of ${MONTHS_LONG[now.getMonth()]}.</p>` : ''}`));
+  $('yeb').onclick = () => openYearEnd(+$('yey').value, $('yem').value);
+  $('rm').onchange = ev => { R.mode = ev.target.value; render(); };
+  $('ry').onchange = ev => { R.year = +ev.target.value; render(); };
+  if ($('rmo')) $('rmo').onchange = ev => { R.month = +ev.target.value; render(); };
+}
+
+/* ---------------- Year-end Member Activity Report ---------------- */
+
+function openYearEnd(year, who) {
+  S.report = { year: year, who: who, back: S.tab };
+  render(); window.scrollTo(0, 0);
+}
+
+function reportRows(year, who) {
+  const d = S.d;
+  const src = who === 'ALL' ? (d.all || []) : (who === d.me.unit ? d.mine : (d.all || []).filter(e => e.unit === who));
+  return src.filter(e => !e.exclude && +e.date.slice(0, 4) === year && (who === 'ALL' || e.unit === who));
+}
+
+function renderYearEnd() {
+  const R = S.report, d = S.d, s = d.settings, year = R.year, who = R.who;
+  const rows = reportRows(year, who);
+  const t = sum(rows);
+  const TF = teamFn(rows);
+  const today = new Date();
+  const generated = MONTHS_LONG[today.getMonth()] + ' ' + today.getDate() + ', ' + today.getFullYear();
+  const isAll = who === 'ALL';
+  const member = isAll ? null : { unit: who, name: nameOf(who) };
+  const thru = year === today.getFullYear() ? ` (through ${fmtDate(todayStr())})` : '';
+
+  // Month table
+  let mrows = '';
+  for (let m = 0; m < 12; m++) {
+    const mt = sum(rows.filter(e => e.date.slice(5, 7) === pad(m + 1)));
+    if (!mt.f && !mt.h && !mt.mi) continue;
+    mrows += isAll
+      ? `<tr><td>${MONTHS_LONG[m]}</td><td>${n1(TF.byMonth[year + '-' + pad(m + 1)] || 0)}</td><td>${n1(mt.f)}</td><td>${n1(mt.h)}</td><td>${n1(mt.mi)}</td></tr>`
+      : `<tr><td>${MONTHS_LONG[m]}</td><td>${n1(mt.f)}</td><td>${n1(mt.h)}</td><td>${n1(mt.mi)}</td></tr>`;
+  }
+  const monthTable = !mrows ? '<p>No activity recorded.</p>' : isAll
+    ? `<table><tr><th>Month</th><th>Functions</th><th>Turnouts</th><th>Hours</th><th>Miles</th></tr>${mrows}
+      <tr class="tot"><td>Total</td><td>${n1(TF.total)}</td><td>${n1(t.f)}</td><td>${n1(t.h)}</td><td>${n1(t.mi)}</td></tr></table>`
+    : `<table><tr><th>Month</th><th>Functions</th><th>Hours</th><th>Miles</th></tr>${mrows}
+      <tr class="tot"><td>Total</td><td>${n1(t.f)}</td><td>${n1(t.h)}</td><td>${n1(t.mi)}</td></tr></table>`;
+
+  // Type table
+  const byType = {};
+  rows.forEach(e => { (byType[e.type] = byType[e.type] || []).push(e); });
+  const order = d.types.concat(['Monthly report']);
+  const typeTable = !Object.keys(byType).length ? '' : `<table><tr><th>Activity type</th><th>Functions</th>${isAll ? '<th>Turnouts</th>' : ''}<th>Hours</th><th>Miles</th></tr>
+      ${Object.keys(byType).sort((a, b) => order.indexOf(a) - order.indexOf(b)).map(k => { const x = sum(byType[k]);
+        return `<tr><td>${esc(k === 'Monthly report' ? 'Monthly report (old form)' : k)}</td><td>${n1(isAll ? TF.byType[k] || 0 : x.f)}</td>${isAll ? `<td>${n1(x.f)}</td>` : ''}<td>${n1(x.h)}</td><td>${n1(x.mi)}</td></tr>`; }).join('')}</table>`;
+
+  let body;
+  if (isAll) {
+    const units = [...new Set(rows.map(e => e.unit))].sort();
+    const memberTable = `<table><tr><th>Unit</th><th class="l">Name</th><th>Functions</th><th>Hours</th><th>Miles</th><th>Goal (${n1(s.required)})</th></tr>
+      ${units.map(u => { const x = sum(rows.filter(e => e.unit === u));
+        return `<tr><td>${u}</td><td class="l">${esc(nameOf(u))}</td><td>${n1(x.f)}</td><td>${n1(x.h)}</td><td>${n1(x.mi)}</td><td>${x.f >= s.required ? 'Met' : 'Not met'}</td></tr>`; }).join('')}
+      <tr class="tot"><td>Total</td><td class="l">${units.length} member${units.length === 1 ? '' : 's'} (turnouts)</td><td>${n1(t.f)}</td><td>${n1(t.h)}</td><td>${n1(t.mi)}</td><td></td></tr></table>`;
+    const missions = new Set(rows.filter(e => e.mission).map(e => e.mission.toLowerCase())).size;
+    const callouts = new Set(rows.filter(e => e.type === 'Callout' && e.mission).map(e => e.mission.toLowerCase())).size;
+    body = `<h3>Summary</h3>
+      <div class="kv"><div><b>${n1(TF.total)}</b><span>Functions (missions &amp; events)</span></div><div><b>${n1(t.f)}</b><span>Member turnouts</span></div>
+        <div><b>${units.length}</b><span>Members reporting</span></div>
+        <div><b>${n1(t.h)}</b><span>Volunteer hours</span></div><div><b>${n1(t.mi)}</b><span>Miles driven</span></div>
+        <div><b>${money(t.v)}</b><span>Volunteer contribution value</span></div></div>
+      <p class="fine">Volunteer contribution value = ${n1(t.h)} hours × ${money2(s.hourRate)} + ${n1(t.mi)} miles × ${money2(s.mileRate)}. ${missions} named missions and events were logged in the app, including ${callouts} callout${callouts === 1 ? '' : 's'}.
+      Functions count each mission or event once per day it was worked; member turnouts count every member who took part. For months reported on the old form, functions are the highest number any one member reported.
+      Activity before the app was reported as monthly totals on the old form, so it is not broken out by mission.</p>
+      <h3>Activity by member</h3>${memberTable}
+      <h3>Activity by type</h3>${typeTable}
+      <h3>Activity by month</h3>${monthTable}`;
+  } else {
+    const charity = t.mi * s.charityRate;
+    const log = rows.slice().sort((a, b) => a.date.localeCompare(b.date)).map(e => e.source === 'App'
+      ? `<tr><td>${esc(fmtDate(e.date))}</td><td class="l">${esc(e.type)}</td><td class="l">${esc(e.mission || '')}</td><td>${n1(e.h)}</td><td>${n1(e.mi)}</td></tr>`
+      : `<tr><td>${esc(fmtMonth(e.date))}</td><td class="l">Monthly report</td><td class="l">${n1(e.f)} function${e.f === 1 ? '' : 's'} reported</td><td>${n1(e.h)}</td><td>${n1(e.mi)}</td></tr>`).join('');
+    body = `<h3>Member</h3>
+      <p style="margin:0"><b>${esc(member.name)}</b> &nbsp;·&nbsp; Unit ${esc(member.unit)}</p>
+      <h3>Summary</h3>
+      <div class="kv"><div><b>${n1(t.f)}</b><span>Functions</span></div><div><b>${n1(t.h)}</b><span>Volunteer hours</span></div>
+        <div><b>${n1(t.mi)}</b><span>Miles driven in service</span></div></div>
+      <p style="margin:10px 0 0">Required functions for the year: ${n1(s.required)} — <b>${t.f >= s.required ? 'requirement met' : (n1(s.required - t.f) + ' short of the requirement')}</b>.</p>
+      <h3>Mileage for tax records</h3>
+      <table><tr><th>Miles driven in service</th><th>Charitable mileage rate</th><th>Mileage amount</th></tr>
+        <tr><td>${n1(t.mi)}</td><td>${money2(s.charityRate)} per mile</td><td><b>${money2(charity)}</b></td></tr></table>
+      <p class="fine">This statement records volunteer service performed for the ${esc(POSSE_INFO.header)} as logged by the member.
+      The mileage amount uses the IRS standard rate for driving in service of a charitable organization. Volunteer time is not deductible.
+      This statement is provided for the member's records and is not tax advice; please consult a tax professional about what you may deduct.</p>
+      <h3>Activity by month</h3>${monthTable}
+      ${typeTable ? `<h3>Activity by type</h3>${typeTable}` : ''}
+      <h3>Activity detail</h3>
+      ${log ? `<table><tr><th>Date</th><th class="l">Type</th><th class="l">Mission / Event</th><th>Hours</th><th>Miles</th></tr>${log}</table>` : '<p>No activity recorded.</p>'}`;
+  }
+
+  const fname = `${POSSE_INFO.short} ${year} ${isAll ? 'Member Activity Report' : 'Statement ' + member.unit}.pdf`;
+  main(`<div class="rtools">
+      <button class="btn gray" id="rback" type="button">← Back</button>
+      <button class="btn" id="rprint" type="button">Print</button>
+      <button class="btn" id="rpdf" type="button">Download PDF</button>
+    </div>
+    <div class="rpage" id="rpage">
+      <div class="rhead">${LOGO ? `<img src="${LOGO}" alt="">` : ''}
+        <div><div class="org">${esc(POSSE_INFO.header)}</div>
+        <div class="rtitle">Member Activity Report${isAll ? ' — All Members' : ' — Member Statement'}</div>
+        <div class="rsub">Calendar year ${year}${thru} · Prepared ${generated}</div></div></div>
+      ${body}
+      <div class="sig">
+        <div><div class="line"></div><div class="name">${esc(s.cmdrName)}</div><div>${esc(s.cmdrTitle)}, ${esc(POSSE_INFO.header)}</div></div>
+        <div><div class="line"></div><div>Date</div></div>
+      </div>
+    </div>`);
+  $('rback').onclick = () => { S.tab = R.back; S.report = null; buildTabs(); render(); };
+  $('rprint').onclick = () => window.print();
+  $('rpdf').onclick = () => downloadPdf($('rpage'), fname);
+}
+
+function loadScript(src) {
+  return new Promise((res, rej) => {
+    const s = document.createElement('script');
+    s.src = src; s.onload = res; s.onerror = () => rej(new Error("Couldn't load the PDF tool. Use Print and choose Save as PDF."));
+    document.head.appendChild(s);
+  });
+}
+
+function pdfOptions(fname) {
+  return {
+    margin: [0.4, 0.4, 0.5, 0.4], filename: fname,
+    image: { type: 'jpeg', quality: 0.95 },
+    html2canvas: { scale: 2, useCORS: true, backgroundColor: '#ffffff', windowWidth: 1000 },
+    jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' },
+    pagebreak: { mode: ['css', 'legacy'], avoid: ['tr', '.sig', '.kv', '.kv4', '.facts'] }
+  };
+}
+
+async function downloadPdf(el, fname) {
+  const b = $('rpdf'); b.disabled = true; b.textContent = 'Making PDF…';
+  try {
+    if (!window.html2pdf) await loadScript('https:\/\/cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js');
+    el.classList.add('pdf');
+    await window.html2pdf().set(pdfOptions(fname)).from(el).save();
+    toast('PDF downloaded. If nothing appeared, use Print and choose Save as PDF.', false, 6000);
+  } catch (e) {
+    toast(clean(e), true, 6000);
+  } finally { el.classList.remove('pdf'); b.disabled = false; b.textContent = 'Download PDF'; }
+}
+
+/* ---------------- Admin: Review ---------------- */
+
+function renderReview() {
+  const legacy = S.d.all.filter(e => e.source.indexOf('Form') === 0);
+  const g = {};
+  legacy.forEach(e => { const k = e.unit + '|' + e.date.slice(0, 7); (g[k] = g[k] || []).push(e); });
+  const groups = Object.keys(g).filter(k => g[k].length > 1).sort((a, b) => b.split('|')[1].localeCompare(a.split('|')[1]) || a.localeCompare(b));
+  const sig = e => [e.f, e.h, e.mi].join('/');
+  const row = (e, same) => `<div class="r ${e.exclude ? 'x' : ''}">
+      <input type="checkbox" class="exc" data-id="${esc(e.id)}" ${e.exclude ? 'checked' : ''} title="Exclude">
+      <div class="t">Submitted ${esc(e.logged)} · <b>${e.f == null ? '—' : n1(e.f)}</b> fn · <b>${e.h == null ? '—' : n1(e.h)}</b> hr · <b>${e.mi == null ? '—' : n1(e.mi)}</b> mi
+      ${same ? '<span class="tag warn">identical</span>' : ''}</div></div>`;
+
+  const dupHtml = groups.map(k => {
+    const list = g[k].sort((a, b) => a.logged.localeCompare(b.logged));
+    const [u, m] = k.split('|');
+    return `<div class="grp"><h4>${u} ${esc(nameOf(u))} · ${MONTHS_LONG[+m.slice(5) - 1]} ${m.slice(0, 4)}</h4>
+      ${list.map(e => row(e, list.some(o => o !== e && sig(o) === sig(e)))).join('')}</div>`;
+  }).join('');
+  const missing = legacy.filter(e => !e.exclude && (e.f == null || e.h == null || e.mi == null))
+    .sort((a, b) => b.date.localeCompare(a.date));
+  const missHtml = missing.map(e => `<div class="grp"><h4>${e.unit} ${esc(nameOf(e.unit))} · ${fmtMonth(e.date)}</h4>${row(e, false)}</div>`).join('');
+
+  main(section('Repeat Monthly Reports',
+      `<p class="muted small" style="margin-top:0">These units sent more than one report for the same month on the old form. Check the box to exclude a row; excluded rows don't count anywhere.</p>`
+      + (dupHtml || '<p class="muted">None.</p>'))
+    + section('Missing Values',
+      `<p class="muted small" style="margin-top:0">Blank values count as 0. To fix a number, edit it in the Entries tab of the sheet.</p>`
+      + (missHtml || '<p class="muted">None.</p>')));
+
+  document.querySelectorAll('.exc').forEach(c => c.onchange = async () => {
+    const y = window.scrollY;
+    c.disabled = true;
+    try { setData(await run('apiSetExclude', S.creds, c.dataset.id, c.checked)); window.scrollTo(0, y); }
+    catch (e) { c.disabled = false; c.checked = !c.checked; toast(clean(e), true); }
+  });
+}
+
+/* ---------------- Admin: Settings ---------------- */
+
+function renderSettings() {
+  const s = S.d.settings;
+  const members = S.d.members || [];
+  const order = { Locked: 0, 'No PIN yet': 1, 'Starting PIN': 2, 'PIN set': 3 };
+  const sel = S.memberSel || '';
+  const pick = members.find(x => x.unit === sel);
+  const statusTag = st => st === 'Locked' ? '<span class="tag bad">Locked</span>' : st === 'PIN set' ? '<span class="tag good">PIN set</span>' : `<span class="tag">${esc(st)}</span>`;
+  const locked = members.filter(x => x.status === 'Locked');
+
+  let html = section('Settings', `<form id="sf" class="form">
+      <div class="row2">
+        <label>Mileage rate ($ per mile)<input type="number" id="smr" step="0.01" min="0" value="${s.mileRate}" required></label>
+        <label>Hourly rate ($ per hour)<input type="number" id="shr" step="0.01" min="0" value="${s.hourRate}" required></label>
+      </div>
+      <div class="row2">
+        <label>Required functions per year<input type="number" id="srq" step="1" min="0" value="${s.required}" required></label>
+        <label>Charitable mileage rate ($ per mile)<input type="number" id="scr" step="0.01" min="0" value="${s.charityRate}" required>
+          <span class="hint">IRS rate for volunteer driving, used on member tax statements.</span></label>
+      </div>
+      <div class="row2">
+        <label>Commander name<input id="scn" maxlength="80" value="${esc(s.cmdrName)}" required></label>
+        <label>Commander title<input id="sct" maxlength="80" value="${esc(s.cmdrTitle)}" required></label>
+      </div>
+      <label>First sign-in code<input id="ssc" maxlength="20" autocomplete="off" autocapitalize="characters" spellcheck="false" value="${esc(s.signupCode || '')}">
+        <span class="hint">New members (and anyone whose PIN you reset) enter this once with their new PIN. Text it to your team. Change it any time; leave it blank to turn off new sign-ins.</span></label>
+      <label>Alert emails<input id="sae" maxlength="500" autocomplete="off" spellcheck="false" value="${esc(s.alertEmail || '')}">
+        <span class="hint">Get an email when a unit is locked out or a member creates a PIN. Separate several addresses with commas, e.g. you, the Commander and the Captain.</span></label>
+      <button class="btn" type="submit" id="sb">Save settings</button>
+    </form>
+    <p class="muted small">Value = hours × hourly rate + miles × mileage rate. Changes apply to all years.
+    The Commander name and title print under the signature line on year-end reports.
+    These are also on the Settings tab of the sheet. Admin access is managed on the Roster tab.</p>`);
+
+  const c = S.d.conn || {};
+  const saved = (on, tail) => on ? `Saved${tail ? ' (' + esc(tail) + ')' : ''}. Leave blank to keep it.` : '';
+  html += section('Connections', `<form id="cf" class="form" autocomplete="off">
+      <h4 class="ch">CalTopo ${c.caltopo ? '<span class="tag good">Connected</span>' : '<span class="tag">Not set up</span>'}</h4>
+      <p class="muted small" style="margin-top:0">Creates a map for new missions and backs maps up to Google Drive. Uses a CalTopo service account (Team Admin page > Details > Create a Service Account, with edit permission).</p>
+      <div class="row2">
+        <label>Team ID<input id="cct" maxlength="20" value="${esc(c.ctTeam || '')}" spellcheck="false"></label>
+        <label>Folder for new maps<input id="ccf" maxlength="80" value="${esc(c.ctFolder || '')}"></label>
+      </div>
+      <label>Credential ID<input id="cci" maxlength="40" value="${esc(c.ctId || '')}" spellcheck="false"></label>
+      <label>Credential secret<input id="cck" type="password" maxlength="200" placeholder="${c.ctHasKey ? 'Saved. Leave blank to keep it.' : 'Paste the secret CalTopo showed once'}" spellcheck="false" autocomplete="new-password"></label>
+      <div class="btnrow" style="margin-bottom:16px"><button class="btn small ghost" type="button" data-test="caltopo">Test CalTopo</button>
+        ${c.ctHasKey ? '<button class="btn small ghost" type="button" id="ccx">Remove CalTopo keys</button>' : ''}</div>
+
+      <h4 class="ch">GroupMe ${c.groupme ? '<span class="tag good">Connected</span>' : '<span class="tag">Not set up</span>'}</h4>
+      <p class="muted small" style="margin-top:0">Posts mission alerts to one group through a GroupMe bot (dev.groupme.com > Bots). To switch groups, paste the other bot's ID.</p>
+      <label>Bot ID<input id="cgb" maxlength="60" placeholder="${c.groupme ? esc(saved(true, c.gmTail)) : 'Paste the bot ID'}" spellcheck="false"></label>
+      <div class="btnrow" style="margin-bottom:16px"><button class="btn small ghost" type="button" data-test="groupme">Send test message</button>
+        ${c.groupme ? '<button class="btn small ghost" type="button" id="cgx">Remove bot</button>' : ''}</div>
+
+      <h4 class="ch">Public website numbers (GitHub) ${c.github ? '<span class="tag good">Connected</span>' : '<span class="tag">Not set up</span>'}</h4>
+      <p class="muted small" style="margin-top:0">Keeps a numbers-only file on millardsar.org current (every 5 minutes when something changes), so the public page loads instantly.${c.ghLast ? ' Last: ' + esc(c.ghLast) + '.' : ''}</p>
+      <label>GitHub token<input id="cgt" type="password" maxlength="300" placeholder="${c.github ? esc(saved(true, c.ghTail)) : 'Fine-grained token with Contents: read and write'}" spellcheck="false" autocomplete="new-password"></label>
+      <div class="row2">
+        <label>Repository<input id="cgr" maxlength="100" value="${esc(c.ghRepo || '')}" spellcheck="false"></label>
+        <label>File<input id="cgp" maxlength="100" value="${esc(c.ghPath || '')}" spellcheck="false"></label>
+      </div>
+      <div class="btnrow" style="margin-bottom:16px"><button class="btn small ghost" type="button" data-test="github">Publish now</button>
+        ${c.github ? '<button class="btn small ghost" type="button" id="cgtx">Remove token</button>' : ''}</div>
+      <button class="btn" type="submit" id="cb">Save connections</button>
+      <p class="muted small">Keys are stored privately with the app on Google's side. They are never shown again, never put in the sheet and never sent to members' phones.</p>
+    </form>`);
+
+  html += section('Member PINs', `${locked.length ? `<p style="margin-top:0"><b>Locked now:</b> ${locked.map(x => esc(x.unit + ' ' + x.name)).join(', ')}</p>` : ''}
+    <div class="form">
+      <label>Member<select id="mps"><option value="">Pick a member…</option>
+        ${members.slice().sort((a, b) => (order[a.status] - order[b.status]) || a.unit.localeCompare(b.unit))
+          .map(x => `<option value="${esc(x.unit)}" ${x.unit === sel ? 'selected' : ''}>${esc(x.unit)} · ${esc(x.name)} · ${esc(x.status)}</option>`).join('')}
+      </select></label>
+      ${pick ? `<p style="margin:-6px 0 12px">${esc(pick.unit)} ${esc(pick.name)} ${statusTag(pick.status)}</p>
+        <div class="btnrow">
+          ${pick.status === 'Locked' ? '<button class="btn small" type="button" id="mpu">Unlock</button>' : ''}
+          ${pick.unit !== S.d.me.unit ? '<button class="btn small ghost" type="button" id="mpr">Reset PIN</button>' : ''}
+        </div>` : ''}
+    </div>
+    <p class="muted small"><b>Unlock</b> lets the member sign in again with their PIN.
+    <b>Reset PIN</b> clears their PIN (and unlocks them); they sign in again with the first sign-in code and choose a new PIN.
+    You can also do this on the Roster tab of the sheet: clear the <b>Locked</b> cell to unlock, or clear the <b>PIN</b> cell to reset.</p>`);
+  main(html);
+
+  $('sf').onsubmit = async ev => {
+    ev.preventDefault();
+    $('sb').disabled = true;
+    try {
+      setData(await run('apiSaveSettings', S.creds, { mileRate: $('smr').value, hourRate: $('shr').value, required: $('srq').value,
+        charityRate: $('scr').value, cmdrName: $('scn').value, cmdrTitle: $('sct').value,
+        signupCode: $('ssc').value, alertEmail: $('sae').value }));
+      toast('Settings saved.');
+    } catch (e) { $('sb').disabled = false; toast(clean(e), true); }
+  };
+  $('mps').onchange = ev => { S.memberSel = ev.target.value; render(); };
+  const connVals = () => ({ ctTeam: $('cct').value, ctFolder: $('ccf').value, ctId: $('cci').value, ctKey: $('cck').value.trim(),
+    gmBot: $('cgb').value.trim(), ghToken: $('cgt').value.trim(), ghRepo: $('cgr').value, ghPath: $('cgp').value });
+  const saveConn = async (extra, msg) => {
+    try { setData(await run('apiSaveConnections', S.creds, Object.assign(connVals(), extra || {}))); if (msg) toast(msg); return true; }
+    catch (e) { toast(clean(e), true); return false; }
+  };
+  $('cf').onsubmit = async ev => { ev.preventDefault(); $('cb').disabled = true; await saveConn({}, 'Connections saved.'); };
+  document.querySelectorAll('[data-test]').forEach(b => b.onclick = async () => {
+    b.disabled = true;
+    const which = b.dataset.test;
+    /* Save anything typed first, then test */
+    const v = connVals();
+    if (v.ctKey || v.gmBot || v.ghToken || v.ctTeam !== (c.ctTeam || '') || v.ctId !== (c.ctId || '') || v.ctFolder !== (c.ctFolder || '') ||
+        v.ghRepo !== (c.ghRepo || '') || v.ghPath !== (c.ghPath || '')) { if (!(await saveConn())) { b.disabled = false; return; } }
+    toast('Testing…', false, 30000);
+    try { const r = await run('apiTestConnection', S.creds, which); toast(r.message, false, 7000); try { setData(await run('apiRefresh', S.creds)); } catch (e) {} }
+    catch (e) { toast(clean(e), true, 8000); const x = document.querySelector('[data-test="' + which + '"]'); if (x) x.disabled = false; }
+  });
+  if ($('ccx')) $('ccx').onclick = () => { if (confirm('Remove the CalTopo keys?')) saveConn({ clearCt: true, ctKey: '' }, 'CalTopo keys removed.'); };
+  if ($('cgx')) $('cgx').onclick = () => { if (confirm('Remove the GroupMe bot?')) saveConn({ clearGm: true, gmBot: '' }, 'GroupMe bot removed.'); };
+  if ($('cgtx')) $('cgtx').onclick = () => { if (confirm('Remove the GitHub token? The website will go back to asking Google for its numbers.')) saveConn({ clearGh: true, ghToken: '' }, 'GitHub token removed.'); };
+  const act = async (action, msg) => {
+    try { setData(await run('apiResetMember', S.creds, pick.unit, action)); toast(msg); }
+    catch (e) { toast(clean(e), true); }
+  };
+  if ($('mpu')) $('mpu').onclick = () => act('unlock', pick.unit + ' is unlocked.');
+  if ($('mpr')) $('mpr').onclick = () => {
+    if (!confirm(`Reset the PIN for ${pick.unit} ${pick.name}? They will need the first sign-in code to choose a new PIN.`)) return;
+    act('reset', pick.unit + "'s PIN was reset.");
+  };
+}
+</script>
+
+<script>init();</script>
 </body>
 </html>
