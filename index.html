@@ -395,9 +395,12 @@ const POSSE_INFO = {"key":"west","short":"West Posse","header":"West Millard She
 </script>
 <script>
 /* ================= Duty Log: core (shared by the East and West posses) ================= */
-const APP_VERSION = 'V1.5.6';
+const APP_VERSION = 'V1.5.7';
 const APP_DATE = 'October 25, 2026';
 const CHANGELOG = [
+  { v: 'V1.5.7', date: 'November 8, 2026', items: [
+    'The sign-in code box no longer forces capital letters. Type the code in capitals or lowercase; either one works. The code is saved the way the Commander types it.'
+  ] },
   { v: 'V1.5.6', date: 'November 8, 2026', items: [
     'Cleaned-up Search & Rescue badge: sharp lettering, a true circle, and star points with the same scrollwork and beveled edges as the Sheriff\'s Office badge. The logo is also a little larger.'
   ] },
@@ -849,7 +852,7 @@ function showLogin(msg) {
   main(section('Sign In', `${LOGO ? `<img class="signlogo" src="${LOGO}" alt="Millard County Sheriff Search & Rescue">` : ''}<form id="lf" class="form">
     <label>Unit<select id="lu" required><option value="">Choose your unit…</option>${opts}</select></label>
     <p id="lnew" class="hidden" style="margin:0 0 14px">First time signing in? Enter the sign-in code from the Commander, then choose your own 4 to 8 digit PIN. You'll use the PIN every time after this.</p>
-    <label id="lcw" class="hidden">Sign-in code<input id="lc" autocomplete="off" autocapitalize="characters" spellcheck="false" maxlength="20"></label>
+    <label id="lcw" class="hidden">Sign-in code<input id="lc" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false" maxlength="20"></label>
     <label><span id="lpl">PIN</span><input id="lp" type="password" inputmode="numeric" autocomplete="current-password" maxlength="8" required></label>
     <label id="lp2w" class="hidden">PIN again<input id="lp2" type="password" inputmode="numeric" autocomplete="new-password" maxlength="8"></label>
     ${msg ? `<div class="err">${esc(msg)}</div>` : ''}
@@ -2703,7 +2706,7 @@ function renderSettings() {
         <label>Commander name<input id="scn" maxlength="80" value="${esc(s.cmdrName)}" required></label>
         <label>Commander title<input id="sct" maxlength="80" value="${esc(s.cmdrTitle)}" required></label>
       </div>
-      <label>First sign-in code<input id="ssc" maxlength="20" autocomplete="off" autocapitalize="characters" spellcheck="false" value="${esc(s.signupCode || '')}">
+      <label>First sign-in code<input id="ssc" maxlength="20" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false" value="${esc(s.signupCode || '')}">
         <span class="hint">New members (and anyone whose PIN you reset) enter this once with their new PIN. Text it to your team. Change it any time; leave it blank to turn off new sign-ins.</span></label>
       <label>Alert emails<input id="sae" maxlength="500" autocomplete="off" spellcheck="false" value="${esc(s.alertEmail || '')}">
         <span class="hint">Get an email when a unit is locked out or a member creates a PIN. Separate several addresses with commas, e.g. you, the Commander and the Captain.</span></label>
