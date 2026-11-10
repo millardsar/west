@@ -458,9 +458,10 @@ const POSSE_INFO = {"key":"west","short":"West Posse","header":"West Millard She
 </script>
 <script>
 /* ================= Duty Log: core (shared by the East and West posses) ================= */
-const APP_VERSION = 'V1.6.1';
+const APP_VERSION = 'V1.6.2';
 const APP_DATE = 'October 25, 2026';
 const CHANGELOG = [
+  { v: 'V1.6.2', date: 'November 10, 2026', items: ['Go On Duty switches right away; the save finishes in the background. If it can’t save, the button switches back and says why.'] },
   { v: 'V1.6.1', date: 'November 10, 2026', items: ['Fixed the install: renamed the Duty page file so it no longer clashes with the Duty code file.'] },
   { v: 'V1.6', date: 'November 10, 2026', items: [
     'Active-mission banner: while a callout (red) or training or event (yellow) is active, a bar under the tabs shows it on every page. Tap it for everything in one place: CalTopo map, Incident Location and Staging Point with directions, Comms Plan and Details.',
@@ -3034,7 +3035,7 @@ function openActive(name, which) {
   $('amsh').onclick = ev => { if (ev.target.id === 'amsh') closeActive(); };
   $('amx').onclick = closeActive;
   if ($('dOn')) $('dOn').onclick = () => goOnDuty(a.name);
-  if ($('dOff')) $('dOff').onclick = () => { closeActive(); openOffDuty(); };
+  if ($('dOff')) $('dOff').onclick = () => openOffDuty();
   if ($('amBoard')) $('amBoard').onclick = () => { closeActive(); S.tab = 'board'; buildTabs(); render(); window.scrollTo(0, 0); };
   document.querySelectorAll('#amsh .amo').forEach(b => b.onclick = () => openActive(others[+b.dataset.i].name));
 }
@@ -3049,9 +3050,21 @@ async function goOnDuty(name) {
     closeActive(); openOffDuty(name); return;
   }
   S.dutyRid = S.dutyRid || newRid();
-  toast('Going on duty…', false, 20000);
-  try { setData(await run('apiDutyOn', S.creds, name, S.dutyRid)); S.dutyRid = null; closeActive(); toast("You're on duty for " + name + '.'); openActive(name); }
-  catch (e) { toast(clean(e), true, 6000); }
+  // Show it right away; the save finishes in the background.
+  const before = S.d.duty, act = activeList().find(x => x.name === name), ml = (S.d.missionList || []).find(x => x.name === name) || {};
+  S.d.duty = Object.assign({}, before, { mine: { id: 'pending', unit: S.d.me.unit, name: S.d.me.name, mission: name, type: (act && act.type) || ml.type || '', on: dutyNow(), assignment: '' } });
+  S.dutyPending = true;
+  const reshow = () => { const open = !!$('amsh') && !$('offSave'); drawActBar(); if (S.tab === 'log' && !$('mssh')) { const y = window.scrollY; render(); window.scrollTo(0, y); } if (open) openActive(name); };
+  reshow();
+  toast("You're on duty for " + name + '.');
+  try {
+    const r = await run('apiDutyOn', S.creds, name, S.dutyRid);
+    S.dutyRid = null; S.dutyPending = false;
+    if (r && r.duty) { S.d.duty = r.duty; if (S.d.me.admin) buildTabs(); reshow(); } else if (r) setData(r);
+  } catch (e) {
+    S.dutyPending = false; S.d.duty = before; reshow();
+    toast(clean(e), true, 6000);
+  }
 }
 
 /** Log page: Go On Duty for any mission (meetings and maintenance too). */
@@ -3083,6 +3096,7 @@ function hookDutyStrip() {
 /* ---------------- Go Off Duty ---------------- */
 function openOffDuty(thenOn) {
   const mine = dutyInfo().mine; if (!mine) return;
+  if (mine.id === 'pending') { toast('Still saving your on-duty time. Try again in a moment.'); return; }
   closeActive();
   const now = dutyNow();
   const long = now - mine.on > (dutyInfo().longHours || 16) * 3600000;
@@ -3216,7 +3230,7 @@ function editAssignment(id) {
 }
 /** Put fresh duty info in and redraw what shows it (without reloading everything). */
 function applyDuty(r) {
-  if (!r || !r.duty || !S.d) return;
+  if (!r || !r.duty || !S.d || S.dutyPending) return;
   S.d.duty = r.duty;
   const hadTab = S.tabList && S.tabList.indexOf('board') >= 0;
   if (S.d.me.admin && hadTab !== boardWanted()) buildTabs();
