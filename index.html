@@ -24,6 +24,7 @@
   .wrap { max-width: 980px; margin: 0 auto; padding: 0 16px; }
   .top { background: var(--navy); color: #fff; padding: 14px 0 10px; border-bottom: 3px solid var(--gold); }
   .top .wrap { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 6px; }
+  @media (min-width: 900px) { .top .wrap { max-width: none; padding: 0 28px; } }
   .brand { display: flex; align-items: center; gap: 10px; }
   .brand img { width: 48px; height: 48px; border-radius: 50%; box-shadow: 0 0 0 2px rgba(212,169,60,.6); }
   .signlogo { display: block; width: 122px; height: 122px; margin: 4px auto 16px; border-radius: 50%; box-shadow: 0 2px 10px rgba(0,0,0,.18); }
@@ -139,6 +140,25 @@
   .every { display: flex; align-items: center; gap: 6px; font-size: 15px; font-weight: 600; color: var(--text); margin: 0; }
   .every select { width: auto; display: inline-block; margin: 0; padding: 6px 8px; font-size: 15px; height: auto !important; }
   .duebar { background: #fdf2dc; border: 2px solid #d69e2e; color: #6b4a0d; border-radius: 10px; padding: 10px 12px; margin: 0 0 14px; font-weight: 700; font-size: 15px; }
+  .bar select.bview { background: #fff; color: var(--navy); font-weight: 700; font-size: 14px; padding: 5px 8px; border-radius: 7px; max-width: 58%; }
+  table.attn td, table.attn th { text-align: center; padding: 6px 4px; } table.attn td.l, table.attn th.l { text-align: left; white-space: nowrap; }
+  table.attn .aty { color: #2f855a; font-size: 16px; } table.attn .atn { color: #cfd7d2; font-size: 16px; } table.attn .matm { font-weight: 700; color: var(--navy); padding: 0; }
+  .btn.bpo { background: #fff; color: #c53030; border: 1.5px solid #c53030; margin-left: 6px; }
+  .bporow { display: flex; justify-content: flex-end; margin-top: 6px; }
+  .dzone { border-top: 1px dashed #e0a0a0; margin-top: 18px; padding-top: 10px; }
+  .dzone .mscrub { background: #fff; color: #c53030; border: 1.5px solid #c53030; }
+  .stopbox { background: #fff1f1; border: 1.5px solid #c53030; border-radius: 10px; padding: 10px; margin: 6px 0 10px; font-size: 14px; }
+  .btn.scgo { background: #c53030; } .btn.scgo:disabled { background: #e9b4b4; opacity: 1; }
+  #scW { font-size: 18px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+  .hcard { border: 1px solid var(--line); border-radius: 12px; margin-bottom: 10px; background: #fff; overflow: hidden; }
+  .hcard.sel { background: #f3f7f4; padding: 10px 12px; margin-bottom: 12px; }
+  .hcard .hhead { display: block; width: 100%; text-align: left; background: none; border: 0; padding: 10px 12px; font: inherit; color: inherit; cursor: pointer; }
+  .hcard .hrow { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
+  .hcard .hrow b { font-size: 15px; }
+  .hcard .hsub { display: block; color: var(--muted, #5b6760); font-size: 13px; margin-top: 3px; }
+  .hcard .tag { white-space: nowrap; } .hcard .tag.cl { background: #e6e6e6; color: #666; }
+  .hcard .hbody { padding: 0 12px 10px; } .hcard .hcar { color: var(--navy); font-weight: 700; }
+  .hcard .hchg, .hcard .hone, .hone { color: var(--navy); padding: 6px 0 0; font-weight: 700; }
   .bcard { border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; margin-bottom: 10px; background: #fff; border-left: 6px solid #2f855a; }
   .bcard.cs-soon { border-left-color: #d69e2e; } .bcard.cs-late { border-left-color: #c53030; background: #fff5f5; } .bcard.off { border-left-color: #9aa7a0; background: #f8faf9; }
   .brow { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; } .bu { font-size: 19px; font-weight: 800; color: var(--navy); } .bu span { color: var(--text); } .bel { font-size: 19px; font-weight: 800; white-space: nowrap; }
@@ -458,9 +478,17 @@ const POSSE_INFO = {"key":"west","short":"West Posse","header":"West Millard She
 </script>
 <script>
 /* ================= Duty Log: core (shared by the East and West posses) ================= */
-const APP_VERSION = 'V1.6.2';
+const APP_VERSION = 'V1.6.5';
 const APP_DATE = 'October 25, 2026';
 const CHANGELOG = [
+  { v: 'V1.6.5', date: 'November 10, 2026', items: [
+    'Monthly meetings: each meeting is its own mission ("Posse Meeting · Nov 2026") with room for minutes, highlights and photos. Admins create it with one tap on the Missions tab. It stays open for logging until 90 days after the meeting.',
+    'Meetings have their own group at the top of the Log list. A member can log each meeting only once, and the app asks if the date doesn\u2019t match the meeting\u2019s month.',
+    'Report tab: Meetings Attendance, with a dot for every meeting, sorted by attendance, and a spreadsheet download.',
+    'Admins can delete a mission and all its time (type SCRUB to confirm). A copy is kept on the hidden Deleted tab of the sheet.',
+    'Admins can put a member off duty from the board. The member sees a notice to check their entry.'] },
+  { v: 'V1.6.4', date: 'November 10, 2026', items: ['On Duty Board: a dropdown on the green bar shows Active missions, Missions today, Missions this month, or one Selected Mission with all its logged time.', 'Admins always have the Board tab.', 'On a computer, the badge and title sit on the left edge and your account on the right.'] },
+  { v: 'V1.6.3', date: 'November 10, 2026', items: ['On Duty Board: closed missions drop off the board (unless someone is still on duty there).'] },
   { v: 'V1.6.2', date: 'November 10, 2026', items: ['Go On Duty switches right away; the save finishes in the background. If it can’t save, the button switches back and says why.'] },
   { v: 'V1.6.1', date: 'November 10, 2026', items: ['Fixed the install: renamed the Duty page file so it no longer clashes with the Duty code file.'] },
   { v: 'V1.6', date: 'November 10, 2026', items: [
@@ -809,7 +837,7 @@ function typeOptions(sel, withAll) {
   return (withAll ? `<option value="all">All types</option>` : '') +
     S.d.types.map(t => `<option value="${esc(t)}" ${t === sel ? 'selected' : ''}>${esc(t)}</option>`).join('');
 }
-function setData(d) { S.d = d; buildTabs(); render(); cacheData(); checkLongShift(); }
+function setData(d) { S.d = d; buildTabs(); render(); cacheData(); checkLongShift(); showDutyNotices(); }
 
 /* ---------------- Remembering the last load (shows instantly next time) ---------------- */
 
@@ -1094,7 +1122,8 @@ function renderPin() {
 function missionSelect(current) {
   const d = S.d;
   const ongoing = d.missions.filter(m => m.ongoing).sort((a, b) => a.name.localeCompare(b.name));
-  const dated = d.missions.filter(m => !m.ongoing).sort((a, b) => b.date.localeCompare(a.date) || a.name.localeCompare(b.name));
+  const meets = d.missions.filter(m => isMeetingName(m.name)).sort((a, b) => meetingYM(b.name).localeCompare(meetingYM(a.name)));
+  const dated = d.missions.filter(m => !m.ongoing && !isMeetingName(m.name)).sort((a, b) => b.date.localeCompare(a.date) || a.name.localeCompare(b.name));
   const all = d.missions.map(m => m.name);
   const cur = current && all.indexOf(current) < 0
     ? `<option value="${esc(current)}" selected>${esc(current)}</option>` : '';
@@ -1106,6 +1135,7 @@ function missionSelect(current) {
   const optD = m => `<option value="${esc(m.name)}" ${sel(m)}${lk(m)} data-n="${esc(m.name)}" data-s="${esc(fmtDate(m.date) + ' · ' + m.type + jt(m) + lt(m))}">${esc(fmtDate(m.date))} · ${esc(m.name)} · ${esc(m.type)}${jt(m)}${lt(m)}</option>`;
   return `<select id="ems">
       <option value="">${current ? '— None —' : '— Pick a Mission or Event —'}</option>${cur}
+      ${meets.length ? `<optgroup label="Meetings">${meets.map(optD).join('')}</optgroup>` : ''}
       ${ongoing.length ? `<optgroup label="Ongoing">${ongoing.map(optO).join('')}</optgroup>` : ''}
       ${dated.length ? `<optgroup label="Missions & events, newest first">${dated.map(optD).join('')}</optgroup>` : ''}
       <option value="__new">+ New Mission / Event…</option>
@@ -1340,9 +1370,51 @@ function renderEdit() {
   };
 }
 
+/* ---------------- Monthly meetings ---------------- */
+const MEET_MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+function isMeetingName(n) { return /^Posse Meeting · (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) \d{4}$/.test(String(n || '').trim()); }
+function meetingYM(n) { const m = String(n).match(/· (\w{3}) (\d{4})$/); return m ? m[2] + '-' + String(MEET_MONTHS.indexOf(m[1]) + 1).padStart(2, '0') : ''; }
+function meetingNameFor(ymd) { return 'Posse Meeting · ' + MEET_MONTHS[+ymd.slice(5, 7) - 1] + ' ' + ymd.slice(0, 4); }
+function monthLongOf(ym) { return MONTHS_LONG[+ym.slice(5, 7) - 1]; }
+/** A small question sheet. btns = [[key, label], ...]; the first is the main button. Resolves with the key ('' if closed). */
+function askSheet(title, html, btns, kind) {
+  return new Promise(res => {
+    const old = $('asksh'); if (old) old.remove();
+    document.body.insertAdjacentHTML('beforeend', `<div class="amsh" id="asksh"><div class="ambox form" role="dialog" aria-label="${esc(title)}">
+      <div class="amhead ${kind || 'grn2'}"><div class="n">${esc(title)}</div><button type="button" class="amx" data-k="" aria-label="Close">✕</button></div>
+      <div style="padding:14px 16px 4px;font-size:16px">${html}</div>
+      <div style="padding:4px 16px 18px">${btns.map(([k, l], i) => `<button type="button" class="btn${i ? ' ghost' : ''}" data-k="${esc(k)}" style="width:100%;margin-top:8px">${esc(l)}</button>`).join('')}</div></div></div>`);
+    document.documentElement.classList.add('msopen');
+    const done = k => { const x = $('asksh'); if (x) x.remove(); if (!$('amsh') && !$('mssh')) document.documentElement.classList.remove('msopen'); res(k); };
+    $('asksh').querySelectorAll('[data-k]').forEach(b => b.onclick = () => done(b.dataset.k));
+    $('asksh').onclick = ev => { if (ev.target.id === 'asksh') done(''); };
+  });
+}
+async function meetingDupSheet(md) {
+  const k = await askSheet('You already logged ' + md.mission, `<b>${n1(md.h)} hr on ${esc(fmtDate(md.date))}.</b> Each meeting can only be logged once.`,
+    [['open', 'Open my ' + shortDate(md.date) + ' entry to change it'], ['', 'Close']], 'red');
+  if (k !== 'open') return;
+  const e = (S.d.mine || []).find(x => x.id === md.id);
+  if (!e) { toast('Find it under My Stats.'); return; }
+  S.edit = e; S.tab = 'edit'; buildTabs(); render(); window.scrollTo(0, 0);
+}
+function shortDate(ymd) { const d = new Date(ymd + 'T12:00:00'); return d.toLocaleDateString(undefined, { month: 'short', day: 'numeric' }); }
+
 async function saveEntry(force) {
   if (!checkMissionName()) return;
   const e = entryValues();
+  if (!force && isMeetingName(e.mission) && e.date && e.date.slice(0, 7) !== meetingYM(e.mission)) {
+    const alt = meetingNameFor(e.date), has = (S.d.missions || []).some(x => x.name === alt);
+    const mo = monthLongOf(meetingYM(e.mission));
+    const k = await askSheet('This is the ' + mo + ' meeting', `Your date is <b>${esc(fmtDate(e.date))}</b>.` + (has ? ` Did you mean <b>${esc(alt)}</b>?` : ' Is that right?'),
+      has ? [['switch', 'Switch to ' + alt.replace('Posse Meeting · ', '')], ['keep', 'Keep ' + mo]] : [['keep', 'Save it anyway'], ['', 'Cancel']], 'yel');
+    if (!k) return;
+    if (k === 'switch') { e.mission = alt; const sel = $('ems'); if (sel) { sel.value = alt; if (sel.onchange) try { sel.onchange(); } catch (x) {} } }
+    return saveEntryNow(e, force);
+  }
+  return saveEntryNow(e, force);
+}
+async function saveEntryNow(e, force) {
   if (e.type === 'Callout' && !e.mission) { toast('Pick the mission for a callout.', true); $('ems_b').focus(); openPick('ems'); return; }
   if (!force && Number(e.hours) > 16 && !confirm(e.hours + ' hours is a long stretch. Save it?')) return;
   const files = [].slice.call($('ep').files || []);
@@ -1351,6 +1423,7 @@ async function saveEntry(force) {
   e.rid = S.entryRid;
   try {
     const r = await run('apiAddEntry', S.creds, e, force);
+    if (r.meetingDup) { b.disabled = false; b.textContent = 'Save entry'; S.entryRid = null; meetingDupSheet(r.meetingDup); return; }
     if (r.dup) {
       b.disabled = false; b.textContent = 'Save entry';
       if (confirm('You already logged this mission on this date. Save another entry anyway?')) saveEntry(true);
@@ -2114,6 +2187,77 @@ function hookAddResult() {
   };
 }
 
+/** Admins: delete a mission and all its logged time (type SCRUB to confirm). */
+async function openScrub(name) {
+  let p;
+  try { p = await run('apiScrubPreview', S.creds, name); } catch (e) { toast(clean(e), true); return; }
+  const old = $('amsh'); if (old) old.remove();
+  const plural = (n, w) => n + ' ' + w + (n === 1 ? '' : 's');
+  const block = p.joint ? "This is a joint mission with the other posse, so it can't be deleted here."
+    : p.locked ? 'This mission is locked. Unlock it first.' : '';
+  const onDuty = p.onDuty.length ? `<div class="stopbox"><b>Still on duty:</b> ${p.onDuty.map(o => esc(o.unit + ' ' + lastName(o.name))).join(', ')}.<br>Put them off duty first.
+      ${p.onDuty.map(o => `<button type="button" class="btn small bpo scoff" data-id="${esc(o.id)}" style="margin:6px 6px 0 0">Put ${esc(o.unit)} off duty…</button>`).join('')}</div>` : '';
+  document.body.insertAdjacentHTML('beforeend', `<div class="amsh" id="amsh"><div class="ambox form" role="dialog" aria-label="Delete mission">
+    <div class="amhead red"><div class="k">DELETE MISSION</div><div class="n">${esc(p.name)}</div><button type="button" class="amx" id="amx" aria-label="Close">✕</button></div>
+    <div style="padding:12px 16px 0;font-size:15px"><b>This removes from the app and every report:</b>
+      <ul style="margin:6px 0 10px 18px;padding:0">
+        <li>${plural(p.entries, 'time entry').replace('entrys', 'entries')}${p.entries ? ` from ${plural(p.members, 'member')} (${n1(p.hours)} hr, ${p.miles} mi)` : ''}</li>
+        ${p.shifts ? `<li>${plural(p.shifts, 'Go On Duty shift')} and their Board Log</li>` : ''}
+        ${p.photos || p.expenses ? `<li>${plural(p.photos, 'photo')} and ${plural(p.expenses, 'expense')}</li>` : ''}
+        <li>The mission itself</li></ul>
+      ${block ? `<div class="stopbox">${esc(block)}</div>` : onDuty}</div>
+    ${block || p.onDuty.length ? '' : `<label style="margin:4px 16px 8px">Type <span style="color:#c53030">SCRUB</span> to confirm<input type="text" id="scW" autocomplete="off" autocapitalize="characters" spellcheck="false"></label>
+    <button type="button" class="btn wide scgo" id="scGo" disabled>Delete everything</button>`}
+    <div class="center"><button type="button" class="link" id="scC" style="color:var(--muted)">Cancel</button></div>
+    <p class="muted small" style="margin:6px 16px 16px">A copy goes to the hidden "Deleted" tab of the Google Sheet, so a mistake can be undone. The CalTopo map, GroupMe posts and photo files in Google Drive aren't touched.</p></div></div>`);
+  document.documentElement.classList.add('msopen');
+  const close = () => closeActive();
+  $('amx').onclick = close; $('scC').onclick = close;
+  document.querySelectorAll('.scoff').forEach(b => b.onclick = () => { const id = b.dataset.id; S.afterAdminOff = () => openScrub(name); closeActive(); openAdminOffById(id); });
+  if ($('scW')) {
+    $('scW').oninput = () => { $('scGo').disabled = $('scW').value.trim().toUpperCase() !== 'SCRUB'; };
+    $('scGo').onclick = async () => {
+      const b = $('scGo'); b.disabled = true; b.textContent = 'Deleting…';
+      try {
+        const r = await run('apiScrubMission', S.creds, name, $('scW').value);
+        closeActive(); S.openMission = null; setData(r.data); toast(r.name + ' and all its time were deleted.');
+      } catch (e) { b.disabled = false; b.textContent = 'Delete everything'; toast(clean(e), true, 6000); }
+    };
+  }
+}
+function scrollOpenMission() { setTimeout(() => { const c = document.querySelector('.mcard.isopen'); if (c) c.scrollIntoView({ block: 'start', behavior: 'smooth' }); }, 60); }
+function todayYmd() { const n = new Date(); return n.getFullYear() + '-' + String(n.getMonth() + 1).padStart(2, '0') + '-' + String(n.getDate()).padStart(2, '0'); }
+/** Admins: create (or open) this month's meeting. */
+function openMeetingSheet() {
+  const name = meetingNameFor(todayYmd());
+  if ((S.d.missionList || []).some(m => m.name === name)) { S.openMission = name; S.mFilter = 'all'; render(); scrollOpenMission(); return; }
+  const old = $('amsh'); if (old) old.remove();
+  document.body.insertAdjacentHTML('beforeend', `<div class="amsh" id="amsh"><div class="ambox form" role="dialog" aria-label="Create meeting">
+    <div class="amhead grn2"><div class="k">CREATE MEETING</div><div class="n" id="mtN">${esc(name)}</div><button type="button" class="amx" id="amx" aria-label="Close">✕</button></div>
+    <label style="margin:12px 16px 8px">Meeting date<input type="date" id="mtD" value="${todayYmd()}"></label>
+    <label style="margin:0 16px 8px">Details <span class="muted small">(optional: agenda, mini training)</span><textarea id="mtT" rows="3" maxlength="2000"></textarea></label>
+    <p class="muted small" style="margin:0 16px 10px" id="mtC"></p>
+    <button type="button" class="btn wide" id="mtS">Create meeting</button><div style="height:14px"></div></div></div>`);
+  document.documentElement.classList.add('msopen');
+  const upd = () => {
+    const v = $('mtD').value; if (!v) return;
+    $('mtN').textContent = meetingNameFor(v);
+    const c = new Date(v + 'T12:00:00'); c.setDate(c.getDate() + 90);
+    $('mtC').textContent = 'Stays open for logging until ' + c.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' }) + '. Add minutes and photos to it any time.';
+  };
+  upd(); $('mtD').oninput = upd;
+  const close = () => { const x = $('amsh'); if (x) x.remove(); document.documentElement.classList.remove('msopen'); };
+  $('amx').onclick = close;
+  $('mtS').onclick = async () => {
+    const b = $('mtS'); b.disabled = true; b.textContent = 'Creating…';
+    try {
+      const r = await run('apiCreateMeeting', S.creds, { date: $('mtD').value, details: $('mtT').value });
+      close(); setData(r.data); S.openMission = r.name; S.mFilter = 'all'; render(); scrollOpenMission();
+      toast(r.existed ? r.name + ' already exists. Here it is.' : r.name + ' is ready for members to log.');
+    } catch (e) { b.disabled = false; b.textContent = 'Create meeting'; toast(clean(e), true); }
+  };
+}
+
 function renderMissions() {
   const d = S.d, admin = d.me.admin, conn = d.conn || {};
   const list = d.missionList.filter(m => S.mFilter === 'all' || m.type === S.mFilter);
@@ -2121,6 +2265,10 @@ function renderMissions() {
   let html = addResultPanel();
 
   if (admin) {
+    const thisMeet = meetingNameFor(todayYmd());
+    const hasMeet = d.missionList.some(m => m.name === thisMeet);
+    html += section('Monthly Meeting', `<button type="button" class="btn" id="mkmeet">${hasMeet ? 'Open ' + esc(thisMeet) : "+ Create this month's meeting"}</button>
+      <p class="muted small" style="margin-bottom:0">Each meeting is its own mission, so minutes, highlights and photos stay with it. Members can log it until 90 days after the meeting; then it closes by itself.</p>`);
     html += addMissionForm();
     const sims = similarGroups(d.missionList);
     S.sims = sims;
@@ -2224,11 +2372,13 @@ function renderMissions() {
           <p class="small" style="margin:8px 0 0">🔓 Unlocked · <button class="link mlock" type="button" style="color:var(--navy);padding:0">Lock now without a report</button></p></div>
         <div class="btnrow" style="margin-top:16px"><button class="btn small ghost mgo" type="button">Merge…</button>
           <button class="btn small ghost rno" type="button">Rename…</button></div>` : ''}
+        ${admin && !m.joint ? `<div class="dzone"><button class="btn small mscrub" type="button">Delete mission and all its time…</button>
+          <p class="muted small" style="margin:6px 0 0">For mock or practice missions that shouldn't count toward service hours.</p></div>` : ''}
         ${admin ? '' : '<p class="muted small" style="margin:14px 0 0">Only admins can change a mission. Add your time and photos on the Log tab.</p>'}
         <div class="mdone"><button class="btn mclose" type="button">Done</button></div>
       </div>`;
     }
-    return `<div class="mcard" data-i="${i}">
+    return `<div class="mcard${open ? ' isopen' : ''}" data-i="${i}">
       <div class="mhead" tabindex="0" role="button" aria-expanded="${open}"><div><div class="mname">${esc(m.name)}<span class="tag">${esc(m.type)}</span>${m.joint ? '<span class="tag joint">Joint</span>' : ''}${status}${m.mapId ? '<span class="tag">🗺 Map</span>' : ''}${m.photoCount ? `<span class="tag">📷 ${m.photoCount}</span>` : ''}</div>
         <div class="meta small muted">${dates ? esc(dates) + (m.joint ? '' : ' · ') : ''}${m.joint ? '' : nums}${mine}</div>${jline}</div>
         <div class="chev">${open ? '▾' : '▸'}</div></div>${body}</div>`;
@@ -2244,6 +2394,7 @@ function renderMissions() {
   hookAddResult();
   loadThumbs();
   if (admin) {
+    if ($('mkmeet')) $('mkmeet').onclick = openMeetingSheet;
     hookAddMission();
     document.querySelectorAll('.mg').forEach(b => b.onclick = async () => {
       const g = S.sims[+b.dataset.g];
@@ -2331,6 +2482,7 @@ function renderMissions() {
       S.report = { kind: 'mission', rep: rep, back: 'missions' };
       render(); window.scrollTo(0, 0);
     });
+    if (q('.mscrub')) q('.mscrub').onclick = () => openScrub(m.name);
     if (!q('.msave')) return;
     hookChannel('cp' + card.dataset.i, 'cpo' + card.dataset.i); hookChannel('cb' + card.dataset.i, 'cbo' + card.dataset.i);
     q('.mpk').onclick = () => pickStaging(q('.mst'), splitPlace(placeValue(q('.mlc'))).pt || q('.mlc').value.trim() || m.location || '');
@@ -2597,11 +2749,55 @@ function renderReport() {
       '<p class="muted small" style="margin:10px 0 0">Functions count each mission or event once per day it was worked. Member turnouts (the total in the Functions column below) count every member who took part.</p>', ctl)
     + section(title, `<div class="tblwrap"><table><tr><th>Unit</th><th class="l">Name</th><th>Functions</th><th>Hours</th><th>Miles</th><th>Value</th>${R.mode === 'year' ? '<th>Goal</th>' : ''}</tr>
       ${rows}<tr class="tot"><td>Total</td><td class="l">Turnouts</td><td>${n1(tot.f)}</td><td>${n1(tot.h)}</td><td>${n1(tot.mi)}</td><td>${money(tot.v)}</td>${R.mode === 'year' ? '<td></td>' : ''}</tr></table></div>
-      ${R.mode === 'year' && R.year === cy ? `<p class="muted small">"On pace" means at least ${n1(pace)} functions by the end of ${MONTHS_LONG[now.getMonth()]}.</p>` : ''}`));
+      ${R.mode === 'year' && R.year === cy ? `<p class="muted small">"On pace" means at least ${n1(pace)} functions by the end of ${MONTHS_LONG[now.getMonth()]}.</p>` : ''}`)
+    + meetingAttendance(R, cy));
+  hookMeetingAttendance();
   $('yeb').onclick = () => openYearEnd(+$('yey').value, $('yem').value);
   $('rm').onchange = ev => { R.mode = ev.target.value; render(); };
   $('ry').onchange = ev => { R.year = +ev.target.value; render(); };
   if ($('rmo')) $('rmo').onchange = ev => { R.month = +ev.target.value; render(); };
+}
+
+/* ---------------- Meetings Attendance ---------------- */
+function meetingAttData(year) {
+  const d = S.d, all = d.all.filter(e => !e.exclude);
+  const meets = d.missionList.filter(m => isMeetingName(m.name) && meetingYM(m.name).slice(0, 4) === String(year))
+    .sort((a, b) => meetingYM(a.name).localeCompare(meetingYM(b.name)));
+  const went = {};
+  all.forEach(e => { if (isMeetingName(e.mission)) went[e.unit + '|' + e.mission] = 1; });
+  const units = [...new Set(d.roster.filter(r => r.name && r.name !== '(vacant)').map(r => r.unit))];
+  const rows = units.map(u => { const att = meets.map(m => !!went[u + '|' + m.name]); return { unit: u, name: nameOf(u), att: att, n: att.filter(Boolean).length }; })
+    .filter(r => r.n || r.name !== '(vacant)')
+    .sort((a, b) => b.n - a.n || a.unit.localeCompare(b.unit));
+  return { meets: meets, rows: rows };
+}
+function meetingAttendance(R, cy) {
+  const years = [...new Set(S.d.missionList.filter(m => isMeetingName(m.name)).map(m => +meetingYM(m.name).slice(0, 4)).concat(cy))].sort((a, b) => b - a);
+  if (R.mty == null) R.mty = cy;
+  const A = meetingAttData(R.mty), n = A.meets.length;
+  const sel = `<select id="mty" class="mini" aria-label="Meeting year">${years.map(v => `<option value="${v}" ${v === R.mty ? 'selected' : ''}>${v}</option>`).join('')}</select>`;
+  if (!n) return section('Meetings Attendance', `<p class="muted">No meetings in ${R.mty} yet. Create each month's meeting on the Missions tab.</p>`, sel);
+  const avg = Math.round(A.rows.reduce((t, r) => t + r.n, 0) / n);
+  const head = A.meets.map((m, i) => `<th><button type="button" class="link matm" data-i="${i}" title="${esc(m.name)}">${esc(meetingYM(m.name) ? MEET_MONTHS[+meetingYM(m.name).slice(5, 7) - 1] : '')}</button></th>`).join('');
+  const body = A.rows.map(r => `<tr><td class="l"><b>${esc(r.unit)}</b> ${esc(lastName(r.name))}</td>${r.att.map(x => `<td class="${x ? 'aty' : 'atn'}">●</td>`).join('')}<td><b>${r.n}/${n}</b></td></tr>`).join('');
+  return section('Meetings Attendance', `<p class="muted small" style="margin-top:0">${n} meeting${n === 1 ? '' : 's'} · average ${avg} member${avg === 1 ? '' : 's'}</p>
+    <div class="tblwrap"><table class="attn"><tr><th class="l">Member</th>${head}<th></th></tr>${body}</table></div>
+    <p class="muted small">Tap a month to open that meeting. Sorted by attendance.</p>
+    <button type="button" class="btn ghost" id="matcsv">Download as spreadsheet</button>`, sel);
+}
+function hookMeetingAttendance() {
+  const R = S.rep;
+  if ($('mty')) $('mty').onchange = ev => { R.mty = +ev.target.value; const y = window.scrollY; render(); window.scrollTo(0, y); };
+  const A = meetingAttData(R.mty);
+  document.querySelectorAll('.matm').forEach(b => b.onclick = () => { S.openMission = A.meets[+b.dataset.i].name; S.mFilter = 'all'; S.tab = 'missions'; buildTabs(); render(); scrollOpenMission(); });
+  if ($('matcsv')) $('matcsv').onclick = () => {
+    const q = v => '"' + String(v).replace(/"/g, '""') + '"';
+    const lines = [['Unit', 'Name'].concat(A.meets.map(m => m.name)).concat(['Attended', 'Of']).map(q).join(',')]
+      .concat(A.rows.map(r => [r.unit, r.name].concat(r.att.map(x => x ? 'Yes' : '')).concat([r.n, A.meets.length]).map(q).join(',')));
+    const blob = new Blob([lines.join('\r\n')], { type: 'text/csv' });
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'Meeting attendance ' + R.mty + '.csv';
+    document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 500);
+  };
 }
 
 /* ---------------- Year-end Member Activity Report ---------------- */
@@ -3155,6 +3351,7 @@ function dueInfo(s, every) {
 }
 function renderBoard() {
   if (!S.d.me.admin) { S.tab = 'log'; return renderLog(); }
+  if (S.boardView && S.boardView !== 'active') return renderBoardHist();
   const groups = boardData();
   const wide = window.innerWidth >= 900;
   const due = [];
@@ -3176,12 +3373,13 @@ function renderBoard() {
       if (wide) return `<tr class="cs-${di.cls}"><td class="u">${esc(s.unit)}</td><td class="nm">${esc(lastName(s.name))}</td>
         <td><textarea class="basg" data-id="${esc(s.id)}" rows="2" maxlength="300" placeholder="Type the assignment">${esc(s.assignment)}</textarea></td>
         <td>On ${clock(s.on)}${earlier ? `<div class="muted small">${esc(earlier)}</div>` : ''}</td><td class="big"><span class="tick" data-on="${s.on}">${hm(dutyNow() - s.on)}</span></td><td>${last}${s.checkBy && s.checkBy !== 'Start' ? `<div class="muted small">by ${esc(s.checkBy)}</div>` : ''}</td>
-        <td><span class="cd ${di.cls}">${di.text || '<span class="muted">No checks</span>'}</span></td><td>${g.every ? `<button type="button" class="btn small bchk" data-id="${esc(s.id)}">✓ Checked</button>` : ''}</td></tr>`;
+        <td><span class="cd ${di.cls}">${di.text || '<span class="muted">No checks</span>'}</span></td><td>${g.every ? `<button type="button" class="btn small bchk" data-id="${esc(s.id)}">✓ Checked</button>` : ''}<button type="button" class="btn small bpo" data-id="${esc(s.id)}">Put off duty…</button></td></tr>`;
       return `<div class="bcard cs-${di.cls}"><div class="brow"><div class="bu">${esc(s.unit)} <span>${esc(lastName(s.name))}</span></div><div class="bel"><span class="tick" data-on="${s.on}">${hm(dutyNow() - s.on)}</span></div></div>
         <div class="bmeta">On since ${clock(s.on)}${g.every ? ' · last check ' + last : ''}</div>${earlier ? `<div class="bmeta">${esc(earlier)}</div>` : ''}
         ${s.assignment ? `<button type="button" class="asg" data-id="${esc(s.id)}"><span class="tx"><b>Assignment</b>${esc(s.assignment)}</span><span class="ed">Edit</span></button>`
           : `<button type="button" class="asg none" data-id="${esc(s.id)}"><span class="tx">+ Add assignment</span></button>`}
-        ${g.every ? `<div class="bchkrow"><span class="cd ${di.cls}">${di.text}</span><button type="button" class="btn small bchk" data-id="${esc(s.id)}">✓ Checked</button></div>` : ''}</div>`;
+        ${g.every ? `<div class="bchkrow"><span class="cd ${di.cls}">${di.text}</span><button type="button" class="btn small bchk" data-id="${esc(s.id)}">✓ Checked</button></div>` : ''}
+        <div class="bporow"><button type="button" class="btn small bpo" data-id="${esc(s.id)}">Put off duty…</button></div></div>`;
     }).join('');
     const head = `<div class="bgh"><div><b>${esc(g.mission)}</b> <span class="tag">${esc(g.type || 'Mission')}</span> <span class="muted small">${g.on.length} on duty</span></div>${every}</div>`;
     if (wide) return `${head}<table class="dtab"><tr><th>Unit</th><th>Name</th><th>Assignment <span class="muted">(saves when you click away)</span></th><th>On / Off</th><th>On shift</th><th>Last check</th><th>Next check</th><th></th></tr>
@@ -3190,7 +3388,8 @@ function renderBoard() {
   }).join('<hr class="bsep">');
   main(section('On Duty Board', `${due.length ? `<div class="duebar">🔔 Security check due: ${esc(due.join(', '))}</div>` : ''}
     ${html || '<p class="muted">Nobody is on duty, and no mission is active. When members tap Go On Duty, they show up here.</p>'}
-    <p class="muted small" style="margin-top:16px">Every check, assignment and on/off duty is recorded with who did it on the Board Log tab of the sheet. Alerts sound while this app is open.</p>`));
+    <p class="muted small" style="margin-top:16px">Every check, assignment and on/off duty is recorded with who did it on the Board Log tab of the sheet. Alerts sound while this app is open.</p>`, boardViewSelect()));
+  hookBoardView();
   if (wide) $('main').classList.add('widemain');
   document.querySelectorAll('.bev').forEach(sel => sel.onchange = async () => {
     const g = groups[+sel.dataset.g]; sel.disabled = true;
@@ -3210,7 +3409,177 @@ function renderBoard() {
     });
   });
   document.querySelectorAll('button.asg').forEach(b => b.onclick = () => editAssignment(b.dataset.id));
+  document.querySelectorAll('button.bpo').forEach(b => b.onclick = () => openAdminOff(b.dataset.id));
 }
+
+/* ---------------- Admin: put a member off duty ---------------- */
+async function openAdminOffById(id) {
+  if (!shiftById(id)) { try { applyDuty(await run('apiDutyStatus', S.creds)); } catch (e) {} }
+  openAdminOff(id);
+}
+function openAdminOff(id) {
+  const s = shiftById(id); if (!s) { toast('That member is already off duty.'); return; }
+  closeActive();
+  const now = dutyNow();
+  const p2 = n => String(n).padStart(2, '0');
+  const toLocal = t => { const d = new Date(t); return d.getFullYear() + '-' + p2(d.getMonth() + 1) + '-' + p2(d.getDate()) + 'T' + p2(d.getHours()) + ':' + p2(d.getMinutes()); };
+  document.body.insertAdjacentHTML('beforeend', `<div class="amsh" id="amsh"><div class="ambox form" role="dialog" aria-label="Put off duty">
+    <div class="amhead grn2"><div class="k">PUT OFF DUTY</div><div class="n">${esc(s.unit)} ${esc(lastName(s.name))} · ${esc(s.mission)}</div><button type="button" class="amx" id="amx" aria-label="Close">✕</button></div>
+    <div class="sum"><div><span>On duty</span><span>${clock(s.on)}${new Date(s.on).toDateString() !== new Date().toDateString() ? ' · ' + esc(shortDay(s.on)) : ''}</span></div>
+      <div><span>Off duty</span><span id="aoShow">${clock(now)}</span></div><div><span>Time on shift</span><span id="aoEl">${hm(now - s.on)}</span></div>
+      <div class="tot"><span>Logged as</span><span id="aoHr">${halfUpHrs((now - s.on) / 60000)} hr (rounded up)</span></div></div>
+    <label style="margin:0 16px 10px">Off-duty time <span class="muted small">(when they really stopped, if you know)</span><input type="datetime-local" id="aoT" value="${toLocal(now)}" max="${toLocal(now)}" min="${toLocal(s.on)}"></label>
+    <label style="margin:0 16px 10px">Miles <span class="muted small">(leave blank if you don't know; they can fix it)</span><input type="number" id="aoMi" min="0" max="2000" step="1" inputmode="numeric" placeholder="Unknown"></label>
+    <label style="margin:0 16px 10px">Reason<input type="text" id="aoNo" maxlength="200" placeholder="e.g. Forgot to go off duty, couldn't reach them"></label>
+    <button type="button" class="btn wide offb" id="aoSave">Put ${esc(s.unit)} off duty</button>
+    <div class="center"><button type="button" class="link" id="aoCancel" style="color:var(--muted)">Cancel</button></div>
+    <p class="muted small" style="margin:6px 16px 14px">Saved as their entry with the note "Put off duty by ${esc(S.d.me.unit)} ${esc(lastName(S.d.me.name).charAt(0) + lastName(S.d.me.name).slice(1).toLowerCase())}" and recorded on the Board Log. They see a notice next time they open the app.</p></div></div>`);
+  document.documentElement.classList.add('msopen');
+  const start = toLocal(now);
+  const offAt = () => { const v = $('aoT').value; return !v || v === start ? dutyNow() : new Date(v).getTime(); };
+  const upd = () => { const t = offAt(); $('aoShow').textContent = clock(t); $('aoEl').textContent = hm(t - s.on); $('aoHr').textContent = halfUpHrs(Math.max(1, (t - s.on) / 60000)) + ' hr (rounded up)'; };
+  $('aoT').oninput = upd;
+  const close = () => { closeActive(); };
+  $('amx').onclick = close; $('aoCancel').onclick = close;
+  $('aoSave').onclick = async () => {
+    const mi = $('aoMi').value.trim();
+    if (mi !== '' && !(Number(mi) >= 0 && Number(mi) <= 2000)) { toast('Miles must be between 0 and 2000, or left blank.', true); return; }
+    const v = $('aoT').value, changed = v && v !== start;
+    const b = $('aoSave'); b.disabled = true; b.textContent = 'Saving…';
+    S.aoRid = S.aoRid || newRid();
+    try {
+      const r = await run('apiAdminOff', S.creds, { id: s.id, off: changed ? new Date(v).toISOString() : '', miles: mi, notes: $('aoNo').value, rid: S.aoRid });
+      S.aoRid = null; closeActive(); applyDuty(r); toast(s.unit + ' is off duty.');
+      if (S.afterAdminOff) { const f = S.afterAdminOff; S.afterAdminOff = null; f(); }
+    } catch (e) { b.disabled = false; b.textContent = 'Put ' + s.unit + ' off duty'; toast(clean(e), true, 6000); }
+  };
+}
+
+/* ---------------- Member: an admin put me off duty ---------------- */
+async function showDutyNotices() {
+  const list = (dutyInfo().notices || []);
+  if (!list.length || S.noticeShown || $('amsh') || $('asksh')) return;
+  S.noticeShown = true;
+  const s = list[list.length - 1];
+  const html = `<b>${esc(s.mission)}</b><br>On ${clock(s.on)} · off ${clock(s.off)} ${esc(shortDay(s.on))} · logged ${n1(s.hours)} hr` +
+    (s.miles == null ? '<br><span class="err">Miles weren\'t entered.</span>' : ' · ' + s.miles + ' mi') +
+    (list.length > 1 ? `<br><span class="muted small">+ ${list.length - 1} more</span>` : '');
+  const k = await askSheet('An admin put you off duty', html, [['fix', 'Open my entry to check it'], ['ok', 'OK']]);
+  try { applyDutyQuiet(await run('apiDutyAck', S.creds, list.map(x => x.id))); } catch (e) { S.noticeShown = false; }
+  if (k === 'fix') {
+    const e = (S.d.mine || []).find(x => x.id === s.entryId);
+    if (e) { S.edit = e; S.tab = 'edit'; buildTabs(); render(); window.scrollTo(0, 0); } else toast('Find it under My Stats.');
+  }
+}
+function applyDutyQuiet(r) { if (r && r.duty && S.d) S.d.duty = r.duty; }
+/* ---------------- Board views: Active / Today / This month / one mission ---------------- */
+function boardViewSelect() {
+  const v = S.boardView || 'active';
+  const o = [['active', 'Active missions'], ['today', 'Missions today'], ['month', 'Missions this month']];
+  if (S.boardMission) o.push(['mission', 'Selected Mission']);
+  o.push(['pick', 'Pick a mission…']);
+  return `<select id="bview" class="mini bview" aria-label="Board view">${o.map(([k, l]) => `<option value="${k}" ${k === v ? 'selected' : ''}>${esc(l)}</option>`).join('')}</select>`;
+}
+function hookBoardView() {
+  const sel = $('bview'); if (!sel) return;
+  sel.onchange = () => {
+    const v = sel.value;
+    if (v === 'pick') { sel.value = S.boardView || 'active'; pickBoardMission(); return; }
+    setBoardView(v);
+  };
+}
+function setBoardView(v, mission) {
+  S.boardView = v; if (mission) S.boardMission = mission;
+  S.boardHist = null; S.boardOpen = {};
+  render(); window.scrollTo(0, 0);
+}
+function pickBoardMission() {
+  const old = $('bpick'); if (old) old.remove();
+  const list = (S.d.missionList || []).slice().sort((a, b) => String(b.last || b.first || '').localeCompare(String(a.last || a.first || '')) || a.name.localeCompare(b.name));
+  const holder = document.createElement('div'); holder.className = 'hidden'; holder.id = 'bpick';
+  holder.innerHTML = `<select id="bpicksel"><option value="">Cancel</option>${list.map(m => {
+    const sub = [m.last || m.first ? fmtDate(m.last || m.first) : '', m.type, m.status === 'Closed' ? 'Closed' : ''].filter(Boolean).join(' · ');
+    return `<option value="${esc(m.name)}" data-n="${esc(m.name)}" data-s="${esc(sub)}">${esc(m.name)}</option>`; }).join('')}</select>`;
+  document.body.appendChild(holder);
+  const sel = $('bpicksel'); sel.dataset.title = 'Show which mission?';
+  sel.onchange = () => { const v = sel.value; holder.remove(); if (v) setBoardView('mission', v); };
+  openPick('bpicksel');
+}
+async function loadBoardHist(key) {
+  const v = S.boardView;
+  try {
+    const r = await run('apiBoardView', S.creds, { view: v, mission: v === 'mission' ? S.boardMission : '' });
+    if (S.boardView !== v) return;
+    S.boardHist = Object.assign(r, { key: key });
+  } catch (e) { S.boardHist = { key: key, error: clean(e) }; }
+  if (S.tab === 'board') render();
+}
+function shortDay(ms) { return new Date(ms).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }); }
+function histShifts(g, multiDay) {
+  const n = {}, cnt = {};
+  g.on.concat(g.shifts).forEach(s => { cnt[s.unit] = (cnt[s.unit] || 0) + 1; });
+  const all = g.shifts.concat(g.on).sort((a, b) => a.on - b.on);
+  const label = {};
+  all.forEach(s => { n[s.unit] = (n[s.unit] || 0) + 1; label[s.id] = cnt[s.unit] > 1 ? 'Shift ' + n[s.unit] + ' · ' : ''; });
+  const day = ms => multiDay ? shortDay(ms) + ' · ' : '';
+  const rows = all.map(s => s.status === 'On'
+    ? `<div class="bcard"><div class="brow"><div class="bu">${esc(s.unit)} <span>${esc(lastName(s.name))}</span></div><div class="bel"><span class="tick" data-on="${s.on}">${hm(dutyNow() - s.on)}</span></div></div>
+        <div class="bmeta"><b class="ink">${label[s.id]}${day(s.on)}On duty now · since ${clock(s.on)}</b></div>${s.assignment ? `<div class="bmeta">Assignment: ${esc(s.assignment)}</div>` : ''}</div>`
+    : `<div class="bcard off"><div class="brow"><div class="bu">${esc(s.unit)} <span>${esc(lastName(s.name))}</span></div><div class="bel">${hm(s.off - s.on)}</div></div>
+        <div class="bmeta"><b class="ink">${label[s.id]}${day(s.on)}On ${clock(s.on)} · Off ${clock(s.off)}</b></div>
+        <div class="bmeta">Logged ${s.hours} hr${s.miles == null ? '' : ' · ' + s.miles + ' mi'}${s.assignment ? ' · Assignment: ' + esc(s.assignment) : ''}</div></div>`).join('');
+  const other = g.other.length ? `<div class="bh">Logged on the Log page (no clock times)</div>` + g.other.map(e =>
+    `<div class="bcard off"><div class="brow"><div class="bu">${esc(e.unit)} <span>${esc(lastName(e.name || ''))}</span></div><div class="bel">${e.h == null ? '' : e.h + ' hr'}</div></div>
+      <div class="bmeta">${esc(fmtDate(e.date))}${e.mi == null ? '' : ' · ' + e.mi + ' mi'}${e.notes ? ' · ' + esc(e.notes) : ''}</div></div>`).join('') : '';
+  return (rows || other) ? rows + other : '<p class="muted">No time logged.</p>';
+}
+function histHead(g) {
+  const tag = g.active ? (g.type || 'Mission') + ' · Active' : g.status === 'Closed' ? 'Closed' : (g.type || 'Mission');
+  const when = g.first && g.last && g.first !== g.last ? fmtDate(g.first) + ' – ' + fmtDate(g.last) : g.first ? fmtDate(g.first) : '';
+  const bits = [when, g.units + (g.units === 1 ? ' unit' : ' units'), g.hours ? g.hours + ' hr' : '', g.miles ? g.miles + ' mi' : '', g.on.length ? g.on.length + ' on duty now' : ''].filter(Boolean);
+  return { tag: tag, closed: !g.active && g.status === 'Closed', line: bits.join(' · ') };
+}
+function renderBoardHist() {
+  const v = S.boardView, key = v + '|' + (v === 'mission' ? S.boardMission : '');
+  const h = S.boardHist;
+  if (!h || h.key !== key) {
+    main(section('On Duty Board', '<p class="muted">Loading…</p>', boardViewSelect())); hookBoardView();
+    if (!S.boardLoading || S.boardLoading !== key) { S.boardLoading = key; loadBoardHist(key).then(() => { S.boardLoading = null; }); }
+    return;
+  }
+  let body;
+  if (h.error) body = `<p class="err">${esc(h.error)}</p>`;
+  else if (v === 'mission') {
+    const g = h.groups[0];
+    if (!g) body = '<p class="muted">No time has been logged to this mission.</p>';
+    else {
+      const hd = histHead(g);
+      body = `<div class="hcard sel"><div class="hrow"><b>${esc(g.mission)}</b><span class="tag${hd.closed ? ' cl' : ''}">${esc(hd.tag)}</span></div>
+        <div class="hsub">${g.type && !g.active ? esc(g.type) + ' · ' : ''}<b>${esc(hd.line)}</b></div>
+        <button type="button" class="link hchg" id="hchg">Change mission ›</button></div>
+        ${histShifts(g, g.first !== g.last)}
+        <p class="muted small" style="margin-top:12px">Board Log: ${h.checks} security check${h.checks === 1 ? '' : 's'}, ${h.assigns} assignment${h.assigns === 1 ? '' : 's'}.</p>`;
+    }
+  } else {
+    S.boardOpen = S.boardOpen || {};
+    body = h.groups.length ? h.groups.map((g, i) => {
+      const hd = histHead(g), open = !!S.boardOpen[g.mission];
+      return `<div class="hcard${open ? ' open' : ''}"><button type="button" class="hhead" data-i="${i}" aria-expanded="${open}">
+          <span class="hrow"><b>${esc(g.mission)}</b><span class="tag${hd.closed ? ' cl' : ''}">${esc(hd.tag)}</span></span>
+          <span class="hsub">${esc(hd.line)} <span class="hcar">${open ? '▾' : '▸'}</span></span></button>
+          ${open ? `<div class="hbody">${histShifts(g, v === 'month' && g.first !== g.last)}<button type="button" class="link hone" data-i="${i}">Show this mission by itself ›</button></div>` : ''}</div>`;
+    }).join('') : `<p class="muted">No time logged ${v === 'today' ? 'today' : 'this month'}.</p>`;
+  }
+  main(section('On Duty Board', body + '<p class="muted small" style="margin-top:14px">Security checks and alerts only run for active missions.</p>', boardViewSelect()));
+  hookBoardView();
+  if ($('hchg')) $('hchg').onclick = pickBoardMission;
+  document.querySelectorAll('.hhead').forEach(b => b.onclick = () => {
+    const g = h.groups[+b.dataset.i]; S.boardOpen[g.mission] = !S.boardOpen[g.mission];
+    const y = window.scrollY; render(); window.scrollTo(0, y);
+  });
+  document.querySelectorAll('.hone').forEach(b => b.onclick = () => setBoardView('mission', h.groups[+b.dataset.i].mission));
+}
+
 function shiftById(id) { for (const g of boardData()) { const s = g.on.concat(g.off).find(x => x.id === id); if (s) return s; } return null; }
 function editAssignment(id) {
   const s = shiftById(id); if (!s) return;
@@ -3236,8 +3605,9 @@ function applyDuty(r) {
   if (S.d.me.admin && hadTab !== boardWanted()) buildTabs();
   drawActBar();
   if (S.tab === 'board' && !S.boardTyping && !$('amsh') && !$('mssh')) { const y = window.scrollY; render(); window.scrollTo(0, y); }
+  showDutyNotices();
 }
-function boardWanted() { return !!(S.d && S.d.me && S.d.me.admin && boardData().length); }
+function boardWanted() { return !!(S.d && S.d.me && S.d.me.admin); }
 
 /* ---------------- Ticking clocks, alerts and refreshes ---------------- */
 function beep() {
