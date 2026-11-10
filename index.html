@@ -395,9 +395,12 @@ const POSSE_INFO = {"key":"west","short":"West Posse","header":"West Millard She
 </script>
 <script>
 /* ================= Duty Log: core (shared by the East and West posses) ================= */
-const APP_VERSION = 'V1.5.7';
+const APP_VERSION = 'V1.5.8';
 const APP_DATE = 'October 25, 2026';
 const CHANGELOG = [
+  { v: 'V1.5.8', date: 'November 9, 2026', items: [
+    'GroupMe mission posts are easier to read: bold section headings (Incident Location, Staging Point, Comms Plan, Details, Map, Log Your Time) with a blank line between sections. A very long post is sent in parts instead of being cut off.'
+  ] },
   { v: 'V1.5.7', date: 'November 8, 2026', items: [
     'The sign-in code box no longer forces capital letters. Type the code in capitals or lowercase; either one works. The code is saved the way the Commander types it.'
   ] },
@@ -1617,24 +1620,26 @@ async function copyText(t) {
 }
 function missionEmoji(type) { return { Callout: '🚨', Training: '📘', 'Event / Parade': '📣' }[type] || '📌'; }
 
-/** Default GroupMe message for a new mission (the admin can edit it before it goes out). */
+/** Bold-looking text for GroupMe headings (GroupMe has no bold, so this uses Unicode bold letters). Headings only. */
+function gmBold(t) {
+  return String(t).replace(/[A-Za-z0-9]/g, ch => {
+    const c = ch.charCodeAt(0);
+    const cp = c >= 65 && c <= 90 ? 0x1D5D4 + c - 65 : c >= 97 && c <= 122 ? 0x1D5EE + c - 97 : 0x1D7EC + c - 48;
+    return String.fromCodePoint(cp);
+  });
+}
+
+/** Default GroupMe message for a new mission (the admin can edit it before it goes out). Sections are separated by a blank line. */
 function alertMessage(f) {
-  const lines = [missionEmoji(f.type) + ' ' + f.type + ': ' + (f.name || '(mission name)')];
-  if (f.date) lines.push(fmtDate(f.date));
-  if (f.location) lines.push('Incident Location: ' + f.location);
-  if (f.staging) lines.push('Staging Point: ' + f.staging);
-  if (f.primary || f.backup) {
-    lines.push('Comms Plan:');
-    if (f.primary) lines.push('Primary Ch: ' + f.primary);
-    if (f.backup) lines.push('Backup Ch: ' + f.backup);
-  }
-  if (f.extra) lines.push(f.extra);
-  if (f.map) {
-    lines.push('Map: ' + MAP_PLACEHOLDER);
-    lines.push('Or in CalTopo: ' + ((S.d.posse && S.d.posse.short) || 'Posse') + ' Data › ' + (f.name || '(mission name)'));
-  }
-  lines.push('Log your time: ' + ((S.d.conn && S.d.conn.appUrl) || POSSE_INFO.appUrl || ''));
-  return lines.filter(Boolean).join('\n');
+  const sec = [];
+  sec.push([missionEmoji(f.type) + ' ' + gmBold(String(f.type || '').toUpperCase()), f.name || '(mission name)', f.date ? fmtDate(f.date) : ''].filter(Boolean).join('\n'));
+  if (f.location) sec.push(gmBold('Incident Location') + '\n' + f.location);
+  if (f.staging) sec.push(gmBold('Staging Point') + '\n' + f.staging);
+  if (f.primary || f.backup) sec.push([gmBold('Comms Plan'), f.primary ? 'Primary Ch: ' + f.primary : '', f.backup ? 'Backup Ch: ' + f.backup : ''].filter(Boolean).join('\n'));
+  if (f.extra) sec.push(gmBold('Details') + '\n' + f.extra);
+  if (f.map) sec.push(gmBold('Map') + '\n' + MAP_PLACEHOLDER + '\nOr in CalTopo: ' + ((S.d.posse && S.d.posse.short) || 'Posse') + ' Data › ' + (f.name || '(mission name)'));
+  sec.push(gmBold('Log Your Time') + '\n' + ((S.d.conn && S.d.conn.appUrl) || POSSE_INFO.appUrl || ''));
+  return sec.join('\n\n');
 }
 
 /* ---------------- Comms plan: channel dropdowns ---------------- */
