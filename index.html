@@ -180,6 +180,30 @@
   .msfind { margin: 8px 12px; width: calc(100% - 24px); font-size: 16px; padding: 9px; border: 1.5px solid #9fb3a7; border-radius: 8px; }
   .usbtns .btn { display: block; width: 100%; margin: 8px 0 0; }
   .mtop { display: flex; gap: 10px; margin-bottom: 12px; } .mtop .btn { flex: 1; width: auto; }
+  .home { max-width: 640px; margin: 0 auto; }
+  .hcardx { background: #fff; border-radius: 14px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,.08); margin: 4px 0 14px; }
+  .hcardx .hh { padding: 14px 16px; color: #fff; } .hcardx .hh.red { background: #c53030; } .hcardx .hh.yel { background: #d69e2e; color: #1a1f1c; } .hcardx .hh.grn { background: var(--navy); }
+  .hcardx .hh .k { font-size: 12px; font-weight: 800; letter-spacing: .06em; opacity: .92; }
+  .hcardx .hh .n { font-size: 22px; font-weight: 900; line-height: 1.15; margin-top: 2px; overflow-wrap: anywhere; }
+  .hcardx .hh .d { font-size: 13.5px; opacity: .92; margin-top: 4px; }
+  .hon { display: flex; justify-content: space-between; gap: 8px; background: #e8f5ec; color: #22673f; font-weight: 800; padding: 10px 16px; font-size: 15px; }
+  .hbtns { display: flex; gap: 10px; padding: 14px 16px 8px; } .hbtns .btn { flex: 1; width: auto; font-size: 17px; padding: 15px 8px; border-radius: 12px; text-align: center; }
+  .hbtns .hmap { background: var(--navy); color: #fff; text-decoration: none; display: flex; align-items: center; justify-content: center; }
+  .hasg { margin: 6px 16px 8px; background: #fff8e1; border: 1.5px solid #e6c46e; border-radius: 12px; padding: 10px 12px; }
+  .hasg .ht { font-size: 18px; font-weight: 800; margin-top: 2px; }
+  .hl { font-size: 11.5px; font-weight: 800; color: var(--navy); letter-spacing: .06em; text-transform: uppercase; } .hasg .hl { color: #8a6a10; }
+  .hsec { padding: 10px 16px; border-top: 1px solid #eef1ef; } .hsec .hv { font-size: 15.5px; margin-top: 3px; }
+  .hsec .dir { font-weight: 800; color: var(--navy); white-space: nowrap; }
+  .hadm { display: flex; justify-content: space-between; width: 100%; background: #f3f6ff; border: 1px solid #c8d3f0; border-radius: 12px; padding: 12px 14px;
+    font: inherit; font-weight: 700; color: #1e3a8a; cursor: pointer; text-align: left; margin-bottom: 12px; }
+  .hquiet { background: #fff; border-radius: 14px; padding: 24px 18px; text-align: center; margin: 4px 0 14px; }
+  .hquiet .big { font-size: 21px; font-weight: 900; color: var(--navy); margin-bottom: 6px; } .hquiet .btn { margin-top: 16px; font-size: 18px; padding: 15px; }
+  .hnext { background: #fff; border-radius: 14px; padding: 12px 16px; margin-bottom: 14px; }
+  .hnext .row { display: flex; justify-content: space-between; gap: 10px; padding: 8px 0; border-bottom: 1px solid #eef1ef; }
+  .htiles { display: flex; gap: 12px; } .htiles div { flex: 1; background: #fff; border-radius: 12px; padding: 12px; text-align: center; }
+  .htiles b { display: block; font-size: 24px; color: var(--navy); } .htiles span { font-size: 13px; color: var(--muted); }
+  .myasg { display: block; font-size: 12px; font-weight: 700; margin-top: 2px; opacity: .95; }
+  .stripasg { margin-top: 4px; font-size: 14px; }
   .hcard { border: 1px solid var(--line); border-radius: 12px; margin-bottom: 10px; background: #fff; overflow: hidden; }
   .hcard.sel { background: #f3f7f4; padding: 10px 12px; margin-bottom: 12px; }
   .hcard .hhead { display: block; width: 100%; text-align: left; background: none; border: 0; padding: 10px 12px; font: inherit; color: inherit; cursor: pointer; }
@@ -508,9 +532,13 @@ const POSSE_INFO = {"key":"west","short":"West Posse","header":"West Millard She
 </script>
 <script>
 /* ================= Duty Log: core (shared by the East and West posses) ================= */
-const APP_VERSION = 'V1.6.6';
+const APP_VERSION = 'V1.6.7';
 const APP_DATE = 'October 25, 2026';
 const CHANGELOG = [
+  { v: 'V1.6.7', date: 'November 10, 2026', items: [
+    'New Home tab: the app opens to it. During a callout or training it shows the mission, a big Go On / Off Duty button, CalTopo Map, your assignment, staging, comms and details. On a quiet day: Log Time, what is coming up, and your hours this month.',
+    'Tab order: members Home, Log, Missions, My Stats, Team; admins Home, Board, Missions, Log, then the rest.',
+    'Your assignment also shows on the bar under the tabs and on the Log page. A new or changed assignment buzzes and pops up; while on duty the app checks every minute.'] },
   { v: 'V1.6.6', date: 'November 10, 2026', items: [
     'Duty Board (renamed): shows only active callouts, trainings and events. Off-duty units fold into one line; anyone on duty for something else shows under "Also on duty".',
     'Detail and List views. List is one quiet line per unit with a small security-check box; tap a name for everything else.',
@@ -680,7 +708,7 @@ const CHANGELOG = [
 
 const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 const MONTHS_LONG = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-const S = { boot: null, creds: null, d: null, tab: 'log', period: 'ytd', teamYear: null, teamMetric: 'tf',
+const S = { boot: null, creds: null, d: null, tab: 'home', period: 'ytd', teamYear: null, teamMetric: 'tf',
   rep: { mode: 'year', year: null, month: null }, openMission: null, chart: null, edit: null,
   openMonth: null, prefill: null, mFilter: 'all', showLog: false, report: null };
 
@@ -874,7 +902,7 @@ function typeOptions(sel, withAll) {
   return (withAll ? `<option value="all">All types</option>` : '') +
     S.d.types.map(t => `<option value="${esc(t)}" ${t === sel ? 'selected' : ''}>${esc(t)}</option>`).join('');
 }
-function setData(d) { S.d = d; buildTabs(); render(); cacheData(); checkLongShift(); showDutyNotices(); }
+function setData(d) { S.d = d; buildTabs(); render(); cacheData(); checkLongShift(); showDutyNotices(); checkAssignment(); }
 
 /* ---------------- Remembering the last load (shows instantly next time) ---------------- */
 
@@ -954,7 +982,7 @@ async function init() {
     S.boot = boot || { units: [] };
     S.creds = c;
     resetView();
-    S.tab = 'log';
+    S.tab = 'home';
     S.d = saved.d; buildTabs(); render();
     syncNote('Updating…');
     try {
@@ -1058,7 +1086,7 @@ async function login(c) {
 function finishLogin(c, d) {
   S.creds = c; store('posseCreds', c); store('posseLastUnit', c.unit);
   resetView();
-  S.tab = d.me.mustSetPin ? 'pin' : 'log';
+  S.tab = d.me.mustSetPin ? 'pin' : 'home';
   setData(d);
 }
 
@@ -1097,9 +1125,11 @@ function goTab(k, dir) {
 })();
 
 function buildTabs() {
-  const t = [['log', 'Log'], ['stats', 'My Stats'], ['team', 'Team'], ['missions', 'Missions']];
-  if (boardWanted()) t.splice(1, 0, ['board', 'Board']);
-  if (S.d.me.admin) t.push(['photos', 'Photos'], ['report', 'Report'], ['review', 'Review'], ['settings', 'Settings']);
+  // Members: Home, Log, Missions, My Stats, Team. Admins: Home, Board, Missions, Log, My Stats, Team, then admin tabs.
+  const t = S.d.me.admin
+    ? [['home', 'Home'], ['board', 'Board'], ['missions', 'Missions'], ['log', 'Log'], ['stats', 'My Stats'], ['team', 'Team'],
+       ['photos', 'Photos'], ['report', 'Report'], ['review', 'Review'], ['settings', 'Settings']]
+    : [['home', 'Home'], ['log', 'Log'], ['missions', 'Missions'], ['stats', 'My Stats'], ['team', 'Team']];
   t.push(['about', 'About']);
   S.tabList = t.map(x => x[0]);
   $('tabs').innerHTML = t.map(([k, l]) => `<button data-t="${k}" class="${S.tab === k ? 'on' : ''}">${l}</button>`).join('');
@@ -1116,7 +1146,7 @@ function render() {
   S.touched = false;
   if (S.report) { if (S.report.kind === 'mission') renderMissionReport(); else renderYearEnd(); return; }
   const fn = { log: renderLog, stats: renderStats, team: renderTeam, report: renderReport, missions: renderMissions,
-    review: renderReview, settings: renderSettings, photos: renderPhotos, edit: renderEdit, pin: renderPin, about: renderAbout, board: renderBoard }[S.tab] || renderLog;
+    review: renderReview, settings: renderSettings, photos: renderPhotos, edit: renderEdit, pin: renderPin, about: renderAbout, board: renderBoard, home: renderHome }[S.tab] || renderHome;
   $('main').classList.remove('widemain');
   fn();
   drawActBar();
@@ -1147,7 +1177,7 @@ function renderPin() {
     try {
       const d = await run('apiChangePin', S.creds, p1);
       S.creds = { unit: S.creds.unit, pin: p1 }; store('posseCreds', S.creds);
-      S.tab = 'log'; setData(d);
+      S.tab = 'home'; setData(d);
       toast('PIN saved.');
     } catch (e) { $('pb').disabled = false; $('pb').textContent = 'Save PIN'; toast(clean(e), true); }
   };
@@ -3230,18 +3260,79 @@ function dirLink(place) {
 function dutyInfo() { return (S.d && S.d.duty) || { active: [], mine: null }; }
 function activeList() { return dutyInfo().active || []; }
 
+/* ---------------- Home: the landing page for what's active right now ---------------- */
+function renderHome() {
+  const d = S.d, act = activeList(), mine = dutyInfo().mine;
+  const sec = (h, v) => v ? `<div class="hsec"><div class="hl">${h}</div><div class="hv">${v}</div></div>` : '';
+  const place = p => { if (!p) return ''; const sp = splitPlace(p), u = dirLink(p); return esc(sp.name || p) + (u ? ` <a class="dir" href="${u}" target="_blank" rel="noopener">Directions ›</a>` : ''); };
+  const card = (a, isAct) => {
+    const onHere = mine && mine.mission === a.name;
+    const kind = a.type === 'Callout' ? 'red' : isAct ? 'yel' : 'grn';
+    const url = mapLink(a.mapId);
+    const count = isAct && d.me.admin ? (boardData().find(g => g.mission === a.name) || { on: [] }).on.length : null;
+    return `<div class="hcardx">
+      <div class="hh ${kind}"><div class="k">${isAct ? 'ACTIVE ' + esc(String(a.type).toUpperCase()) : "YOU'RE ON DUTY"}</div><div class="n">${esc(a.name)}</div>
+        <div class="d">${a.created ? 'Started ' + clock(a.created) : a.date ? esc(fmtDate(a.date)) : ''}${count != null ? ' · ' + count + ' unit' + (count === 1 ? '' : 's') + ' on duty' : ''}</div></div>
+      ${onHere ? `<div class="hon"><span>● You're on duty since ${clock(mine.on)}</span><b class="tick" data-on="${mine.on}">${hm(dutyNow() - mine.on)}</b></div>` : ''}
+      <div class="hbtns">${onHere ? `<button type="button" class="btn offb hgo" data-off="1">Go Off Duty</button>` : `<button type="button" class="btn onb hgo" data-n="${esc(a.name)}">Go On Duty</button>`}
+        ${url ? `<a class="btn hmap" href="${url}" target="_blank" rel="noopener">CalTopo Map</a>` : '<button type="button" class="btn hmap" disabled>No map yet</button>'}</div>
+      ${onHere && mine.assignment ? `<div class="hasg"><div class="hl">YOUR ASSIGNMENT</div><div class="ht">${esc(mine.assignment)}</div></div>` : ''}
+      ${sec('Staging point', place(a.staging))}${sec('Incident location', place(a.location))}
+      ${sec('Comms', [a.primary ? esc(a.primary) : '', a.backup ? 'backup ' + esc(a.backup) : ''].filter(Boolean).join(' · '))}
+      ${sec('Details', a.details ? esc(a.details).replace(/\n/g, '<br>') : '')}
+    </div>`;
+  };
+  let html = act.map(a => card(a, true)).join('');
+  if (mine && !act.some(a => a.name === mine.mission)) {
+    const ml = (d.missionList || []).find(x => x.name === mine.mission) || {};
+    html += card({ name: mine.mission, type: ml.type || mine.type || '', date: '', location: ml.location, staging: ml.staging, primary: ml.primary, backup: ml.backup, details: ml.details, mapId: ml.mapId }, false);
+  }
+  if (d.me.admin && (act.length || (dutyInfo().also || []).length)) {
+    const onCount = boardData().reduce((t, g) => t + g.on.length, 0) + (dutyInfo().also || []).length;
+    const dueCount = boardData().reduce((t, g) => t + g.on.filter(x => dueInfo(x, g.every).due).length, 0);
+    html += `<button type="button" class="hadm" id="hBoard"><span>Duty Board: ${onCount} on duty${dueCount ? ' · <b>' + dueCount + ' check' + (dueCount === 1 ? '' : 's') + ' due</b>' : ''}</span><span>›</span></button>`;
+  }
+  if (!html) {
+    const now = new Date(), ym = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0');
+    const today = ym + '-' + String(now.getDate()).padStart(2, '0');
+    const t = sum((d.mine || []).filter(e => !e.exclude && e.date.slice(0, 7) === ym));
+    const next = (d.missions || []).filter(m => m.date && m.date > today).sort((a, b) => a.date.localeCompare(b.date)).slice(0, 3);
+    html = `<div class="hquiet"><div class="big">No active missions</div><div class="muted">You'll see callouts and trainings here the moment they're sent.</div>
+        <button type="button" class="btn onb" id="hLog">Log Time</button></div>
+      ${next.length ? `<div class="hnext"><div class="hl">COMING UP</div>${next.map(m => `<div class="row"><span>${esc(m.name)}</span><b>${esc(shortDate(m.date))}</b></div>`).join('')}</div>` : ''}
+      <div class="htiles"><div><b>${n1(t.h)}</b><span>hours this month</span></div><div><b>${n1(t.f)}</b><span>functions this month</span></div></div>`;
+  }
+  main(`<div class="home">${html}</div>`);
+  document.querySelectorAll('.hgo').forEach(b => b.onclick = () => b.dataset.off ? openOffDuty() : goOnDuty(b.dataset.n));
+  if ($('hBoard')) $('hBoard').onclick = () => { S.tab = 'board'; buildTabs(); render(); window.scrollTo(0, 0); };
+  if ($('hLog')) $('hLog').onclick = () => { S.tab = 'log'; buildTabs(); render(); window.scrollTo(0, 0); };
+}
+
+/** A new or changed assignment while on duty: a short buzz and a message (once per assignment). */
+function checkAssignment() {
+  const mine = dutyInfo().mine;
+  if (!mine || !mine.assignment || mine.id === 'pending') return;
+  const key = mine.id + '|' + mine.assignment;
+  let seen = S.asgSeen;
+  if (seen == null) { try { seen = localStorage.getItem('dutyAsgSeen') || ''; } catch (e) { seen = ''; } }
+  if (seen === key) { S.asgSeen = seen; return; }
+  S.asgSeen = key; try { localStorage.setItem('dutyAsgSeen', key); } catch (e) {}
+  try { if (navigator.vibrate) navigator.vibrate([200, 100, 200]); } catch (e) {}
+  toast('New assignment: ' + mine.assignment, false, 8000);
+}
+
 /* ---------------- The bar under the tabs ---------------- */
 function drawActBar() {
   const bar = $('actbar'); if (!bar) return;
-  if (!S.d || !S.d.me || S.tab === 'pin') { bar.innerHTML = ''; return; }
+  if (!S.d || !S.d.me || S.tab === 'pin' || S.tab === 'home') { bar.innerHTML = ''; return; }
   const act = activeList(), mine = dutyInfo().mine;
-  const me = mine ? `<span class="mytag">● You're on duty${act.some(a => a.name === (mine && mine.mission)) ? '' : ' · ' + esc(mine.mission)} · <b class="tick" data-on="${mine.on}">${hm(dutyNow() - mine.on)}</b></span>` : '';
+  const me = mine ? `<span class="mytag">● You're on duty${act.some(a => a.name === (mine && mine.mission)) ? '' : ' · ' + esc(mine.mission)} · <b class="tick" data-on="${mine.on}">${hm(dutyNow() - mine.on)}</b></span>${mine.assignment ? `<span class="myasg">Assignment: ${esc(mine.assignment)}</span>` : ''}` : '';
   if (act.length) {
     const a = act[0], red = a.type === 'Callout';
     bar.innerHTML = `<button type="button" class="actbar ${red ? 'red' : 'yel'}" id="abtn"><span class="dot"></span><span class="t">ACTIVE ${esc(a.type.toUpperCase())}
       <small>${esc(a.name)}${act.length > 1 ? ' · +' + (act.length - 1) + ' more' : ''}</small>${me}</span><span class="go">Details ›</span></button>`;
   } else if (mine) {
-    bar.innerHTML = `<button type="button" class="actbar grn" id="abtn"><span class="dot"></span><span class="t">ON DUTY<small>${esc(mine.mission)} · <b class="tick" data-on="${mine.on}">${hm(dutyNow() - mine.on)}</b></small></span><span class="go">Details ›</span></button>`;
+    bar.innerHTML = `<button type="button" class="actbar grn" id="abtn"><span class="dot"></span><span class="t">ON DUTY<small>${esc(mine.mission)} · <b class="tick" data-on="${mine.on}">${hm(dutyNow() - mine.on)}</b></small>${mine.assignment ? `<span class="myasg">Assignment: ${esc(mine.assignment)}</span>` : ''}</span><span class="go">Details ›</span></button>`;
   } else { bar.innerHTML = ''; return; }
   $('abtn').onclick = () => openActive(act.length ? act[0].name : mine.mission);
 }
@@ -3295,7 +3386,7 @@ async function goOnDuty(name) {
   const before = S.d.duty, act = activeList().find(x => x.name === name), ml = (S.d.missionList || []).find(x => x.name === name) || {};
   S.d.duty = Object.assign({}, before, { mine: { id: 'pending', unit: S.d.me.unit, name: S.d.me.name, mission: name, type: (act && act.type) || ml.type || '', on: dutyNow(), assignment: '' } });
   S.dutyPending = true;
-  const reshow = () => { const open = !!$('amsh') && !$('offSave'); drawActBar(); if (S.tab === 'log' && !$('mssh')) { const y = window.scrollY; render(); window.scrollTo(0, y); } if (open) openActive(name); };
+  const reshow = () => { const open = !!$('amsh') && !$('offSave'); drawActBar(); if ((S.tab === 'log' || S.tab === 'home') && !$('mssh')) { const y = window.scrollY; render(); window.scrollTo(0, y); } if (open) openActive(name); };
   reshow();
   toast("You're on duty for " + name + '.');
   try {
@@ -3325,7 +3416,7 @@ function pickDutyMission() {
 
 function dutyLogStrip() {
   const mine = dutyInfo().mine;
-  if (mine) return `<div class="dutystrip on"><div><b>● You're on duty</b> · ${esc(mine.mission)}<div class="muted small">Since ${clock(mine.on)} · <b class="tick" data-on="${mine.on}">${hm(dutyNow() - mine.on)}</b></div></div>
+  if (mine) return `<div class="dutystrip on"><div><b>● You're on duty</b> · ${esc(mine.mission)}<div class="muted small">Since ${clock(mine.on)} · <b class="tick" data-on="${mine.on}">${hm(dutyNow() - mine.on)}</b></div>${mine.assignment ? `<div class="stripasg">Assignment: <b>${esc(mine.assignment)}</b></div>` : ''}</div>
     <button type="button" class="btn offb" id="lOff">Go Off Duty</button></div>`;
   return `<div class="dutystrip"><div class="muted small">Starting now? Go on duty and the app keeps your time.</div><button type="button" class="btn onb" id="lOn">Go On Duty</button></div>`;
 }
@@ -3388,7 +3479,7 @@ function openOffDuty(thenOn, pre) {
     }
   };
 }
-function dutyReshow() { drawActBar(); if (S.tab === 'log' && !$('mssh') && !$('amsh')) { const y = window.scrollY; render(); window.scrollTo(0, y); } }
+function dutyReshow() { drawActBar(); if ((S.tab === 'log' || S.tab === 'home') && !$('mssh') && !$('amsh')) { const y = window.scrollY; render(); window.scrollTo(0, y); } }
 
 /** A shift left running for a long time: ask once per app open. */
 function checkLongShift() {
@@ -3806,8 +3897,9 @@ function applyDuty(r) {
   const hadTab = S.tabList && S.tabList.indexOf('board') >= 0;
   if (S.d.me.admin && hadTab !== boardWanted()) buildTabs();
   drawActBar();
-  if (S.tab === 'board' && !S.boardTyping && !$('amsh') && !$('mssh')) { const y = window.scrollY; render(); window.scrollTo(0, y); }
+  if ((S.tab === 'board' || S.tab === 'home') && !S.boardTyping && !$('amsh') && !$('mssh') && !$('asksh')) { const y = window.scrollY; render(); window.scrollTo(0, y); }
   showDutyNotices();
+  checkAssignment();
 }
 function boardWanted() { return !!(S.d && S.d.me && S.d.me.admin); }
 
@@ -3843,7 +3935,13 @@ async function dutyRefresh() {
 }
 setInterval(dutyTick, 30000);
 setInterval(() => { if (S.d && (S.tab === 'board' || (S.d.me && S.d.me.admin && boardData().length))) dutyRefresh(); }, 60000);
-setInterval(() => { if (S.d && !(S.d.me && S.d.me.admin)) dutyRefresh(); }, 5 * 60000);
+S.refreshTick = 0;
+setInterval(() => {
+  if (!S.d || (S.d.me && S.d.me.admin)) return;
+  S.refreshTick++;
+  // On duty: check every minute so a new assignment arrives quickly. Otherwise every 5 minutes.
+  if (dutyInfo().mine || S.refreshTick % 5 === 0) dutyRefresh();
+}, 60000);
 document.addEventListener('visibilitychange', () => { if (!document.hidden) dutyRefresh(); });
 </script>
 
