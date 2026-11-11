@@ -150,6 +150,36 @@
   .stopbox { background: #fff1f1; border: 1.5px solid #c53030; border-radius: 10px; padding: 10px; margin: 6px 0 10px; font-size: 14px; }
   .btn.scgo { background: #c53030; } .btn.scgo:disabled { background: #e9b4b4; opacity: 1; }
   #scW { font-size: 18px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+  .btop { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-bottom: 12px; }
+  .bseg { display: inline-flex; border: 1.5px solid var(--navy); border-radius: 9px; overflow: hidden; }
+  .bseg button { border: 0; background: #fff; color: var(--navy); font: inherit; font-weight: 700; padding: 7px 16px; cursor: pointer; }
+  .bseg button.on { background: var(--navy); color: #fff; }
+  .btn.bputon { width: auto; flex: 1; min-width: 180px; background: #f3faf5; color: var(--navy); border: 1.5px dashed #2f855a; }
+  .bghr { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  .btn.badd { background: #fff; color: #2f855a; border: 1.5px solid #2f855a; width: auto; }
+  .bfold { display: block; width: 100%; text-align: left; border: 1px solid var(--line); border-radius: 10px; background: #f6f8f7; color: var(--muted);
+    font: inherit; font-weight: 700; padding: 9px 12px; margin: 8px 0; cursor: pointer; }
+  .dtab .bfold { margin: 0; }
+  .link.bet { color: var(--navy); padding: 0 0 0 4px; font-size: 13px; text-decoration: underline; }
+  .lbox { margin-bottom: 6px; }
+  .lrow { display: grid; grid-template-columns: 1fr auto 42px; align-items: center; gap: 8px; border-bottom: 1px solid #edf0ee; }
+  .lrow .lname { display: flex; align-items: center; gap: 10px; background: none; border: 0; padding: 10px 2px; font: inherit; text-align: left; cursor: pointer; color: inherit; min-width: 0; }
+  .lrow .lu { font-weight: 800; color: var(--navy); width: 54px; flex: none; }
+  .lrow .ln { font-weight: 600; } .lrow .lt { display: block; font-size: 12px; color: var(--muted); font-weight: 500; }
+  .lrow .lst { font-size: 12px; font-weight: 700; border-radius: 999px; padding: 3px 9px; }
+  .lrow .lst.on { background: #e3f3e8; color: #22673f; } .lrow .lst.off { background: #eef0ef; color: #7a837e; }
+  .lrow.dim .lu, .lrow.dim .ln { color: #9aa39e; }
+  .lck { width: 36px; height: 30px; border-radius: 7px; border: 0; font-weight: 900; font-size: 13px; cursor: pointer; justify-self: end; }
+  .lck.ok { background: #e3f3e8; color: #22673f; } .lck.soon { background: #fdf1d6; color: #9a6a10; } .lck.late { background: #c53030; color: #fff; }
+  .also { background: #f3f6ff; border: 1px solid #c8d3f0; border-radius: 10px; padding: 8px 10px; margin-top: 12px; font-size: 14px; }
+  .also .alsoi { display: block; background: none; border: 0; padding: 6px 0 0; font: inherit; color: var(--navy); text-align: left; cursor: pointer; }
+  .pol { max-height: 38vh; overflow: auto; margin: 0 16px; border: 1px solid var(--line); border-radius: 10px; }
+  .poi { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 9px 10px; border-bottom: 1px solid #eef1ef; margin: 0; font-weight: 400; }
+  .poi input { width: 20px; height: 20px; margin: 0 8px 0 0; } label.poi { justify-content: flex-start; cursor: pointer; }
+  .poi.dis { color: #9aa39e; }
+  .msfind { margin: 8px 12px; width: calc(100% - 24px); font-size: 16px; padding: 9px; border: 1.5px solid #9fb3a7; border-radius: 8px; }
+  .usbtns .btn { display: block; width: 100%; margin: 8px 0 0; }
+  .mtop { display: flex; gap: 10px; margin-bottom: 12px; } .mtop .btn { flex: 1; width: auto; }
   .hcard { border: 1px solid var(--line); border-radius: 12px; margin-bottom: 10px; background: #fff; overflow: hidden; }
   .hcard.sel { background: #f3f7f4; padding: 10px 12px; margin-bottom: 12px; }
   .hcard .hhead { display: block; width: 100%; text-align: left; background: none; border: 0; padding: 10px 12px; font: inherit; color: inherit; cursor: pointer; }
@@ -478,9 +508,16 @@ const POSSE_INFO = {"key":"west","short":"West Posse","header":"West Millard She
 </script>
 <script>
 /* ================= Duty Log: core (shared by the East and West posses) ================= */
-const APP_VERSION = 'V1.6.5';
+const APP_VERSION = 'V1.6.6';
 const APP_DATE = 'October 25, 2026';
 const CHANGELOG = [
+  { v: 'V1.6.6', date: 'November 10, 2026', items: [
+    'Duty Board (renamed): shows only active callouts, trainings and events. Off-duty units fold into one line; anyone on duty for something else shows under "Also on duty".',
+    'Detail and List views. List is one quiet line per unit with a small security-check box; tap a name for everything else.',
+    'Admins can put units on duty from the board, one or several at once, with "+ Add unit" on each mission.',
+    'Admins can edit on and off times; logged hours follow, and the change goes on the Board Log.',
+    'Go Off Duty closes right away and saves in the background.',
+    'Missions tab: the new mission form opens from a "+ New Mission / Event" button. Long mission lists have a search box.'] },
   { v: 'V1.6.5', date: 'November 10, 2026', items: [
     'Monthly meetings: each meeting is its own mission ("Posse Meeting · Nov 2026") with room for minutes, highlights and photos. Admins create it with one tap on the Missions tab. It stays open for logging until 90 days after the meeting.',
     'Meetings have their own group at the top of the Log list. A member can log each meeting only once, and the app asks if the date doesn\u2019t match the meeting\u2019s month.',
@@ -1179,10 +1216,16 @@ function openPick(id) {
   });
   document.body.insertAdjacentHTML('beforeend', `<div class="mssh" id="mssh"><div class="msbox" role="listbox" aria-label="${esc(sel.dataset.title)}">
     <div class="mshead"><b>${esc(sel.dataset.title)}</b><button type="button" class="msx" id="msx" aria-label="Close">✕</button></div>
+    ${sel.options.length > 12 || sel.dataset.search ? '<input type="search" class="msfind" id="msfind" placeholder="Type to search" autocomplete="off">' : ''}
     <div class="mslist" id="mslist">${h}</div></div></div>`);
   document.documentElement.classList.add('msopen');
   $('mssh').onclick = ev => { if (ev.target.id === 'mssh') closeMs(); };
   $('msx').onclick = closeMs;
+  if ($('msfind')) $('msfind').oninput = () => {
+    const q = $('msfind').value.trim().toLowerCase();
+    $('mslist').querySelectorAll('.msi').forEach(x => { x.style.display = !q || x.textContent.toLowerCase().indexOf(q) >= 0 || !x.dataset.v ? '' : 'none'; });
+    $('mslist').querySelectorAll('.msg').forEach(x => { x.style.display = q ? 'none' : ''; });
+  };
   $('mslist').querySelectorAll('.msi').forEach(b => b.onclick = () => {
     sel.value = b.dataset.v; closeMs();
     sel.dispatchEvent(new Event('change', { bubbles: true }));
@@ -1203,7 +1246,7 @@ function entryForm(e, button, cancel) {
       </div>
       <label>Mission / Event${missionSelect(e ? e.mission : '')}
         <span class="hint">Pick from the list so everyone's time lands on the same mission. Can't find it? Choose “+ New”.${(S.d.missions || []).some(m => m.locked) ? ' Locked missions have been reported. Ask an admin if you need to add time.' : ''}</span></label>
-      <label id="emwrap" class="hidden">New Mission / Event name<textarea id="em" class="grow1" rows="1" maxlength="80" autocomplete="off" placeholder="e.g. LOST HIKER – CHALK CREEK"></textarea></label>
+      <label id="emwrap" class="hidden">New Mission / Event name<textarea id="em" class="grow1" rows="1" maxlength="80" autocomplete="off" placeholder="e.g. LOST HIKER CHALK CREEK"></textarea></label>
       <div id="simbox" class="simbox hidden"></div>
       <div class="row2">
         <label>Hours (include travel)<input type="number" id="eh" min="0.5" max="72" step="0.5" inputmode="decimal" required value="${e ? e.h : ''}"></label>
@@ -2033,7 +2076,7 @@ function addMissionForm() {
   const d = S.d, c = d.conn || {};
   const folder = c.ctFolder || (d.posse && d.posse.short) || '';
   return section('Add Mission / Event', `<form id="mf" class="form">
-      <label>Mission / Event name<textarea id="mn" class="grow1" rows="1" maxlength="80" required placeholder="e.g. LOST HIKER – CHALK CREEK"></textarea>
+      <label>Mission / Event name<textarea id="mn" class="grow1" rows="1" maxlength="80" required placeholder="e.g. LOST HIKER CHALK CREEK"></textarea>
         <span class="hint">Letters are capitalized automatically, to match the CalTopo map name.</span></label>
       <div class="row2">
         <label id="mdw">Start date<input type="date" id="md" value="${todayStr()}" required></label>
@@ -2142,7 +2185,7 @@ function hookAddMission() {
         ongoing: $('mong').checked, joint: $('mjoint').checked, location: f.location, caseNo: $('mcase').value.trim(),
         staging: f.staging, primary: f.primary, backup: f.backup, details: f.extra,
         makeMap: f.map, post: post, message: post ? msg : '', rid: S.missionRid });
-      clearTimeout(st.dt); draftClear('mission'); S.missionRid = null;
+      clearTimeout(st.dt); draftClear('mission'); S.missionRid = null; S.showNewMission = false;
       if (r && r.results) {
         S.addResult = { name: r.name, results: r.results, message: msg, wantMap: f.map, wantPost: post };
         setData(r.data); window.scrollTo(0, 0);
@@ -2267,13 +2310,14 @@ function renderMissions() {
   if (admin) {
     const thisMeet = meetingNameFor(todayYmd());
     const hasMeet = d.missionList.some(m => m.name === thisMeet);
-    html += section('Monthly Meeting', `<button type="button" class="btn" id="mkmeet">${hasMeet ? 'Open ' + esc(thisMeet) : "+ Create this month's meeting"}</button>
-      <p class="muted small" style="margin-bottom:0">Each meeting is its own mission, so minutes, highlights and photos stay with it. Members can log it until 90 days after the meeting; then it closes by itself.</p>`);
-    html += addMissionForm();
+    html += `<div class="mtop"><button type="button" class="btn" id="mknew">${S.showNewMission ? 'Close the new mission form' : '+ New Mission / Event'}</button>
+      <button type="button" class="btn ghost" id="mkmeet">${hasMeet ? esc(thisMeet) : "+ This month's meeting"}</button></div>`;
+    if (S.showNewMission == null) { const dr = draftLoad('mission'); S.showNewMission = !!(dr && (dr.mn || dr.mloc || dr.mnotes || dr.mxtra)); }
+    if (S.showNewMission) html += addMissionForm();
     const sims = similarGroups(d.missionList);
     S.sims = sims;
     if (sims.length) {
-      html += section('Similar Mission Names', `<p class="muted small" style="margin-top:0">These names look alike. Pick the one to keep and merge: every entry, note and photo moves to that name. Leave a group alone if they really are different missions.</p>` +
+      S.simsHtml = section('Similar Mission Names', `<p class="muted small" style="margin-top:0">These names look alike. Pick the one to keep and merge: every entry, note and photo moves to that name. Leave a group alone if they really are different missions.</p>` +
         sims.map((g, gi) => {
           g.sort((a, b) => (b.planned - a.planned) || b.members - a.members);
           return `<div class="grp"><h4>Possible duplicates</h4>
@@ -2281,8 +2325,8 @@ function renderMissions() {
               <span class="t">${esc(m.name)} <span class="muted small">· ${m.members} member${m.members === 1 ? '' : 's'}${m.planned ? ' · on your list' : ''}</span></span></label>`).join('')}
             <div class="r"><button class="btn small mg" data-g="${gi}">Merge into the selected name</button></div></div>`;
         }).join(''));
-    }
-  }
+    } else S.simsHtml = '';
+  } else S.simsHtml = '';
 
   const me = d.posse ? d.posse.short : 'This posse';
   const cards = list.map((m, i) => {
@@ -2387,7 +2431,7 @@ function renderMissions() {
   html += section(`Missions & Events${S.mFilter === 'all' ? '' : ' · ' + esc(S.mFilter)}`,
     (cards || '<p class="muted">No missions of this type yet.</p>') +
     `<p class="muted small">Tap a mission for its map, notes, photos, expenses and who logged time${admin ? ', or to close, lock, merge or rename it' : ''}.</p>`, filter);
-  main(html);
+  main(html + (S.simsHtml || ''));
 
   $('mfil').onchange = ev => { S.mFilter = ev.target.value; S.openMission = null; render(); };
   if (admin) refreshPlaceList();
@@ -2395,7 +2439,8 @@ function renderMissions() {
   loadThumbs();
   if (admin) {
     if ($('mkmeet')) $('mkmeet').onclick = openMeetingSheet;
-    hookAddMission();
+    $('mknew').onclick = () => { S.showNewMission = !S.showNewMission; render(); window.scrollTo(0, 0); if (S.showNewMission && $('mn')) $('mn').focus(); };
+    if ($('mf')) hookAddMission();
     document.querySelectorAll('.mg').forEach(b => b.onclick = async () => {
       const g = S.sims[+b.dataset.g];
       const keep = document.querySelector(`input[name="sg${b.dataset.g}"]:checked`).value;
@@ -3224,7 +3269,7 @@ function openActive(name, which) {
     ${sec('Incident Location', place(a.location))}${sec('Staging Point', place(a.staging))}
     ${sec('Comms Plan', [a.primary ? 'Primary Ch: ' + esc(a.primary) : '', a.backup ? 'Backup Ch: ' + esc(a.backup) : ''].filter(Boolean).join('<br>'))}
     ${sec('Details', a.details ? esc(a.details).replace(/\n/g, '<br>') : '')}
-    ${S.d.me.admin && isAct ? `<div class="amlinks"><button type="button" class="link" id="amBoard" style="color:var(--navy);padding:0">Open the On Duty Board ›</button></div>` : ''}
+    ${S.d.me.admin && isAct ? `<div class="amlinks"><button type="button" class="link" id="amBoard" style="color:var(--navy);padding:0">Open the Duty Board ›</button></div>` : ''}
     ${others.length ? `<div class="amlinks">Also active: ${others.map((o, i) => `<button type="button" class="link amo" data-i="${i}" style="color:var(--navy);padding:0 6px">${esc(o.name)}</button>`).join('')}</div>` : ''}
     </div></div>`);
   document.documentElement.classList.add('msopen');
@@ -3290,7 +3335,7 @@ function hookDutyStrip() {
 }
 
 /* ---------------- Go Off Duty ---------------- */
-function openOffDuty(thenOn) {
+function openOffDuty(thenOn, pre) {
   const mine = dutyInfo().mine; if (!mine) return;
   if (mine.id === 'pending') { toast('Still saving your on-duty time. Try again in a moment.'); return; }
   closeActive();
@@ -3314,6 +3359,7 @@ function openOffDuty(thenOn) {
   const offTime = () => { const v = $('offT').value; if (!v || v === startVal) return Date.now(); const t = new Date(v).getTime(); return isFinite(t) ? Math.max(t, mine.on) : Date.now(); };
   const upd = () => { const t = offTime(), min = (t - mine.on) / 60000; $('offShow').textContent = clock(t); $('offEl').textContent = hm(t - mine.on); $('offHr').textContent = (min > 0 ? halfUpHrs(min) : '—') + ' hr (rounded up)'; };
   $('offT').addEventListener('input', upd); $('offT').addEventListener('change', upd);
+  if (pre) { if (pre.offT) $('offT').value = pre.offT; $('offMi').value = pre.mi; $('offNo').value = pre.notes; upd(); }
   $('amx').onclick = closeActive; $('offCancel').onclick = closeActive;
   $('offSave').onclick = async () => {
     const mi = $('offMi').value.trim();
@@ -3321,16 +3367,28 @@ function openOffDuty(thenOn) {
     const t = offTime();
     if (t > Date.now() + 60000) { toast("The off-duty time can't be in the future.", true); return; }
     if (t < mine.on) { toast('The off-duty time is before you went on duty.', true); return; }
-    $('offSave').disabled = true; $('offSave').textContent = 'Saving…';
     S.offRid = S.offRid || newRid();
     const changed = $('offT').value !== startVal;
+    const pre = { offT: changed ? $('offT').value : '', mi: mi, notes: $('offNo').value };
+    // Close right away; the save (which also reloads your totals) finishes in the background.
+    const before = S.d.duty;
+    closeActive();
+    S.d.duty = Object.assign({}, before, { mine: null });
+    S.dutyPending = true; dutyReshow();
+    toast('Off duty. Saving your time…', false, 20000);
     try {
-      setData(await run('apiDutyOff', S.creds, { id: mine.id, off: changed ? new Date(t).toISOString() : '', miles: Number(mi), notes: $('offNo').value, rid: S.offRid }));
-      S.offRid = null; closeActive(); toast('Off duty. Your time was logged.', false, 4000);
+      const r = await run('apiDutyOff', S.creds, { id: mine.id, off: changed ? new Date(t).toISOString() : '', miles: Number(mi), notes: pre.notes, rid: S.offRid });
+      S.offRid = null; S.dutyPending = false;
+      setData(r); toast('Your time was logged.', false, 4000);
       if (thenOn) goOnDuty(thenOn);
-    } catch (e) { $('offSave').disabled = false; $('offSave').textContent = 'Go Off Duty & Save'; toast(clean(e), true, 6000); }
+    } catch (e) {
+      S.dutyPending = false; S.d.duty = before; dutyReshow();
+      openOffDuty(thenOn, pre);
+      toast("Couldn't save: " + clean(e), true, 8000);
+    }
   };
 }
+function dutyReshow() { drawActBar(); if (S.tab === 'log' && !$('mssh') && !$('amsh')) { const y = window.scrollY; render(); window.scrollTo(0, y); } }
 
 /** A shift left running for a long time: ask once per app open. */
 function checkLongShift() {
@@ -3339,7 +3397,7 @@ function checkLongShift() {
   if (dutyNow() - mine.on > (dutyInfo().longHours || 16) * 3600000) { S.longAsked = mine.id; openOffDuty(); }
 }
 
-/* ---------------- On Duty Board (admins) ---------------- */
+/* ---------------- Duty Board (admins) ---------------- */
 const CHECK_CHOICES = [[0, 'Off'], [15, '15 min'], [30, '30 min'], [45, '45 min'], [60, '60 min'], [90, '90 min'], [120, '2 hr'], [180, '3 hr'], [240, '4 hr']];
 function boardData() { return dutyInfo().board || []; }
 function dueInfo(s, every) {
@@ -3349,56 +3407,87 @@ function dueInfo(s, every) {
   if (left <= 10) return { cls: 'soon', text: 'Due in ' + left + ' min', due: false, left: left };
   return { cls: 'ok', text: 'Due in ' + left + ' min', due: false, left: left };
 }
+function boardMode() {
+  if (!S.boardMode) { try { S.boardMode = localStorage.getItem('dutyBoardMode') || 'detail'; } catch (e) { S.boardMode = 'detail'; } }
+  return S.boardMode;
+}
+function setBoardMode(m) { S.boardMode = m; try { localStorage.setItem('dutyBoardMode', m); } catch (e) {} const y = window.scrollY; render(); window.scrollTo(0, y); }
+function tcName(n) { const l = lastName(n); return l.charAt(0) + l.slice(1).toLowerCase(); }
 function renderBoard() {
   if (!S.d.me.admin) { S.tab = 'log'; return renderLog(); }
   if (S.boardView && S.boardView !== 'active') return renderBoardHist();
-  const groups = boardData();
-  const wide = window.innerWidth >= 900;
+  const groups = boardData(), also = dutyInfo().also || [];
+  const mode = boardMode(), wide = window.innerWidth >= 900 && mode === 'detail';
+  S.boardOffOpen = S.boardOffOpen || {};
   const due = [];
+  const et = s => `<button type="button" class="link bet" data-id="${esc(s.id)}">Edit times</button>`;
+  const putBy = s => s.putBy ? `<div class="bmeta">Put on duty by ${esc(s.putBy)}</div>` : '';
   const html = groups.map((g, gi) => {
     const on = g.on.slice().sort((a, b) => (dueInfo(a, g.every).left || 9999) - (dueInfo(b, g.every).left || 9999));
     on.forEach(s => { if (dueInfo(s, g.every).due) due.push(s.unit + ' ' + lastName(s.name) + ' (' + dueInfo(s, g.every).text.toLowerCase() + ')'); });
     const every = `<label class="every">Check every <select class="bev" data-g="${gi}">${CHECK_CHOICES.concat(CHECK_CHOICES.some(c => c[0] === g.every) ? [] : [[g.every, g.every + ' min']]).map(([v, l]) => `<option value="${v}" ${v === g.every ? 'selected' : ''}>${l}</option>`).join('')}</select></label>`;
-    const offRows = g.off.map(s => wide
+    const offOpen = !!S.boardOffOpen[g.mission];
+    const fold = g.off.length ? `<button type="button" class="bfold" data-g="${gi}" aria-expanded="${offOpen}">Off duty (${g.off.length}) ${offOpen ? '▾' : '▸'}</button>` : '';
+    const head = `<div class="bgh"><div><b>${esc(g.mission)}</b> <span class="tag">${esc(g.type || 'Mission')}</span> <span class="muted small">${g.on.length} on duty</span></div>
+      <div class="bghr">${every}<button type="button" class="btn small badd" data-g="${gi}">+ Add unit</button></div></div>`;
+    const earlier = s => { const before = g.off.filter(o => o.unit === s.unit); return before.length ? 'Shift ' + (before.length + 1) + ' · earlier: ' + before.slice().reverse().map(o => clock(o.on) + '–' + clock(o.off)).join(', ') : ''; };
+    if (mode === 'list') {
+      const row = (s, isOn) => {
+        const di = dueInfo(s, g.every);
+        const ck = isOn && g.every ? `<button type="button" class="lck ${di.cls}" data-id="${esc(s.id)}" title="${esc(di.text)} · tap after a security check" aria-label="Security check ${esc(s.unit)}: ${esc(di.text)}">${di.cls === 'late' ? '!' : di.cls === 'soon' ? di.left + 'm' : '✓'}</button>` : '<span></span>';
+        return `<div class="lrow${isOn ? '' : ' dim'}"><button type="button" class="lname" data-id="${esc(s.id)}"><span class="lu">${esc(s.unit)}</span><span class="ln">${esc(tcName(s.name))}<span class="lt">${isOn ? `<span class="tick" data-on="${s.on}">${hm(dutyNow() - s.on)}</span>` : clock(s.on) + '–' + clock(s.off)}</span></span></button>
+          <span class="lst ${isOn ? 'on' : 'off'}">${isOn ? 'On duty' : 'Off duty'}</span>${ck}</div>`;
+      };
+      return `${head}<div class="lbox">${on.map(s => row(s, true)).join('') || '<p class="muted" style="margin:8px 0">Nobody on duty.</p>'}${fold}${offOpen ? g.off.map(s => row(s, false)).join('') : ''}</div>`;
+    }
+    const offRows = !offOpen ? '' : g.off.map(s => wide
       ? `<tr class="off"><td class="u">${esc(s.unit)}</td><td class="nm">${esc(lastName(s.name))}</td><td><div class="asgro">${esc(s.assignment) || '<span class="muted">—</span>'}</div></td>
-          <td>On ${clock(s.on)}<br>Off ${clock(s.off)}</td><td class="big">${hm(s.off - s.on)}<div class="muted small">logged ${s.hours} hr · ${s.miles == null ? '' : s.miles + ' mi'}</div></td><td>${s.check && s.checkBy !== 'Start' ? clock(s.check) : '—'}</td><td>—</td><td></td></tr>`
+          <td>On ${clock(s.on)}<br>Off ${clock(s.off)}<div>${et(s)}</div></td><td class="big">${hm(s.off - s.on)}<div class="muted small">logged ${s.hours} hr · ${s.miles == null ? 'miles unknown' : s.miles + ' mi'}</div></td><td>${s.check && s.checkBy !== 'Start' ? clock(s.check) : '—'}</td><td>—</td><td></td></tr>`
       : `<div class="bcard off"><div class="brow"><div class="bu">${esc(s.unit)} <span>${esc(lastName(s.name))}</span></div><div class="bel">${hm(s.off - s.on)}</div></div>
-          <div class="bmeta"><b class="ink">On ${clock(s.on)} · Off ${clock(s.off)}</b>${s.miles == null ? '' : ' · ' + s.miles + ' mi'}</div>
+          <div class="bmeta"><b class="ink">On ${clock(s.on)} · Off ${clock(s.off)}</b>${s.miles == null ? '' : ' · ' + s.miles + ' mi'} ${et(s)}</div>
           <div class="bmeta">Logged as ${s.hours} hr (rounded up)${s.assignment ? ' · Assignment: ' + esc(s.assignment) : ''}</div></div>`).join('');
     const onRows = on.map(s => {
       const di = dueInfo(s, g.every);
       const last = s.check && s.checkBy !== 'Start' ? clock(s.check) : '—';
-      const before = g.off.filter(o => o.unit === s.unit);
-      const earlier = before.length ? 'Shift ' + (before.length + 1) + ' · earlier: ' + before.slice().reverse().map(o => clock(o.on) + '–' + clock(o.off)).join(', ') : '';
-      if (wide) return `<tr class="cs-${di.cls}"><td class="u">${esc(s.unit)}</td><td class="nm">${esc(lastName(s.name))}</td>
+      const ea = earlier(s);
+      if (wide) return `<tr class="cs-${di.cls}"><td class="u">${esc(s.unit)}</td><td class="nm">${esc(lastName(s.name))}${s.putBy ? `<div class="muted small">put on by ${esc(s.putBy)}</div>` : ''}</td>
         <td><textarea class="basg" data-id="${esc(s.id)}" rows="2" maxlength="300" placeholder="Type the assignment">${esc(s.assignment)}</textarea></td>
-        <td>On ${clock(s.on)}${earlier ? `<div class="muted small">${esc(earlier)}</div>` : ''}</td><td class="big"><span class="tick" data-on="${s.on}">${hm(dutyNow() - s.on)}</span></td><td>${last}${s.checkBy && s.checkBy !== 'Start' ? `<div class="muted small">by ${esc(s.checkBy)}</div>` : ''}</td>
+        <td>On ${clock(s.on)}${ea ? `<div class="muted small">${esc(ea)}</div>` : ''}<div>${et(s)}</div></td><td class="big"><span class="tick" data-on="${s.on}">${hm(dutyNow() - s.on)}</span></td><td>${last}${s.checkBy && s.checkBy !== 'Start' ? `<div class="muted small">by ${esc(s.checkBy)}</div>` : ''}</td>
         <td><span class="cd ${di.cls}">${di.text || '<span class="muted">No checks</span>'}</span></td><td>${g.every ? `<button type="button" class="btn small bchk" data-id="${esc(s.id)}">✓ Checked</button>` : ''}<button type="button" class="btn small bpo" data-id="${esc(s.id)}">Put off duty…</button></td></tr>`;
       return `<div class="bcard cs-${di.cls}"><div class="brow"><div class="bu">${esc(s.unit)} <span>${esc(lastName(s.name))}</span></div><div class="bel"><span class="tick" data-on="${s.on}">${hm(dutyNow() - s.on)}</span></div></div>
-        <div class="bmeta">On since ${clock(s.on)}${g.every ? ' · last check ' + last : ''}</div>${earlier ? `<div class="bmeta">${esc(earlier)}</div>` : ''}
+        <div class="bmeta">On since ${clock(s.on)} ${et(s)}${g.every ? ' · last check ' + last : ''}</div>${ea ? `<div class="bmeta">${esc(ea)}</div>` : ''}${putBy(s)}
         ${s.assignment ? `<button type="button" class="asg" data-id="${esc(s.id)}"><span class="tx"><b>Assignment</b>${esc(s.assignment)}</span><span class="ed">Edit</span></button>`
           : `<button type="button" class="asg none" data-id="${esc(s.id)}"><span class="tx">+ Add assignment</span></button>`}
         ${g.every ? `<div class="bchkrow"><span class="cd ${di.cls}">${di.text}</span><button type="button" class="btn small bchk" data-id="${esc(s.id)}">✓ Checked</button></div>` : ''}
         <div class="bporow"><button type="button" class="btn small bpo" data-id="${esc(s.id)}">Put off duty…</button></div></div>`;
     }).join('');
-    const head = `<div class="bgh"><div><b>${esc(g.mission)}</b> <span class="tag">${esc(g.type || 'Mission')}</span> <span class="muted small">${g.on.length} on duty</span></div>${every}</div>`;
     if (wide) return `${head}<table class="dtab"><tr><th>Unit</th><th>Name</th><th>Assignment <span class="muted">(saves when you click away)</span></th><th>On / Off</th><th>On shift</th><th>Last check</th><th>Next check</th><th></th></tr>
-      ${onRows || '<tr><td colspan="8" class="muted">Nobody on duty.</td></tr>'}${offRows ? `<tr class="sep"><td colspan="8">Off duty</td></tr>${offRows}` : ''}</table>`;
-    return `${head}${onRows || '<p class="muted">Nobody on duty.</p>'}${offRows ? `<div class="bh">Off duty</div>${offRows}` : ''}`;
+      ${onRows || '<tr><td colspan="8" class="muted">Nobody on duty.</td></tr>'}${fold ? `<tr class="sep"><td colspan="8">${fold}</td></tr>${offRows}` : ''}</table>`;
+    return `${head}${onRows || '<p class="muted">Nobody on duty.</p>'}${fold}${offRows}`;
   }).join('<hr class="bsep">');
-  main(section('On Duty Board', `${due.length ? `<div class="duebar">🔔 Security check due: ${esc(due.join(', '))}</div>` : ''}
-    ${html || '<p class="muted">Nobody is on duty, and no mission is active. When members tap Go On Duty, they show up here.</p>'}
-    <p class="muted small" style="margin-top:16px">Every check, assignment and on/off duty is recorded with who did it on the Board Log tab of the sheet. Alerts sound while this app is open.</p>`, boardViewSelect()));
-  hookBoardView();
+  const alsoHtml = also.length ? `<div class="also"><b>Also on duty, not an active mission:</b>${also.map(s =>
+    `<button type="button" class="alsoi" data-id="${esc(s.id)}">${esc(s.unit)} ${esc(tcName(s.name))} · ${esc(s.mission)} · <span class="tick" data-on="${s.on}">${hm(dutyNow() - s.on)}</span> ›</button>`).join('')}</div>` : '';
+  const top = `<div class="btop"><div class="bseg" role="group" aria-label="Board layout"><button type="button" data-m="detail" class="${mode === 'detail' ? 'on' : ''}">Detail</button><button type="button" data-m="list" class="${mode === 'list' ? 'on' : ''}">List</button></div>
+    <button type="button" class="btn bputon" id="bputon">+ Put a unit on duty</button></div>`;
+  main(section('Duty Board', `${top}${due.length ? `<div class="duebar">🔔 Security check due: ${esc(due.join(', '))}</div>` : ''}
+    ${html || '<p class="muted">No active callout, training or event right now. Use the dropdown above to look at today, this month, or any mission.</p>'}
+    ${alsoHtml}
+    <p class="muted small" style="margin-top:16px">${mode === 'list' ? 'Tap the small box after a security check. Tap a name for everything else. ' : ''}Every check, assignment and on/off duty is recorded with who did it on the Board Log tab of the sheet. Alerts sound while this app is open.</p>`, boardViewSelect()));
   if (wide) $('main').classList.add('widemain');
+  hookBoardView();
+  document.querySelectorAll('.bseg button').forEach(b => b.onclick = () => setBoardMode(b.dataset.m));
+  $('bputon').onclick = () => openPutOn(null);
+  document.querySelectorAll('.badd').forEach(b => b.onclick = () => openPutOn(groups[+b.dataset.g].mission));
+  document.querySelectorAll('.bfold').forEach(b => b.onclick = () => { const g = groups[+b.dataset.g]; S.boardOffOpen[g.mission] = !S.boardOffOpen[g.mission]; const y = window.scrollY; render(); window.scrollTo(0, y); });
   document.querySelectorAll('.bev').forEach(sel => sel.onchange = async () => {
     const g = groups[+sel.dataset.g]; sel.disabled = true;
     try { applyDuty(await run('apiBoardEvery', S.creds, g.mission, Number(sel.value))); toast('Check timer saved.'); } catch (e) { toast(clean(e), true); sel.disabled = false; }
   });
-  document.querySelectorAll('.bchk').forEach(b => b.onclick = async () => {
-    b.disabled = true; b.textContent = 'Saving…';
-    try { applyDuty(await run('apiBoardCheck', S.creds, b.dataset.id)); toast('Check recorded.'); } catch (e) { toast(clean(e), true); b.disabled = false; b.textContent = '✓ Checked'; }
-  });
+  const check = async b => {
+    const was = b.textContent; b.disabled = true; if (b.classList.contains('bchk')) b.textContent = 'Saving…';
+    try { applyDuty(await run('apiBoardCheck', S.creds, b.dataset.id)); toast('Check recorded.'); } catch (e) { toast(clean(e), true); b.disabled = false; b.textContent = was; }
+  };
+  document.querySelectorAll('.bchk, .lck').forEach(b => b.onclick = () => check(b));
   document.querySelectorAll('textarea.basg').forEach(t => {
     t.dataset.was = t.value;
     t.addEventListener('focus', () => { S.boardTyping = true; });
@@ -3410,6 +3499,119 @@ function renderBoard() {
   });
   document.querySelectorAll('button.asg').forEach(b => b.onclick = () => editAssignment(b.dataset.id));
   document.querySelectorAll('button.bpo').forEach(b => b.onclick = () => openAdminOff(b.dataset.id));
+  document.querySelectorAll('.bet').forEach(b => b.onclick = () => openEditTimes(b.dataset.id));
+  document.querySelectorAll('.lname, .alsoi').forEach(b => b.onclick = () => openUnitSheet(b.dataset.id));
+}
+
+/* ---------------- Board: one unit's actions (list view, "also on duty") ---------------- */
+function shiftGroup(id) {
+  for (const g of boardData()) if (g.on.concat(g.off).some(x => x.id === id)) return g;
+  return null;
+}
+function openUnitSheet(id) {
+  const s = shiftById(id); if (!s) return;
+  const g = shiftGroup(id), isOn = s.status === 'On', every = g ? g.every : 0, di = dueInfo(s, every);
+  closeActive();
+  const line = (k, v) => `<div><span>${k}</span><span>${v}</span></div>`;
+  document.body.insertAdjacentHTML('beforeend', `<div class="amsh" id="amsh"><div class="ambox form" role="dialog" aria-label="${esc(s.unit)}">
+    <div class="amhead grn2"><div class="k">${esc(s.mission || (g && g.mission) || '')}</div><div class="n">${esc(s.unit)} ${esc(lastName(s.name))} · ${isOn ? 'On duty' : 'Off duty'}</div><button type="button" class="amx" id="amx" aria-label="Close">✕</button></div>
+    <div class="sum">${isOn ? line('On since', clock(s.on)) + line('On shift', hm(dutyNow() - s.on)) : line('On / off', clock(s.on) + ' – ' + clock(s.off)) + line('Logged', s.hours + ' hr' + (s.miles == null ? '' : ' · ' + s.miles + ' mi'))}
+      ${isOn && every ? line('Last check', `<b class="${di.cls === 'late' ? 'errtx' : ''}">${s.check && s.checkBy !== 'Start' ? clock(s.check) : '—'} · ${esc(di.text.toLowerCase())}</b>`) : ''}
+      ${line('Assignment', esc(s.assignment) || '—')}${s.putBy ? line('Put on duty by', esc(s.putBy)) : ''}</div>
+    <div class="usbtns" style="padding:4px 16px 16px">
+      ${isOn && every ? '<button type="button" class="btn wide" id="usChk">✓ Checked</button>' : ''}
+      ${isOn ? '<button type="button" class="btn ghost wide" id="usAsg">Edit assignment</button>' : ''}
+      <button type="button" class="btn ghost wide" id="usEt">Edit times</button>
+      ${isOn ? '<button type="button" class="btn wide bpo" id="usOff" style="margin-left:0">Put off duty…</button>' : ''}
+      <div class="center"><button type="button" class="link" id="usC" style="color:var(--muted)">Close</button></div></div></div></div>`);
+  document.documentElement.classList.add('msopen');
+  $('amx').onclick = closeActive; $('usC').onclick = closeActive;
+  if ($('usChk')) $('usChk').onclick = async () => { const b = $('usChk'); b.disabled = true; b.textContent = 'Saving…'; try { const r = await run('apiBoardCheck', S.creds, id); closeActive(); applyDuty(r); toast('Check recorded.'); } catch (e) { b.disabled = false; b.textContent = '✓ Checked'; toast(clean(e), true); } };
+  if ($('usAsg')) $('usAsg').onclick = () => { closeActive(); editAssignment(id); };
+  $('usEt').onclick = () => { closeActive(); openEditTimes(id); };
+  if ($('usOff')) $('usOff').onclick = () => { closeActive(); openAdminOff(id); };
+}
+
+/* ---------------- Admin: edit a shift's on/off times ---------------- */
+function openEditTimes(id) {
+  const s = shiftById(id); if (!s) return;
+  const isOn = s.status === 'On', now = dutyNow();
+  const p2 = n => String(n).padStart(2, '0');
+  const toLocal = t => { const d = new Date(t); return d.getFullYear() + '-' + p2(d.getMonth() + 1) + '-' + p2(d.getDate()) + 'T' + p2(d.getHours()) + ':' + p2(d.getMinutes()); };
+  const was = t => new Date(t).toLocaleString(undefined, { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' });
+  closeActive();
+  document.body.insertAdjacentHTML('beforeend', `<div class="amsh" id="amsh"><div class="ambox form" role="dialog" aria-label="Edit times">
+    <div class="amhead grn2"><div class="k">EDIT TIMES</div><div class="n">${esc(s.unit)} ${esc(lastName(s.name))} · ${esc(s.mission || (shiftGroup(id) || {}).mission || '')}</div><button type="button" class="amx" id="amx" aria-label="Close">✕</button></div>
+    <label style="margin:12px 16px 2px">On-duty time<input type="datetime-local" id="etOn" value="${toLocal(s.on)}" max="${toLocal(now)}"></label><div class="muted small" style="margin:0 16px 8px">Was ${esc(was(s.on))}</div>
+    ${isOn ? '' : `<label style="margin:4px 16px 2px">Off-duty time<input type="datetime-local" id="etOff" value="${toLocal(s.off)}" max="${toLocal(now)}"></label><div class="muted small" style="margin:0 16px 8px">Was ${esc(was(s.off))}</div>`}
+    <div class="sum"><div><span>Time on shift</span><span id="etEl"></span></div><div class="tot"><span>Logged as</span><span id="etHr"></span></div></div>
+    <label style="margin:0 16px 10px">Reason<input type="text" id="etNo" maxlength="200" placeholder="e.g. Started at the staging point before going on duty in the app"></label>
+    <button type="button" class="btn wide" id="etSave">Save times</button>
+    <div class="center"><button type="button" class="link" id="etC" style="color:var(--muted)">Cancel</button></div>
+    <p class="muted small" style="margin:6px 16px 14px">${isOn ? 'They stay on duty; the clock starts from the new time.' : 'Their logged hours update to match.'} Old and new times and who changed them go on the Board Log.</p></div></div>`);
+  document.documentElement.classList.add('msopen');
+  const onAt = () => { const v = $('etOn').value; return v === toLocal(s.on) ? s.on : new Date(v).getTime(); };
+  const offAt = () => isOn ? dutyNow() : ($('etOff').value === toLocal(s.off) ? s.off : new Date($('etOff').value).getTime());
+  const upd = () => { const a = onAt(), b = offAt(), ok = isFinite(a) && isFinite(b) && b > a; $('etEl').textContent = ok ? hm(b - a) : '—';
+    $('etHr').textContent = ok ? halfUpHrs((b - a) / 60000) + ' hr' + (isOn ? ' so far' : ' (was ' + s.hours + ' hr)') : '—'; };
+  upd(); $('etOn').oninput = upd; if ($('etOff')) $('etOff').oninput = upd;
+  $('amx').onclick = closeActive; $('etC').onclick = closeActive;
+  $('etSave').onclick = async () => {
+    const a = onAt(), b = offAt();
+    if (!isFinite(a) || (!isOn && !isFinite(b))) { toast('Check the times.', true); return; }
+    if (!isOn && b <= a) { toast('The off-duty time must be after the on-duty time.', true); return; }
+    if (a === s.on && (isOn || b === s.off)) { toast('Nothing changed.'); return; }
+    const btn = $('etSave'); btn.disabled = true; btn.textContent = 'Saving…';
+    try {
+      const r = await run('apiEditShift', S.creds, { id: s.id, on: new Date(a).toISOString(), off: isOn ? '' : new Date(b).toISOString(), notes: $('etNo').value });
+      closeActive(); applyDuty(r); toast('Times saved.');
+    } catch (e) { btn.disabled = false; btn.textContent = 'Save times'; toast(clean(e), true, 6000); }
+  };
+}
+
+/* ---------------- Admin: put units on duty ---------------- */
+function openPutOn(mission) {
+  const groups = boardData(), also = dutyInfo().also || [];
+  const busy = {};
+  groups.forEach(g => g.on.forEach(s => { busy[s.unit] = g.mission; }));
+  also.forEach(s => { busy[s.unit] = s.mission; });
+  const units = (S.d.roster || []).filter(r => r.name && r.name !== '(vacant)').sort((a, b) => a.unit.localeCompare(b.unit));
+  const act = groups.map(g => g.mission);
+  const others = (S.d.missions || []).map(m => m.name).filter(n => act.indexOf(n) < 0);
+  const mis = mission || act[0] || '';
+  const now = dutyNow(), p2 = n => String(n).padStart(2, '0');
+  const toLocal = t => { const d = new Date(t); return d.getFullYear() + '-' + p2(d.getMonth() + 1) + '-' + p2(d.getDate()) + 'T' + p2(d.getHours()) + ':' + p2(d.getMinutes()); };
+  closeActive();
+  document.body.insertAdjacentHTML('beforeend', `<div class="amsh" id="amsh"><div class="ambox form" role="dialog" aria-label="Put on duty">
+    <div class="amhead grn2"><div class="k">PUT ON DUTY</div><div class="n" id="poN">${esc(mis || 'Pick the mission')}</div><button type="button" class="amx" id="amx" aria-label="Close">✕</button></div>
+    <label style="margin:12px 16px 8px">Mission<select id="poM">${act.length ? `<optgroup label="Active">${act.map(n => `<option ${n === mis ? 'selected' : ''}>${esc(n)}</option>`).join('')}</optgroup>` : ''}
+      ${others.length ? `<optgroup label="Other open missions">${others.map(n => `<option ${n === mis ? 'selected' : ''}>${esc(n)}</option>`).join('')}</optgroup>` : ''}</select></label>
+    <label style="margin:0 16px 4px">Units <span class="muted small">(tap everyone who's starting)</span><input type="text" id="poF" placeholder="Type to find a unit or name" autocomplete="off"></label>
+    <div class="pol" id="poL">${units.map(r => busy[r.unit]
+      ? `<div class="poi dis"><span><b>${esc(r.unit)}</b> ${esc(r.name)}</span><span class="muted small">on duty${busy[r.unit] === mis ? '' : ' · ' + esc(busy[r.unit])}</span></div>`
+      : `<label class="poi" data-q="${esc((r.unit + ' ' + r.name).toLowerCase())}"><input type="checkbox" value="${esc(r.unit)}"> <span><b>${esc(r.unit)}</b> ${esc(r.name)}</span></label>`).join('')}</div>
+    <label style="margin:10px 16px 8px">On-duty time <span class="muted small">(now, or when they really started)</span><input type="datetime-local" id="poT" value="${toLocal(now)}" max="${toLocal(now)}"></label>
+    <label style="margin:0 16px 10px">Assignment <span class="muted small">(optional, for everyone checked)</span><input type="text" id="poA" maxlength="300"></label>
+    <button type="button" class="btn wide" id="poGo" disabled>Pick units above</button>
+    <div class="center"><button type="button" class="link" id="poC" style="color:var(--muted)">Cancel</button></div>
+    <p class="muted small" style="margin:6px 16px 14px">Shows on the board right away with "Put on duty by ${esc(S.d.me.unit)} ${esc(tcName(S.d.me.name))}" and goes on the Board Log. If they open the app, they see they're on duty and can go off duty themselves.</p></div></div>`);
+  document.documentElement.classList.add('msopen');
+  const startT = $('poT').value;
+  const picked = () => [].map.call(document.querySelectorAll('#poL input:checked'), x => x.value);
+  const upd = () => { const n = picked().length; $('poGo').disabled = !n || !$('poM').value; $('poGo').textContent = n ? 'Put ' + (n === 1 ? picked()[0] : n + ' units') + ' on duty' : 'Pick units above'; $('poN').textContent = $('poM').value || 'Pick the mission'; };
+  $('poL').onchange = upd; $('poM').onchange = upd; upd();
+  $('poF').oninput = () => { const q = $('poF').value.trim().toLowerCase(); document.querySelectorAll('#poL .poi').forEach(el => { el.style.display = !q || !el.dataset.q || el.dataset.q.indexOf(q) >= 0 ? '' : 'none'; if (q && !el.dataset.q) el.style.display = 'none'; }); };
+  $('amx').onclick = closeActive; $('poC').onclick = closeActive;
+  $('poGo').onclick = async () => {
+    const b = $('poGo'); b.disabled = true; b.textContent = 'Saving…';
+    S.poRid = S.poRid || newRid();
+    const v = $('poT').value;
+    try {
+      const r = await run('apiAdminOn', S.creds, { units: picked(), mission: $('poM').value, on: v && v !== startT ? new Date(v).toISOString() : '', assignment: $('poA').value, rid: S.poRid });
+      S.poRid = null; closeActive(); applyDuty(r);
+      toast((r.done.length ? r.done.join(', ') + ' on duty.' : 'Nobody was put on duty.') + (r.skipped.length ? ' Skipped: ' + r.skipped.join('; ') : ''), !!r.skipped.length, r.skipped.length ? 8000 : 4000);
+    } catch (e) { b.disabled = false; upd(); toast(clean(e), true, 6000); }
+  };
 }
 
 /* ---------------- Admin: put a member off duty ---------------- */
@@ -3501,7 +3703,7 @@ function pickBoardMission() {
     const sub = [m.last || m.first ? fmtDate(m.last || m.first) : '', m.type, m.status === 'Closed' ? 'Closed' : ''].filter(Boolean).join(' · ');
     return `<option value="${esc(m.name)}" data-n="${esc(m.name)}" data-s="${esc(sub)}">${esc(m.name)}</option>`; }).join('')}</select>`;
   document.body.appendChild(holder);
-  const sel = $('bpicksel'); sel.dataset.title = 'Show which mission?';
+  const sel = $('bpicksel'); sel.dataset.title = 'Show which mission?'; sel.dataset.search = '1';
   sel.onchange = () => { const v = sel.value; holder.remove(); if (v) setBoardView('mission', v); };
   openPick('bpicksel');
 }
@@ -3543,7 +3745,7 @@ function renderBoardHist() {
   const v = S.boardView, key = v + '|' + (v === 'mission' ? S.boardMission : '');
   const h = S.boardHist;
   if (!h || h.key !== key) {
-    main(section('On Duty Board', '<p class="muted">Loading…</p>', boardViewSelect())); hookBoardView();
+    main(section('Duty Board', '<p class="muted">Loading…</p>', boardViewSelect())); hookBoardView();
     if (!S.boardLoading || S.boardLoading !== key) { S.boardLoading = key; loadBoardHist(key).then(() => { S.boardLoading = null; }); }
     return;
   }
@@ -3570,7 +3772,7 @@ function renderBoardHist() {
           ${open ? `<div class="hbody">${histShifts(g, v === 'month' && g.first !== g.last)}<button type="button" class="link hone" data-i="${i}">Show this mission by itself ›</button></div>` : ''}</div>`;
     }).join('') : `<p class="muted">No time logged ${v === 'today' ? 'today' : 'this month'}.</p>`;
   }
-  main(section('On Duty Board', body + '<p class="muted small" style="margin-top:14px">Security checks and alerts only run for active missions.</p>', boardViewSelect()));
+  main(section('Duty Board', body + '<p class="muted small" style="margin-top:14px">Security checks and alerts only run for active missions.</p>', boardViewSelect()));
   hookBoardView();
   if ($('hchg')) $('hchg').onclick = pickBoardMission;
   document.querySelectorAll('.hhead').forEach(b => b.onclick = () => {
@@ -3580,7 +3782,7 @@ function renderBoardHist() {
   document.querySelectorAll('.hone').forEach(b => b.onclick = () => setBoardView('mission', h.groups[+b.dataset.i].mission));
 }
 
-function shiftById(id) { for (const g of boardData()) { const s = g.on.concat(g.off).find(x => x.id === id); if (s) return s; } return null; }
+function shiftById(id) { for (const g of boardData()) { const s = g.on.concat(g.off).find(x => x.id === id); if (s) return s; } return (dutyInfo().also || []).find(x => x.id === id) || null; }
 function editAssignment(id) {
   const s = shiftById(id); if (!s) return;
   const picks = (dutyInfo().assignments || []).slice(-12).reverse();
