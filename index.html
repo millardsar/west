@@ -162,10 +162,10 @@
   .dtab .bfold { margin: 0; }
   .link.bet { color: var(--navy); padding: 0 0 0 4px; font-size: 13px; text-decoration: underline; }
   .lbox { margin-bottom: 6px; }
-  .lrow { display: grid; grid-template-columns: 1fr auto 42px; align-items: center; gap: 8px; border-bottom: 1px solid #edf0ee; }
-  .lrow .lname { display: flex; align-items: center; gap: 10px; background: none; border: 0; padding: 10px 2px; font: inherit; text-align: left; cursor: pointer; color: inherit; min-width: 0; }
-  .lrow .lu { font-weight: 800; color: var(--navy); width: 54px; flex: none; }
-  .lrow .ln { font-weight: 600; } .lrow .lt { display: block; font-size: 12px; color: var(--muted); font-weight: 500; }
+  .lrow { display: grid; grid-template-columns: 50px minmax(0, 1fr) auto auto 40px; align-items: center; gap: 8px; border-bottom: 1px solid #edf0ee; padding: 9px 2px; cursor: pointer; }
+  .lrow:hover { background: #f6f9f7; }
+  .lrow .lu { font-weight: 800; color: var(--navy); }
+  .lrow .ln { font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } .lrow .lt { font-size: 13px; color: var(--muted); font-weight: 600; white-space: nowrap; }
   .lrow .lst { font-size: 12px; font-weight: 700; border-radius: 999px; padding: 3px 9px; }
   .lrow .lst.on { background: #e3f3e8; color: #22673f; } .lrow .lst.off { background: #eef0ef; color: #7a837e; }
   .lrow.dim .lu, .lrow.dim .ln { color: #9aa39e; }
@@ -177,6 +177,20 @@
   .poi { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 9px 10px; border-bottom: 1px solid #eef1ef; margin: 0; font-weight: 400; }
   .poi input { width: 20px; height: 20px; margin: 0 8px 0 0; } label.poi { justify-content: flex-start; cursor: pointer; }
   .poi.dis { color: #9aa39e; }
+  .mfbar { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px; }
+  .mfbar .full { grid-column: 1 / -1; }
+  .mfbar input, .mfbar select { width: 100%; box-sizing: border-box; margin: 0; font-size: 15px; padding: 8px; height: auto; }
+  .mfbar .fl { display: block; margin: 0 0 3px; font-size: 12px; font-weight: 800; color: var(--muted); text-transform: uppercase; letter-spacing: .4px; }
+  @media (min-width: 760px) { .mfbar { grid-template-columns: 2fr 1.4fr 1fr 1fr 1fr; align-items: end; } .mfbar .full { grid-column: auto; } }
+  .mcnt { color: var(--muted); font-size: 13px; margin: 0 0 10px; } .mcnt .link { font-size: 13px; padding: 0 0 0 4px; color: var(--navy); text-decoration: underline; }
+  .oddw { margin-top: 6px; background: #fdf2dc; border: 1px solid #f0d9a8; color: #6b4a0d; border-radius: 8px; padding: 6px 9px; font-size: 13.5px; font-weight: 600; }
+  .tag.attn { background: #fde8e8; color: #9b2c2c; }
+  .wl { display: grid; grid-template-columns: auto 1fr auto; gap: 2px 10px; font-size: 15px; align-items: baseline; }
+  .wl .d { color: var(--muted); white-space: nowrap; } .wl .d.odd { color: #9b2c2c; font-weight: 700; } .wl .r { white-space: nowrap; text-align: right; }
+  .wl .lg { grid-column: 2 / -1; color: var(--muted); font-size: 12.5px; margin: -2px 0 6px; }
+  .wl .went { background: none; border: 0; padding: 0; font: inherit; color: var(--navy); text-align: left; cursor: pointer; text-decoration: underline; }
+  .poh { padding: 8px 10px; background: #eef3ff; color: #1e3a8a; font-size: 12.5px; font-weight: 800; text-transform: uppercase; letter-spacing: .4px; }
+  .tag.ptag { background: #e4ecff; color: #1e3a8a; font-size: 11px; margin-left: 4px; vertical-align: middle; }
   .msfind { margin: 8px 12px; width: calc(100% - 24px); font-size: 16px; padding: 9px; border: 1.5px solid #9fb3a7; border-radius: 8px; }
   .usbtns .btn { display: block; width: 100%; margin: 8px 0 0; }
   .mtop { display: flex; gap: 10px; margin-bottom: 12px; } .mtop .btn { flex: 1; width: auto; }
@@ -226,7 +240,12 @@
   .bh { font-size: 13px; font-weight: 800; text-transform: uppercase; letter-spacing: .4px; color: var(--muted); margin: 16px 0 8px; }
   .bsep { border: 0; border-top: 2px solid var(--line); margin: 20px 0; }
   .chips2 { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 16px 0; } .chip2 { border: 1px solid #8fa596; border-radius: 18px; padding: 7px 12px; font: inherit; font-size: 15px; font-weight: 700; background: #fff; color: var(--text); cursor: pointer; }
-  main.widemain { max-width: 1400px; }
+  main.widemain { max-width: none; padding-left: 28px; padding-right: 28px; }
+  .bgm { font-size: 19px; }
+  .dtab th, .dtab td { text-align: left; white-space: normal; }
+  .dtab .oo { display: flex; gap: 6px; } .dtab .oo span { border: 1px solid var(--line); border-radius: 6px; padding: 3px 7px; min-width: 72px; white-space: nowrap; background: #fff; }
+  .dtab .act .btn { display: block; width: 100%; margin: 0 0 6px; white-space: nowrap; } .dtab .act .btn:last-child { margin-bottom: 0; }
+  .dtab .lgd { color: var(--muted); font-weight: 700; }
   .dtab { width: 100%; border-collapse: separate; border-spacing: 0 8px; font-size: 16px; }
   .dtab th { text-align: left; font-size: 12.5px; text-transform: uppercase; letter-spacing: .4px; color: var(--muted); padding: 0 10px; background: none; }
   .dtab td { background: #fff; padding: 12px 10px; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); vertical-align: middle; }
@@ -234,7 +253,7 @@
   .dtab tr.cs-late td { background: #fff5f5; } .dtab tr.cs-late td:first-child { border-left-color: #c53030; } .dtab tr.cs-soon td:first-child { border-left-color: #d69e2e; }
   .dtab tr.off td { background: #f6f8f7; } .dtab tr.off td:first-child { border-left-color: #9aa7a0; }
   .dtab tr.sep td { background: none; border: 0; padding: 14px 4px 0; font-size: 13px; font-weight: 800; color: var(--muted); text-transform: uppercase; letter-spacing: .4px; }
-  .dtab textarea { width: 100%; min-width: 300px; font: inherit; font-size: 16px; border: 1px solid #b9c7be; border-radius: 8px; padding: 8px; min-height: 48px; resize: vertical; margin: 0; }
+  .dtab textarea { width: 100%; min-width: 180px; font: inherit; font-size: 16px; border: 1px solid #b9c7be; border-radius: 8px; padding: 8px; min-height: 48px; resize: vertical; margin: 0; }
   .dtab .u { font-weight: 800; font-size: 18px; color: var(--navy); white-space: nowrap; } .dtab .nm { font-weight: 700; } .dtab .big { font-weight: 800; font-size: 18px; white-space: nowrap; }
   .asgro { overflow-wrap: anywhere; }
   h5.sub { margin: 14px 0 8px; font-size: 15px; color: var(--navy); }
@@ -532,9 +551,15 @@ const POSSE_INFO = {"key":"west","short":"West Posse","header":"West Millard She
 </script>
 <script>
 /* ================= Duty Log: core (shared by the East and West posses) ================= */
-const APP_VERSION = 'V1.6.7';
+const APP_VERSION = 'V1.6.8';
 const APP_DATE = 'October 25, 2026';
 const CHANGELOG = [
+  { v: 'V1.6.8', date: 'November 10, 2026', items: [
+    'Duty Board on a computer: uses the full window, units in unit-number order, every column lined up on the left, "Elapsed" column, On / Off time boxes, Checked and Put off duty stacked, off-duty units in the same table with their logged hours and miles.',
+    'One "+ Add Units" button at the top. On the phone List view each line is unit, name, elapsed time, On duty and the check box; tap anywhere on a line to open that unit.',
+    'Joint missions: Add Units lists both posses. The other posse\'s members show on the board with their posse tag, and their shifts and hours are saved to their own posse\'s Duty Log.',
+    'Missions tab: search, sort (newest mission date first by default), year, type and status filters. Admins see entries dated more than a week from the mission and missions that need attention.',
+    'Who logged time lists every entry with its date; admins see when it was logged and can tap a name to fix that entry.'] },
   { v: 'V1.6.7', date: 'November 10, 2026', items: [
     'New Home tab: the app opens to it. During a callout or training it shows the mission, a big Go On / Off Duty button, CalTopo Map, your assignment, staging, comms and details. On a quiet day: Log Time, what is coming up, and your hours this month.',
     'Tab order: members Home, Log, Missions, My Stats, Team; admins Home, Board, Missions, Log, then the rest.',
@@ -1404,7 +1429,7 @@ function renderLog() {
 function renderEdit() {
   const e = S.edit;
   if (!e) { S.tab = 'stats'; render(); return; }
-  const back = () => { S.edit = null; S.tab = 'stats'; buildTabs(); render(); };
+  const back = () => { S.edit = null; S.tab = S.editBack || 'stats'; S.editBack = null; buildTabs(); render(); };
   if (e.source === 'App') {
     main(section('Edit Entry', entryForm(e, 'Save changes', true)));
     hookEntryForm();
@@ -1432,7 +1457,7 @@ function renderEdit() {
     const b = $('eb'); b.disabled = true; b.textContent = 'Saving…';
     try {
       let d = await run('apiUpdateEntry', S.creds, e.id, vals);
-      S.edit = null; S.tab = 'stats';
+      S.edit = null; S.tab = S.editBack || 'stats'; S.editBack = null;
       setData(d);
       toast('Changes saved.');
       if (files.length) await uploadPhotos(files, { entryId: e.id, mission: vals.mission, date: vals.date });
@@ -2331,10 +2356,75 @@ function openMeetingSheet() {
   };
 }
 
+/* ---------------- Missions tab: sort, filters, odd dates, needs attention ---------------- */
+function dayDiff(a, b) { return Math.round((new Date(b + 'T12:00:00') - new Date(a + 'T12:00:00')) / 86400000); }
+function entDay(ymd, missionYmd) { return ymd.slice(0, 4) === String(missionYmd || ymd).slice(0, 4) ? shortDate(ymd) : fmtDate(ymd); }
+function oddEnts(m) {
+  if (!m.date || m.status === 'Ongoing') return [];
+  return (m.ents || []).filter(e => Math.abs(dayDiff(m.date, e[0])) > 7);
+}
+function oddText(m) {
+  const odd = oddEnts(m); if (!odd.length) return '';
+  if (odd.length === 1) { const n = dayDiff(m.date, odd[0][0]); return '⚠ 1 entry dated ' + entDay(odd[0][0], m.date) + ', ' + Math.abs(n) + ' days ' + (n > 0 ? 'after' : 'before') + ' the mission'; }
+  return '⚠ ' + odd.length + ' entries dated more than a week from the mission (' + odd.slice(0, 3).map(e => entDay(e[0], m.date)).join(', ') + (odd.length > 3 ? ', …' : '') + ')';
+}
+function needsAttn(m) {
+  const today = todayYmd(), out = [];
+  const past = m.date && m.date <= today;
+  const openDays = m.status === 'Open' && m.date ? dayDiff(m.date, today) : 0;
+  if (openDays > 30) out.push('Open for ' + openDays + ' days' + (m.members ? '' : ' with no time logged'));
+  else if (!m.members && past && m.status !== 'Ongoing') out.push('No time logged');
+  if (m.status === 'Closed' && m.type === 'Callout' && !m.reportNo) out.push('Closed with no mission report');
+  return out;
+}
+const M_SORTS = [['date', 'Mission date, newest first'], ['last', 'Last activity'], ['name', 'Name A to Z'], ['hours', 'Most hours'], ['members', 'Most members']];
+const M_STATUS = [['all', 'All'], ['Open', 'Open'], ['Ongoing', 'Ongoing'], ['Closed', 'Closed'], ['locked', 'Locked'], ['joint', 'Joint'], ['Unlisted', 'Not on the list']];
+function missionView(all, admin) {
+  const q = String(S.mQ || '').trim().toLowerCase(), st = S.mStatus || 'all', yr = S.mYear || 'all', sort = S.mSort || 'date';
+  const yearOf = m => String(m.date || m.last || '').slice(0, 4);
+  const list = all.filter(m => (S.mFilter === 'all' || m.type === S.mFilter) && (!q || m.name.toLowerCase().indexOf(q) >= 0) &&
+    (yr === 'all' || yearOf(m) === yr) &&
+    (st === 'all' || (st === 'locked' ? !!m.locked : st === 'joint' ? !!m.joint : st === 'attn' ? needsAttn(m).length > 0 : m.status === st)));
+  const hrs = m => m.h + (m.other ? m.other.h : 0), mem = m => m.members + (m.other ? m.other.members : 0);
+  const og = (a, b) => (b.status === 'Ongoing') - (a.status === 'Ongoing');
+  const cmp = {
+    date: (a, b) => og(a, b) || String(b.date || b.last || '').localeCompare(String(a.date || a.last || '')) || a.name.localeCompare(b.name),
+    last: (a, b) => og(a, b) || String(b.last || '').localeCompare(String(a.last || '')),
+    name: (a, b) => a.name.localeCompare(b.name),
+    hours: (a, b) => hrs(b) - hrs(a) || a.name.localeCompare(b.name),
+    members: (a, b) => mem(b) - mem(a) || a.name.localeCompare(b.name)
+  }[sort] || null;
+  if (cmp) list.sort(cmp);
+  const years = {}; all.forEach(m => { const y = yearOf(m); if (y) years[y] = 1; });
+  const opt = (v, l, cur) => `<option value="${esc(v)}" ${v === cur ? 'selected' : ''}>${esc(l)}</option>`;
+  const bar = `<div class="mfbar"><input type="search" id="mq" class="full" placeholder="🔍 Search mission names" value="${esc(S.mQ || '')}" aria-label="Search mission names">
+    <div><div class="fl">Sort</div><select id="msort">${M_SORTS.map(([v, l]) => opt(v, l, sort)).join('')}</select></div>
+    <div><div class="fl">Year</div><select id="myear">${opt('all', 'All years', yr)}${Object.keys(years).sort().reverse().map(y => opt(y, y, yr)).join('')}</select></div>
+    <div><div class="fl">Type</div><select id="mfil" aria-label="Filter by type">${typeOptions(S.mFilter, true)}</select></div>
+    <div><div class="fl">Status</div><select id="mstatf">${M_STATUS.concat(admin ? [['attn', 'Needs attention']] : []).map(([v, l]) => opt(v, l, st)).join('')}</select></div></div>
+    <div class="mcnt">Showing ${list.length} of ${all.length} mission${all.length === 1 ? '' : 's'}${q || st !== 'all' || yr !== 'all' || S.mFilter !== 'all' ? ' · <button type="button" class="link" id="mclr">Clear filters</button>' : ''}</div>`;
+  return { list: list, bar: bar };
+}
+function hookMissionFilters() {
+  const re = () => { S.openMission = null; const y = window.scrollY; render(); window.scrollTo(0, y); };
+  $('msort').onchange = ev => { S.mSort = ev.target.value; try { localStorage.setItem('missionSort', S.mSort); } catch (e) {} re(); };
+  $('myear').onchange = ev => { S.mYear = ev.target.value; re(); };
+  $('mfil').onchange = ev => { S.mFilter = ev.target.value; re(); };
+  $('mstatf').onchange = ev => { S.mStatus = ev.target.value; re(); };
+  if ($('mclr')) $('mclr').onclick = () => { S.mQ = ''; S.mStatus = 'all'; S.mYear = 'all'; S.mFilter = 'all'; re(); };
+  $('mq').oninput = () => {
+    clearTimeout(S.mqT);
+    S.mqT = setTimeout(() => {
+      S.mQ = $('mq').value; S.openMission = null; const y = window.scrollY; render(); window.scrollTo(0, y);
+      const b = $('mq'); if (b) { b.focus(); b.setSelectionRange(b.value.length, b.value.length); }
+    }, 300);
+  };
+}
+
 function renderMissions() {
   const d = S.d, admin = d.me.admin, conn = d.conn || {};
-  const list = d.missionList.filter(m => S.mFilter === 'all' || m.type === S.mFilter);
-  const filter = `<select id="mfil" class="mini" aria-label="Filter by type">${typeOptions(S.mFilter, true)}</select>`;
+  if (!S.mSort) { try { S.mSort = localStorage.getItem('missionSort') || 'date'; } catch (e) { S.mSort = 'date'; } }
+  const mv = missionView(d.missionList, admin), list = mv.list;
   let html = addResultPanel();
 
   if (admin) {
@@ -2375,10 +2465,16 @@ function renderMissions() {
       <span>${esc(ot.short)}: <b>${pl(ot.members)}</b> · ${n1(ot.h)} hr</span>
       <span>Total: <b>${pl(m.members + ot.members)}</b> · ${n1(m.h + ot.h)} hr · ${n1(m.mi + ot.mi)} mi</span></div>` : '';
     const mine = m.myH ? ` · <b>You: ${n1(m.myH)} hr</b>` : '';
+    const attn = admin ? needsAttn(m) : [], odd = admin ? oddText(m) : '';
+    const warn = (attn.length ? `<div class="oddw">${esc(attn.join(' · '))}</div>` : '') + (odd ? `<div class="oddw">${esc(odd)}</div>` : '');
     let body = '';
     if (open) {
       const whoLine = w => `${esc(w.unit)} ${esc(w.name || '')}: ${n1(w.h)} hr, ${n1(w.mi)} mi`;
-      const who = (m.who || []).map(whoLine).join('<br>');
+      const nameOf = {}; (d.roster || []).forEach(r => { nameOf[r.unit] = r.name; });
+      const oddAt = m.date && !og ? (e => Math.abs(dayDiff(m.date, e[0])) > 7) : (() => false);
+      const who = (m.ents || []).length ? `<div class="wl">${m.ents.map(e => { const odd = oddAt(e), nm = esc(e[1]) + ' ' + esc(nameOf[e[1]] || '');
+          return `<span class="d${odd ? ' odd' : ''}">${odd ? '⚠ ' : ''}${esc(entDay(e[0], m.date))}</span><span>${admin && e[5] ? `<button type="button" class="went" data-id="${esc(e[5])}">${nm}</button>` : nm}</span><span class="r">${n1(e[2])} hr · ${n1(e[3])} mi</span>` +
+            (admin && e[4] ? `<span class="lg">logged ${esc(entDay(e[4], m.date))}${odd ? ' · tap the name to fix the date' : ''}</span>` : ''); }).join('')}</div>` : '';
       const photos = (m.photos || []).map((p, k) => `<button type="button" class="thumb" data-pk="${k}" title="${esc(p.unit)} · ${esc(p.date)}"><img alt="Photo from ${esc(p.unit)}" data-fid="${esc(p.fileId)}" ${(S.thumbs || {})[p.fileId] ? `src="${S.thumbs[p.fileId]}"` : ''}></button>`).join('');
       const url = mapLink(m.mapId);
       const lockbar = locked ? `<div class="lockbar"><b>🔒 Locked for reporting</b>${m.reportNo ? 'Report ' + esc(m.reportNo) + ' · ' : ''}Locked ${lockedWhen(m.locked)}.
@@ -2453,17 +2549,17 @@ function renderMissions() {
       </div>`;
     }
     return `<div class="mcard${open ? ' isopen' : ''}" data-i="${i}">
-      <div class="mhead" tabindex="0" role="button" aria-expanded="${open}"><div><div class="mname">${esc(m.name)}<span class="tag">${esc(m.type)}</span>${m.joint ? '<span class="tag joint">Joint</span>' : ''}${status}${m.mapId ? '<span class="tag">🗺 Map</span>' : ''}${m.photoCount ? `<span class="tag">📷 ${m.photoCount}</span>` : ''}</div>
-        <div class="meta small muted">${dates ? esc(dates) + (m.joint ? '' : ' · ') : ''}${m.joint ? '' : nums}${mine}</div>${jline}</div>
+      <div class="mhead" tabindex="0" role="button" aria-expanded="${open}"><div><div class="mname">${esc(m.name)}<span class="tag">${esc(m.type)}</span>${m.joint ? '<span class="tag joint">Joint</span>' : ''}${status}${m.mapId ? '<span class="tag">🗺 Map</span>' : ''}${m.photoCount ? `<span class="tag">📷 ${m.photoCount}</span>` : ''}${attn.length ? '<span class="tag attn">Needs attention</span>' : ''}</div>
+        <div class="meta small muted">${dates ? esc(dates) + (m.joint ? '' : ' · ') : ''}${m.joint ? '' : nums}${mine}</div>${jline}${warn}</div>
         <div class="chev">${open ? '▾' : '▸'}</div></div>${body}</div>`;
   }).join('');
 
-  html += section(`Missions & Events${S.mFilter === 'all' ? '' : ' · ' + esc(S.mFilter)}`,
-    (cards || '<p class="muted">No missions of this type yet.</p>') +
-    `<p class="muted small">Tap a mission for its map, notes, photos, expenses and who logged time${admin ? ', or to close, lock, merge or rename it' : ''}.</p>`, filter);
+  html += section('Missions & Events', mv.bar +
+    (cards || '<p class="muted">No missions match.</p>') +
+    `<p class="muted small">Tap a mission for its map, notes, photos, expenses and who logged time${admin ? ', or to close, lock, merge or rename it' : ''}.</p>`);
   main(html + (S.simsHtml || ''));
 
-  $('mfil').onchange = ev => { S.mFilter = ev.target.value; S.openMission = null; render(); };
+  hookMissionFilters();
   if (admin) refreshPlaceList();
   hookAddResult();
   loadThumbs();
@@ -2489,6 +2585,11 @@ function renderMissions() {
     const body = card.querySelector('.mbody');
     if (!body) return;
     const q = sel => body.querySelector(sel);
+    body.querySelectorAll('.went').forEach(b => b.onclick = async () => {
+      b.disabled = true;
+      try { const e = await run('apiGetEntry', S.creds, b.dataset.id); S.edit = e; S.editBack = 'missions'; S.tab = 'edit'; buildTabs(); render(); window.scrollTo(0, 0); }
+      catch (e) { b.disabled = false; toast(clean(e), true); }
+    });
     const busy = async (btn, fn) => { if (btn) btn.disabled = true; try { await fn(); } catch (e) { toast(clean(e), true); } finally { if (btn && document.body.contains(btn)) btn.disabled = false; } };
     const save = async (patch, msg) => {
       try { setData(await run('apiSaveMission', S.creds, Object.assign({ name: m.name, date: m.first, type: m.type }, patch))); if (msg) toast(msg); }
@@ -3503,6 +3604,8 @@ function boardMode() {
   return S.boardMode;
 }
 function setBoardMode(m) { S.boardMode = m; try { localStorage.setItem('dutyBoardMode', m); } catch (e) {} const y = window.scrollY; render(); window.scrollTo(0, y); }
+function byUnit(a, b) { return String(a.unit).localeCompare(String(b.unit), undefined, { numeric: true }); }
+function ptag(s) { return s && s.posse ? ` <span class="tag ptag">${esc(String(s.posse).split(' ')[0])}</span>` : ''; }
 function tcName(n) { const l = lastName(n); return l.charAt(0) + l.slice(1).toLowerCase(); }
 function renderBoard() {
   if (!S.d.me.admin) { S.tab = 'log'; return renderLog(); }
@@ -3514,61 +3617,62 @@ function renderBoard() {
   const et = s => `<button type="button" class="link bet" data-id="${esc(s.id)}">Edit times</button>`;
   const putBy = s => s.putBy ? `<div class="bmeta">Put on duty by ${esc(s.putBy)}</div>` : '';
   const html = groups.map((g, gi) => {
-    const on = g.on.slice().sort((a, b) => (dueInfo(a, g.every).left || 9999) - (dueInfo(b, g.every).left || 9999));
+    const on = g.on.slice().sort(byUnit), off = g.off.slice().sort(byUnit);
     on.forEach(s => { if (dueInfo(s, g.every).due) due.push(s.unit + ' ' + lastName(s.name) + ' (' + dueInfo(s, g.every).text.toLowerCase() + ')'); });
     const every = `<label class="every">Check every <select class="bev" data-g="${gi}">${CHECK_CHOICES.concat(CHECK_CHOICES.some(c => c[0] === g.every) ? [] : [[g.every, g.every + ' min']]).map(([v, l]) => `<option value="${v}" ${v === g.every ? 'selected' : ''}>${l}</option>`).join('')}</select></label>`;
     const offOpen = !!S.boardOffOpen[g.mission];
     const fold = g.off.length ? `<button type="button" class="bfold" data-g="${gi}" aria-expanded="${offOpen}">Off duty (${g.off.length}) ${offOpen ? '▾' : '▸'}</button>` : '';
-    const head = `<div class="bgh"><div><b>${esc(g.mission)}</b> <span class="tag">${esc(g.type || 'Mission')}</span> <span class="muted small">${g.on.length} on duty</span></div>
-      <div class="bghr">${every}<button type="button" class="btn small badd" data-g="${gi}">+ Add unit</button></div></div>`;
+    const head = `<div class="bgh"><div><b class="bgm">${esc(g.mission)}</b> <span class="tag">${esc(g.type || 'Mission')}</span> <div class="muted small">${g.on.length} on duty</div></div>
+      <div class="bghr">${every}</div></div>`;
     const earlier = s => { const before = g.off.filter(o => o.unit === s.unit); return before.length ? 'Shift ' + (before.length + 1) + ' · earlier: ' + before.slice().reverse().map(o => clock(o.on) + '–' + clock(o.off)).join(', ') : ''; };
     if (mode === 'list') {
       const row = (s, isOn) => {
         const di = dueInfo(s, g.every);
         const ck = isOn && g.every ? `<button type="button" class="lck ${di.cls}" data-id="${esc(s.id)}" title="${esc(di.text)} · tap after a security check" aria-label="Security check ${esc(s.unit)}: ${esc(di.text)}">${di.cls === 'late' ? '!' : di.cls === 'soon' ? di.left + 'm' : '✓'}</button>` : '<span></span>';
-        return `<div class="lrow${isOn ? '' : ' dim'}"><button type="button" class="lname" data-id="${esc(s.id)}"><span class="lu">${esc(s.unit)}</span><span class="ln">${esc(tcName(s.name))}<span class="lt">${isOn ? `<span class="tick" data-on="${s.on}">${hm(dutyNow() - s.on)}</span>` : clock(s.on) + '–' + clock(s.off)}</span></span></button>
+        return `<div class="lrow${isOn ? '' : ' dim'}" data-id="${esc(s.id)}" role="button" tabindex="0" aria-label="${esc(s.unit + ' ' + tcName(s.name))}"><span class="lu">${esc(s.unit)}</span><span class="ln">${esc(tcName(s.name))}${ptag(s)}</span>
+          <span class="lt">${isOn ? `<span class="tick" data-on="${s.on}">${hm(dutyNow() - s.on)}</span>` : hm(s.off - s.on)}</span>
           <span class="lst ${isOn ? 'on' : 'off'}">${isOn ? 'On duty' : 'Off duty'}</span>${ck}</div>`;
       };
-      return `${head}<div class="lbox">${on.map(s => row(s, true)).join('') || '<p class="muted" style="margin:8px 0">Nobody on duty.</p>'}${fold}${offOpen ? g.off.map(s => row(s, false)).join('') : ''}</div>`;
+      return `${head}<div class="lbox">${on.map(s => row(s, true)).join('') || '<p class="muted" style="margin:8px 0">Nobody on duty.</p>'}${fold}${offOpen ? off.map(s => row(s, false)).join('') : ''}</div>`;
     }
-    const offRows = !offOpen ? '' : g.off.map(s => wide
-      ? `<tr class="off"><td class="u">${esc(s.unit)}</td><td class="nm">${esc(lastName(s.name))}</td><td><div class="asgro">${esc(s.assignment) || '<span class="muted">—</span>'}</div></td>
-          <td>On ${clock(s.on)}<br>Off ${clock(s.off)}<div>${et(s)}</div></td><td class="big">${hm(s.off - s.on)}<div class="muted small">logged ${s.hours} hr · ${s.miles == null ? 'miles unknown' : s.miles + ' mi'}</div></td><td>${s.check && s.checkBy !== 'Start' ? clock(s.check) : '—'}</td><td>—</td><td></td></tr>`
-      : `<div class="bcard off"><div class="brow"><div class="bu">${esc(s.unit)} <span>${esc(lastName(s.name))}</span></div><div class="bel">${hm(s.off - s.on)}</div></div>
+    const oo = s => `<div class="oo"><span>${clock(s.on)}</span><span class="${s.off ? '' : 'muted'}">${s.off ? clock(s.off) : '—'}</span></div>`;
+    const offRows = !offOpen ? '' : off.map(s => wide
+      ? `<tr class="off"><td class="u">${esc(s.unit)}</td><td class="nm">${esc(lastName(s.name))}${ptag(s)}</td><td><div class="asgro">${esc(s.assignment) || '<span class="muted">—</span>'}</div></td>
+          <td>${oo(s)}<div>${et(s)}</div></td><td class="big">${hm(s.off - s.on)}</td><td>${s.check && s.checkBy !== 'Start' ? clock(s.check) : '—'}</td><td class="lgd">Logged ${s.hours} hr · ${s.miles == null ? 'miles unknown' : s.miles + ' mi'}</td><td></td></tr>`
+      : `<div class="bcard off"><div class="brow"><div class="bu">${esc(s.unit)} <span>${esc(lastName(s.name))}</span>${ptag(s)}</div><div class="bel">${hm(s.off - s.on)}</div></div>
           <div class="bmeta"><b class="ink">On ${clock(s.on)} · Off ${clock(s.off)}</b>${s.miles == null ? '' : ' · ' + s.miles + ' mi'} ${et(s)}</div>
           <div class="bmeta">Logged as ${s.hours} hr (rounded up)${s.assignment ? ' · Assignment: ' + esc(s.assignment) : ''}</div></div>`).join('');
     const onRows = on.map(s => {
       const di = dueInfo(s, g.every);
       const last = s.check && s.checkBy !== 'Start' ? clock(s.check) : '—';
       const ea = earlier(s);
-      if (wide) return `<tr class="cs-${di.cls}"><td class="u">${esc(s.unit)}</td><td class="nm">${esc(lastName(s.name))}${s.putBy ? `<div class="muted small">put on by ${esc(s.putBy)}</div>` : ''}</td>
+      if (wide) return `<tr class="cs-${di.cls}"><td class="u">${esc(s.unit)}</td><td class="nm">${esc(lastName(s.name))}${ptag(s)}${s.putBy ? `<div class="muted small">put on by ${esc(s.putBy)}</div>` : ''}</td>
         <td><textarea class="basg" data-id="${esc(s.id)}" rows="2" maxlength="300" placeholder="Type the assignment">${esc(s.assignment)}</textarea></td>
-        <td>On ${clock(s.on)}${ea ? `<div class="muted small">${esc(ea)}</div>` : ''}<div>${et(s)}</div></td><td class="big"><span class="tick" data-on="${s.on}">${hm(dutyNow() - s.on)}</span></td><td>${last}${s.checkBy && s.checkBy !== 'Start' ? `<div class="muted small">by ${esc(s.checkBy)}</div>` : ''}</td>
-        <td><span class="cd ${di.cls}">${di.text || '<span class="muted">No checks</span>'}</span></td><td>${g.every ? `<button type="button" class="btn small bchk" data-id="${esc(s.id)}">✓ Checked</button>` : ''}<button type="button" class="btn small bpo" data-id="${esc(s.id)}">Put off duty…</button></td></tr>`;
-      return `<div class="bcard cs-${di.cls}"><div class="brow"><div class="bu">${esc(s.unit)} <span>${esc(lastName(s.name))}</span></div><div class="bel"><span class="tick" data-on="${s.on}">${hm(dutyNow() - s.on)}</span></div></div>
+        <td>${oo(s)}${ea ? `<div class="muted small">${esc(ea)}</div>` : ''}<div>${et(s)}</div></td><td class="big"><span class="tick" data-on="${s.on}">${hm(dutyNow() - s.on)}</span></td><td>${last}${s.checkBy && s.checkBy !== 'Start' ? `<div class="muted small">by ${esc(s.checkBy)}</div>` : ''}</td>
+        <td><span class="cd ${di.cls}">${di.text || '<span class="muted">No checks</span>'}</span></td><td class="act">${g.every ? `<button type="button" class="btn small bchk" data-id="${esc(s.id)}">✓ Checked</button>` : ''}<button type="button" class="btn small bpo" data-id="${esc(s.id)}">Put off duty…</button></td></tr>`;
+      return `<div class="bcard cs-${di.cls}"><div class="brow"><div class="bu">${esc(s.unit)} <span>${esc(lastName(s.name))}</span>${ptag(s)}</div><div class="bel"><span class="tick" data-on="${s.on}">${hm(dutyNow() - s.on)}</span></div></div>
         <div class="bmeta">On since ${clock(s.on)} ${et(s)}${g.every ? ' · last check ' + last : ''}</div>${ea ? `<div class="bmeta">${esc(ea)}</div>` : ''}${putBy(s)}
         ${s.assignment ? `<button type="button" class="asg" data-id="${esc(s.id)}"><span class="tx"><b>Assignment</b>${esc(s.assignment)}</span><span class="ed">Edit</span></button>`
           : `<button type="button" class="asg none" data-id="${esc(s.id)}"><span class="tx">+ Add assignment</span></button>`}
         ${g.every ? `<div class="bchkrow"><span class="cd ${di.cls}">${di.text}</span><button type="button" class="btn small bchk" data-id="${esc(s.id)}">✓ Checked</button></div>` : ''}
         <div class="bporow"><button type="button" class="btn small bpo" data-id="${esc(s.id)}">Put off duty…</button></div></div>`;
     }).join('');
-    if (wide) return `${head}<table class="dtab"><tr><th>Unit</th><th>Name</th><th>Assignment <span class="muted">(saves when you click away)</span></th><th>On / Off</th><th>On shift</th><th>Last check</th><th>Next check</th><th></th></tr>
+    if (wide) return `${head}<table class="dtab"><tr><th>Unit</th><th>Name</th><th>Assignment <span class="muted">(saves when you click away)</span></th><th>On / Off</th><th>Elapsed</th><th>Last check</th><th>Next check</th><th></th></tr>
       ${onRows || '<tr><td colspan="8" class="muted">Nobody on duty.</td></tr>'}${fold ? `<tr class="sep"><td colspan="8">${fold}</td></tr>${offRows}` : ''}</table>`;
     return `${head}${onRows || '<p class="muted">Nobody on duty.</p>'}${fold}${offRows}`;
   }).join('<hr class="bsep">');
   const alsoHtml = also.length ? `<div class="also"><b>Also on duty, not an active mission:</b>${also.map(s =>
     `<button type="button" class="alsoi" data-id="${esc(s.id)}">${esc(s.unit)} ${esc(tcName(s.name))} · ${esc(s.mission)} · <span class="tick" data-on="${s.on}">${hm(dutyNow() - s.on)}</span> ›</button>`).join('')}</div>` : '';
   const top = `<div class="btop"><div class="bseg" role="group" aria-label="Board layout"><button type="button" data-m="detail" class="${mode === 'detail' ? 'on' : ''}">Detail</button><button type="button" data-m="list" class="${mode === 'list' ? 'on' : ''}">List</button></div>
-    <button type="button" class="btn bputon" id="bputon">+ Put a unit on duty</button></div>`;
+    <button type="button" class="btn bputon" id="bputon">+ Add Units</button></div>`;
   main(section('Duty Board', `${top}${due.length ? `<div class="duebar">🔔 Security check due: ${esc(due.join(', '))}</div>` : ''}
     ${html || '<p class="muted">No active callout, training or event right now. Use the dropdown above to look at today, this month, or any mission.</p>'}
     ${alsoHtml}
-    <p class="muted small" style="margin-top:16px">${mode === 'list' ? 'Tap the small box after a security check. Tap a name for everything else. ' : ''}Every check, assignment and on/off duty is recorded with who did it on the Board Log tab of the sheet. Alerts sound while this app is open.</p>`, boardViewSelect()));
+    <p class="muted small" style="margin-top:16px">${mode === 'list' ? 'Tap the small box after a security check. Tap a line for everything else. ' : ''}Every check, assignment and on/off duty is recorded with who did it on the Board Log tab of the sheet. Alerts sound while this app is open.</p>`, boardViewSelect()));
   if (wide) $('main').classList.add('widemain');
   hookBoardView();
   document.querySelectorAll('.bseg button').forEach(b => b.onclick = () => setBoardMode(b.dataset.m));
   $('bputon').onclick = () => openPutOn(null);
-  document.querySelectorAll('.badd').forEach(b => b.onclick = () => openPutOn(groups[+b.dataset.g].mission));
   document.querySelectorAll('.bfold').forEach(b => b.onclick = () => { const g = groups[+b.dataset.g]; S.boardOffOpen[g.mission] = !S.boardOffOpen[g.mission]; const y = window.scrollY; render(); window.scrollTo(0, y); });
   document.querySelectorAll('.bev').forEach(sel => sel.onchange = async () => {
     const g = groups[+sel.dataset.g]; sel.disabled = true;
@@ -3591,7 +3695,11 @@ function renderBoard() {
   document.querySelectorAll('button.asg').forEach(b => b.onclick = () => editAssignment(b.dataset.id));
   document.querySelectorAll('button.bpo').forEach(b => b.onclick = () => openAdminOff(b.dataset.id));
   document.querySelectorAll('.bet').forEach(b => b.onclick = () => openEditTimes(b.dataset.id));
-  document.querySelectorAll('.lname, .alsoi').forEach(b => b.onclick = () => openUnitSheet(b.dataset.id));
+  document.querySelectorAll('.alsoi').forEach(b => b.onclick = () => openUnitSheet(b.dataset.id));
+  document.querySelectorAll('.lrow').forEach(r => {
+    r.onclick = e => { if (!e.target.closest('.lck')) openUnitSheet(r.dataset.id); };
+    r.onkeydown = e => { if ((e.key === 'Enter' || e.key === ' ') && e.target === r) { e.preventDefault(); openUnitSheet(r.dataset.id); } };
+  });
 }
 
 /* ---------------- Board: one unit's actions (list view, "also on duty") ---------------- */
@@ -3664,9 +3772,9 @@ function openEditTimes(id) {
 function openPutOn(mission) {
   const groups = boardData(), also = dutyInfo().also || [];
   const busy = {};
-  groups.forEach(g => g.on.forEach(s => { busy[s.unit] = g.mission; }));
+  groups.forEach(g => g.on.forEach(s => { if (!s.posse) busy[s.unit] = g.mission; }));
   also.forEach(s => { busy[s.unit] = s.mission; });
-  const units = (S.d.roster || []).filter(r => r.name && r.name !== '(vacant)').sort((a, b) => a.unit.localeCompare(b.unit));
+  const units = (S.d.roster || []).filter(r => r.name && r.name !== '(vacant)').sort(byUnit);
   const act = groups.map(g => g.mission);
   const others = (S.d.missions || []).map(m => m.name).filter(n => act.indexOf(n) < 0);
   const mis = mission || act[0] || '';
@@ -3678,9 +3786,7 @@ function openPutOn(mission) {
     <label style="margin:12px 16px 8px">Mission<select id="poM">${act.length ? `<optgroup label="Active">${act.map(n => `<option ${n === mis ? 'selected' : ''}>${esc(n)}</option>`).join('')}</optgroup>` : ''}
       ${others.length ? `<optgroup label="Other open missions">${others.map(n => `<option ${n === mis ? 'selected' : ''}>${esc(n)}</option>`).join('')}</optgroup>` : ''}</select></label>
     <label style="margin:0 16px 4px">Units <span class="muted small">(tap everyone who's starting)</span><input type="text" id="poF" placeholder="Type to find a unit or name" autocomplete="off"></label>
-    <div class="pol" id="poL">${units.map(r => busy[r.unit]
-      ? `<div class="poi dis"><span><b>${esc(r.unit)}</b> ${esc(r.name)}</span><span class="muted small">on duty${busy[r.unit] === mis ? '' : ' · ' + esc(busy[r.unit])}</span></div>`
-      : `<label class="poi" data-q="${esc((r.unit + ' ' + r.name).toLowerCase())}"><input type="checkbox" value="${esc(r.unit)}"> <span><b>${esc(r.unit)}</b> ${esc(r.name)}</span></label>`).join('')}</div>
+    <div class="pol" id="poL"></div>
     <label style="margin:10px 16px 8px">On-duty time <span class="muted small">(now, or when they really started)</span><input type="datetime-local" id="poT" value="${toLocal(now)}" max="${toLocal(now)}"></label>
     <label style="margin:0 16px 10px">Assignment <span class="muted small">(optional, for everyone checked)</span><input type="text" id="poA" maxlength="300"></label>
     <button type="button" class="btn wide" id="poGo" disabled>Pick units above</button>
@@ -3688,9 +3794,36 @@ function openPutOn(mission) {
     <p class="muted small" style="margin:6px 16px 14px">Shows on the board right away with "Put on duty by ${esc(S.d.me.unit)} ${esc(tcName(S.d.me.name))}" and goes on the Board Log. If they open the app, they see they're on duty and can go off duty themselves.</p></div></div>`);
   document.documentElement.classList.add('msopen');
   const startT = $('poT').value;
+  const isJoint = n => groups.some(g => g.mission === n && g.joint) || (S.d.missionList || []).some(m => m.name === n && m.joint);
+  const item = (r, val, tag, busyAt) => busyAt
+    ? `<div class="poi dis"><span><b>${esc(r.unit)}</b> ${esc(r.name)}${tag}</span><span class="muted small">on duty${busyAt === $('poM').value ? '' : ' · ' + esc(busyAt)}</span></div>`
+    : `<label class="poi" data-q="${esc((r.unit + ' ' + r.name + ' ' + (r.short || '')).toLowerCase())}"><input type="checkbox" value="${esc(val)}"> <span><b>${esc(r.unit)}</b> ${esc(r.name)}${tag}</span></label>`;
+  const drawList = () => {
+    const was = {}; [].forEach.call(document.querySelectorAll('#poL input:checked'), x => { was[x.value] = 1; });
+    let html = units.map(r => item(r, r.unit, '', busy[r.unit])).join('');
+    if (isJoint($('poM').value)) {
+      const o = S.otherRoster;
+      if (!o) html += '<div class="poi muted small" id="poWait">Loading the other posse\'s roster…</div>';
+      else if (o.err) html += `<div class="poi err small">${esc(o.err)}</div>`;
+      else {
+        const theirs = o.roster.slice().sort(byUnit);
+        if (theirs.length) html += `<div class="poh">${esc(theirs[0].short)} roster</div>` + theirs.map(r => item(r, r.key + ':' + r.unit, ` <span class="tag ptag">${esc(r.short.split(' ')[0])}</span>`, o.busy[r.key + ':' + r.unit])).join('');
+      }
+    }
+    $('poL').innerHTML = html;
+    [].forEach.call(document.querySelectorAll('#poL input'), x => { if (was[x.value]) x.checked = true; });
+    if ($('poF').value) $('poF').oninput();
+  };
+  const loadOther = async () => {
+    if (S.otherRoster && !S.otherRoster.err && Date.now() - S.otherRoster.at < 600000) return;
+    try { S.otherRoster = Object.assign(await run('apiOtherRoster', S.creds), { at: Date.now() }); }
+    catch (e) { S.otherRoster = { err: "Couldn't load the other posse's roster: " + clean(e) }; }
+    if ($('poL')) drawList();
+  };
   const picked = () => [].map.call(document.querySelectorAll('#poL input:checked'), x => x.value);
-  const upd = () => { const n = picked().length; $('poGo').disabled = !n || !$('poM').value; $('poGo').textContent = n ? 'Put ' + (n === 1 ? picked()[0] : n + ' units') + ' on duty' : 'Pick units above'; $('poN').textContent = $('poM').value || 'Pick the mission'; };
-  $('poL').onchange = upd; $('poM').onchange = upd; upd();
+  const upd = () => { const n = picked().length; $('poGo').disabled = !n || !$('poM').value; $('poGo').textContent = n ? 'Put ' + (n === 1 ? picked()[0].replace(/^[a-z]+:/, '') : n + ' units') + ' on duty' : 'Pick units above'; $('poN').textContent = $('poM').value || 'Pick the mission'; };
+  $('poL').onchange = upd; $('poM').onchange = () => { drawList(); if (isJoint($('poM').value)) loadOther(); upd(); };
+  drawList(); if (isJoint($('poM').value)) loadOther(); upd();
   $('poF').oninput = () => { const q = $('poF').value.trim().toLowerCase(); document.querySelectorAll('#poL .poi').forEach(el => { el.style.display = !q || !el.dataset.q || el.dataset.q.indexOf(q) >= 0 ? '' : 'none'; if (q && !el.dataset.q) el.style.display = 'none'; }); };
   $('amx').onclick = closeActive; $('poC').onclick = closeActive;
   $('poGo').onclick = async () => {
@@ -3700,6 +3833,7 @@ function openPutOn(mission) {
     try {
       const r = await run('apiAdminOn', S.creds, { units: picked(), mission: $('poM').value, on: v && v !== startT ? new Date(v).toISOString() : '', assignment: $('poA').value, rid: S.poRid });
       S.poRid = null; closeActive(); applyDuty(r);
+      if (S.otherRoster) S.otherRoster.at = 0;
       toast((r.done.length ? r.done.join(', ') + ' on duty.' : 'Nobody was put on duty.') + (r.skipped.length ? ' Skipped: ' + r.skipped.join('; ') : ''), !!r.skipped.length, r.skipped.length ? 8000 : 4000);
     } catch (e) { b.disabled = false; upd(); toast(clean(e), true, 6000); }
   };
@@ -3816,9 +3950,9 @@ function histShifts(g, multiDay) {
   all.forEach(s => { n[s.unit] = (n[s.unit] || 0) + 1; label[s.id] = cnt[s.unit] > 1 ? 'Shift ' + n[s.unit] + ' · ' : ''; });
   const day = ms => multiDay ? shortDay(ms) + ' · ' : '';
   const rows = all.map(s => s.status === 'On'
-    ? `<div class="bcard"><div class="brow"><div class="bu">${esc(s.unit)} <span>${esc(lastName(s.name))}</span></div><div class="bel"><span class="tick" data-on="${s.on}">${hm(dutyNow() - s.on)}</span></div></div>
+    ? `<div class="bcard"><div class="brow"><div class="bu">${esc(s.unit)} <span>${esc(lastName(s.name))}</span>${ptag(s)}</div><div class="bel"><span class="tick" data-on="${s.on}">${hm(dutyNow() - s.on)}</span></div></div>
         <div class="bmeta"><b class="ink">${label[s.id]}${day(s.on)}On duty now · since ${clock(s.on)}</b></div>${s.assignment ? `<div class="bmeta">Assignment: ${esc(s.assignment)}</div>` : ''}</div>`
-    : `<div class="bcard off"><div class="brow"><div class="bu">${esc(s.unit)} <span>${esc(lastName(s.name))}</span></div><div class="bel">${hm(s.off - s.on)}</div></div>
+    : `<div class="bcard off"><div class="brow"><div class="bu">${esc(s.unit)} <span>${esc(lastName(s.name))}</span>${ptag(s)}</div><div class="bel">${hm(s.off - s.on)}</div></div>
         <div class="bmeta"><b class="ink">${label[s.id]}${day(s.on)}On ${clock(s.on)} · Off ${clock(s.off)}</b></div>
         <div class="bmeta">Logged ${s.hours} hr${s.miles == null ? '' : ' · ' + s.miles + ' mi'}${s.assignment ? ' · Assignment: ' + esc(s.assignment) : ''}</div></div>`).join('');
   const other = g.other.length ? `<div class="bh">Logged on the Log page (no clock times)</div>` + g.other.map(e =>
