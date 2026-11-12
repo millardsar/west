@@ -176,7 +176,11 @@
   .pol { max-height: 38vh; overflow: auto; margin: 0 16px; border: 1px solid var(--line); border-radius: 10px; }
   .poi { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 9px 10px; border-bottom: 1px solid #eef1ef; margin: 0; font-weight: 400; }
   .poi input { width: 20px; height: 20px; margin: 0 8px 0 0; } label.poi { justify-content: flex-start; cursor: pointer; }
-  .poi.dis { color: #9aa39e; }
+  .poi.dis { color: #9aa39e; background: #f6f7f6; cursor: default; }
+  .poi .pon { margin-left: auto; white-space: nowrap; }
+  .bmany { display: flex; gap: 8px; flex-wrap: wrap; flex: 1; min-width: 260px; }
+  .bmany .btn { flex: 1; min-width: 120px; white-space: nowrap; padding-left: 8px; padding-right: 8px; }
+  .btn.bcout { width: auto; background: #fff; color: var(--navy); border: 1.5px solid #2f855a; }
   .mfbar { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px; }
   .mfbar .full { grid-column: 1 / -1; }
   .mfbar input, .mfbar select { width: 100%; box-sizing: border-box; margin: 0; font-size: 15px; padding: 8px; height: auto; }
@@ -208,6 +212,9 @@
   .hl { font-size: 11.5px; font-weight: 800; color: var(--navy); letter-spacing: .06em; text-transform: uppercase; } .hasg .hl { color: #8a6a10; }
   .hsec { padding: 10px 16px; border-top: 1px solid #eef1ef; } .hsec .hv { font-size: 15.5px; margin-top: 3px; }
   .hsec .dir { font-weight: 800; color: var(--navy); white-space: nowrap; }
+  .dirs { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin-top: 8px; }
+  .dirs .dirg { display: inline-block; width: auto; margin: 0; padding: 9px 14px; font-size: 15px; background: #1e4d36; color: #fff; border-radius: 10px; text-decoration: none; font-weight: 800; }
+  .dirs .dira { color: #1e4d36; font-weight: 800; text-decoration: underline; }
   .hadm { display: flex; justify-content: space-between; width: 100%; background: #f3f6ff; border: 1px solid #c8d3f0; border-radius: 12px; padding: 12px 14px;
     font: inherit; font-weight: 700; color: #1e3a8a; cursor: pointer; text-align: left; margin-bottom: 12px; }
   .hquiet { background: #fff; border-radius: 14px; padding: 24px 18px; text-align: center; margin: 4px 0 14px; }
@@ -286,6 +293,24 @@
   .mcard .mhead { display: flex; justify-content: space-between; gap: 10px; padding: 10px 12px; cursor: pointer; }
   .mcard .mhead:hover { background: #f3f8f4; }
   .mcard .mname { font-weight: 700; }
+  .mbtns { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 12px 0 14px; } .mbtns.one { grid-template-columns: 1fr; }
+  .mpanel { border: 0; border-radius: 12px; color: #fff; font: inherit; font-weight: 800; font-size: 17px; padding: 14px 10px; cursor: pointer; line-height: 1.25; }
+  .mpanel.mbn1 { background: #1e4d36; } .mpanel.mbn2 { background: #2f855a; }
+  .mpanel.on { box-shadow: inset 0 -5px 0 var(--gold, #d4a72c); }
+  .sec .bar .mmeet { color: var(--gold, #d4a72c); font-weight: 800; text-decoration: underline; padding: 0; margin-left: auto; font-size: 14px; }
+  .mhl { font-size: 13px; font-weight: 800; letter-spacing: .8px; color: #1e4d36; margin: 4px 2px 8px; }
+  .mcard .mbadges { margin-top: 4px; } .mcard .mbadges .tag { margin-left: 0; margin-right: 6px; }
+  .mcard.act { border: 0; border-radius: 12px; }
+  .mcard.act.red { background: #c53030; color: #fff; } .mcard.act.yel { background: #d69e2e; color: #1a202c; }
+  .mcard.act .mhead:hover { background: transparent; filter: brightness(1.04); }
+  .mcard.act .mname { font-size: 18px; font-weight: 800; }
+  .mcard.act .tag.actb { background: #fff; font-weight: 800; } .mcard.act.red .tag.actb { color: #c53030; } .mcard.act.yel .tag.actb { color: #7b5800; }
+  .mcard.act .mbody { color: var(--ink, #1a202c); }
+  .mcard.act .chev { color: inherit; opacity: .85; }
+  .mfold { border: 1px solid var(--line); border-radius: 12px; background: #fff; margin: 14px 0; overflow: hidden; }
+  .mfoldb { width: 100%; display: flex; justify-content: space-between; align-items: center; background: none; border: 0; font: inherit; font-size: 17px; font-weight: 700; color: #33403a; padding: 14px 16px; cursor: pointer; }
+  .mfold.on .mfoldb { border-bottom: 1px solid var(--line); }
+  .mfoldl { padding: 12px; background: #f8faf9; }
   .mcard .mbody { border-top: 1px solid var(--line); background: #f8fbf9; padding: 10px 12px; font-size: 14px; }
   .mcard .mbody h5 { margin: 12px 0 4px; font-size: 12px; text-transform: uppercase; letter-spacing: .4px; color: var(--navy); }
   .mcard .mbody h5:first-child { margin-top: 0; }
@@ -551,9 +576,17 @@ const POSSE_INFO = {"key":"west","short":"West Posse","header":"West Millard She
 </script>
 <script>
 /* ================= Duty Log: core (shared by the East and West posses) ================= */
-const APP_VERSION = 'V1.6.8';
+const APP_VERSION = 'V1.6.9';
 const APP_DATE = 'October 25, 2026';
 const CHANGELOG = [
+  { v: 'V1.6.9', date: 'November 11, 2026', items: [
+    'Faster: going off duty, logging time, opening the app and refreshing the Duty Board do much less work on Google\'s side.',
+    'Missions tab: two buttons, "+ New Mission / Event" and "Past Missions / Events". Below them, active missions as red (callouts) or yellow cards, then a folded "Open & ongoing" line. The monthly meeting link moved into the New Mission header.',
+    'New status Completed: the mission is over but members can still add or fix their time (it shows under "Recently completed" on the Log page). Closed is final for members; admins can still change time. Admins get a reminder after 30 days to close a Completed mission.',
+    'Marking a mission Completed or Closed while units are on duty asks first, then puts everyone off duty at the time you pick.',
+    'Admins: "+ Add time for members" on any mission, any time (even after it is over), and "Check out…" on the Duty Board to put several units off duty at once.',
+    'All times are 24-hour. Directions open Google Maps (iPhones also get an Apple Maps link). Places show their name only, also in the GroupMe post. Comms Plan shows Primary Ch and Backup Ch.',
+    '"Command Trailer Maintenance" is now "Equipment / Facility Maintenance". Add Units keeps on-duty members in the same layout with a gray box.'] },
   { v: 'V1.6.8', date: 'November 10, 2026', items: [
     'Duty Board on a computer: uses the full window, units in unit-number order, every column lined up on the left, "Elapsed" column, On / Off time boxes, Checked and Put off duty stacked, off-duty units in the same table with their logged hours and miles.',
     'One "+ Add Units" button at the top. On the phone List view each line is unit, name, elapsed time, On duty and the check box; tap anywhere on a line to open that unit.',
@@ -974,10 +1007,8 @@ async function keepCurrent(force) {
   if (document.hidden) return;
   if (!force && Date.now() - lastCheck < 60000) return;
   lastCheck = Date.now();
-  try {
-    const v = await run('apiVersion');
-    if (v && v.version && v.version !== APP_VERSION) showUpdateBar(v.version);
-  } catch (e) { /* offline or busy: try again later */ }
+  /* Version check and fresh numbers go out together (one wait instead of two) */
+  run('apiVersion').then(v => { if (v && v.version && v.version !== APP_VERSION) showUpdateBar(v.version); }).catch(() => {});
   if (!S.creds || !S.d) return;
   try { applyFresh(await run('apiRefresh', S.creds)); }
   catch (e) { /* signed out or offline: leave the screen as it is */ }
@@ -1150,7 +1181,7 @@ function goTab(k, dir) {
 })();
 
 function buildTabs() {
-  // Members: Home, Log, Missions, My Stats, Team. Admins: Home, Board, Missions, Log, My Stats, Team, then admin tabs.
+  /* Members: Home, Log, Missions, My Stats, Team. Admins: Home, Board, Missions, Log, My Stats, Team, then admin tabs. */
   const t = S.d.me.admin
     ? [['home', 'Home'], ['board', 'Board'], ['missions', 'Missions'], ['log', 'Log'], ['stats', 'My Stats'], ['team', 'Team'],
        ['photos', 'Photos'], ['report', 'Report'], ['review', 'Review'], ['settings', 'Settings']]
@@ -1215,7 +1246,8 @@ function missionSelect(current) {
   const d = S.d;
   const ongoing = d.missions.filter(m => m.ongoing).sort((a, b) => a.name.localeCompare(b.name));
   const meets = d.missions.filter(m => isMeetingName(m.name)).sort((a, b) => meetingYM(b.name).localeCompare(meetingYM(a.name)));
-  const dated = d.missions.filter(m => !m.ongoing && !isMeetingName(m.name)).sort((a, b) => b.date.localeCompare(a.date) || a.name.localeCompare(b.name));
+  const dated = d.missions.filter(m => !m.ongoing && !m.completed && !isMeetingName(m.name)).sort((a, b) => b.date.localeCompare(a.date) || a.name.localeCompare(b.name));
+  const doneRecent = d.missions.filter(m => m.completed && !isMeetingName(m.name)).sort((a, b) => b.date.localeCompare(a.date) || a.name.localeCompare(b.name));
   const all = d.missions.map(m => m.name);
   const cur = current && all.indexOf(current) < 0
     ? `<option value="${esc(current)}" selected>${esc(current)}</option>` : '';
@@ -1230,6 +1262,7 @@ function missionSelect(current) {
       ${meets.length ? `<optgroup label="Meetings">${meets.map(optD).join('')}</optgroup>` : ''}
       ${ongoing.length ? `<optgroup label="Ongoing">${ongoing.map(optO).join('')}</optgroup>` : ''}
       ${dated.length ? `<optgroup label="Missions & events, newest first">${dated.map(optD).join('')}</optgroup>` : ''}
+      ${doneRecent.length ? `<optgroup label="Recently completed">${doneRecent.map(optD).join('')}</optgroup>` : ''}
       <option value="__new">+ New Mission / Event…</option>
     </select>`;
 }
@@ -1483,7 +1516,7 @@ function askSheet(title, html, btns, kind) {
       <div style="padding:14px 16px 4px;font-size:16px">${html}</div>
       <div style="padding:4px 16px 18px">${btns.map(([k, l], i) => `<button type="button" class="btn${i ? ' ghost' : ''}" data-k="${esc(k)}" style="width:100%;margin-top:8px">${esc(l)}</button>`).join('')}</div></div></div>`);
     document.documentElement.classList.add('msopen');
-    const done = k => { const x = $('asksh'); if (x) x.remove(); if (!$('amsh') && !$('mssh')) document.documentElement.classList.remove('msopen'); res(k); };
+    const done = k => { const x = $('asksh'); askSheet.vals = {}; if (x) { x.querySelectorAll('input,select,textarea').forEach(i => { if (i.id) askSheet.vals[i.id] = i.type === 'checkbox' ? i.checked : i.value; }); x.remove(); } if (!$('amsh') && !$('mssh')) document.documentElement.classList.remove('msopen'); res(k); };
     $('asksh').querySelectorAll('[data-k]').forEach(b => b.onclick = () => done(b.dataset.k));
     $('asksh').onclick = ev => { if (ev.target.id === 'asksh') done(''); };
   });
@@ -1859,8 +1892,7 @@ function isLockedName(n) { const k = String(n || '').toLowerCase(); return (S.d.
 function lockedWhen(t) {
   const m = /^(\d{4}-\d{2}-\d{2})\s+(\d{1,2}):(\d{2})\s+by\s+(.*)$/.exec(String(t || ''));
   if (!m) return esc(t);
-  const h = +m[2], ap = h < 12 ? 'AM' : 'PM';
-  return esc(fmtDate(m[1]) + ' ' + ((h % 12) || 12) + ':' + m[3] + ' ' + ap + ' by ' + m[4]);
+  return esc(fmtDate(m[1]) + ' ' + pad2(+m[2]) + ':' + m[3] + ' by ' + m[4]);
 }
 function fmtRange(a, b) {
   if (!a) return '';
@@ -1898,8 +1930,8 @@ function gmBold(t) {
 function alertMessage(f) {
   const sec = [];
   sec.push([missionEmoji(f.type) + ' ' + gmBold(String(f.type || '').toUpperCase()), f.name || '(mission name)', f.date ? fmtDate(f.date) : ''].filter(Boolean).join('\n'));
-  if (f.location) sec.push(gmBold('Incident Location') + '\n' + f.location);
-  if (f.staging) sec.push(gmBold('Staging Point') + '\n' + f.staging);
+  if (f.location) sec.push(gmBold('Incident Location') + '\n' + (splitPlace(f.location).name || f.location));
+  if (f.staging) sec.push(gmBold('Staging Point') + '\n' + (splitPlace(f.staging).name || f.staging));
   if (f.primary || f.backup) sec.push([gmBold('Comms Plan'), f.primary ? 'Primary Ch: ' + f.primary : '', f.backup ? 'Backup Ch: ' + f.backup : ''].filter(Boolean).join('\n'));
   if (f.extra) sec.push(gmBold('Details') + '\n' + f.extra);
   if (f.map) sec.push(gmBold('Map') + '\n' + MAP_PLACEHOLDER + '\nOr in CalTopo: ' + ((S.d.posse && S.d.posse.short) || 'Posse') + ' Data › ' + (f.name || '(mission name)'));
@@ -2130,7 +2162,7 @@ function openSaved(input, after) {
 function addMissionForm() {
   const d = S.d, c = d.conn || {};
   const folder = c.ctFolder || (d.posse && d.posse.short) || '';
-  return section('Add Mission / Event', `<form id="mf" class="form">
+  return section('New Mission / Event', `<form id="mf" class="form">
       <label>Mission / Event name<textarea id="mn" class="grow1" rows="1" maxlength="80" required placeholder="e.g. LOST HIKER CHALK CREEK"></textarea>
         <span class="hint">Letters are capitalized automatically, to match the CalTopo map name.</span></label>
       <div class="row2">
@@ -2164,7 +2196,7 @@ function addMissionForm() {
       <div class="btnrow"><button class="btn" type="submit" id="mb" style="flex:1;width:auto">Add mission</button>
         <button class="btn ghost" type="button" id="mclr" style="width:auto">Clear</button></div>
       <p class="muted small">It shows up right away in every member's Mission list on the Log page.${c.caltopo || c.groupme ? ' Map and GroupMe are checked for Callouts, Trainings and Events / Parades. Uncheck either one to skip it.' : ''}</p>
-    </form>`);
+    </form>`, '<button type="button" class="link mmeet" id="mkmeet">Monthly meeting ›</button>');
 }
 
 function hookAddMission() {
@@ -2240,7 +2272,7 @@ function hookAddMission() {
         ongoing: $('mong').checked, joint: $('mjoint').checked, location: f.location, caseNo: $('mcase').value.trim(),
         staging: f.staging, primary: f.primary, backup: f.backup, details: f.extra,
         makeMap: f.map, post: post, message: post ? msg : '', rid: S.missionRid });
-      clearTimeout(st.dt); draftClear('mission'); S.missionRid = null; S.showNewMission = false;
+      clearTimeout(st.dt); draftClear('mission'); S.missionRid = null; S.showNewMission = false; S.mPanel = null;
       if (r && r.results) {
         S.addResult = { name: r.name, results: r.results, message: msg, wantMap: f.map, wantPost: post };
         setData(r.data); window.scrollTo(0, 0);
@@ -2370,7 +2402,7 @@ function oddText(m) {
 }
 function needsAttn(m) {
   const today = todayYmd(), out = [];
-  const past = m.date && m.date <= today;
+  const past = m.date && m.date < today;
   const openDays = m.status === 'Open' && m.date ? dayDiff(m.date, today) : 0;
   if (openDays > 30) out.push('Open for ' + openDays + ' days' + (m.members ? '' : ' with no time logged'));
   else if (!m.members && past && m.status !== 'Ongoing') out.push('No time logged');
@@ -2378,7 +2410,7 @@ function needsAttn(m) {
   return out;
 }
 const M_SORTS = [['date', 'Mission date, newest first'], ['last', 'Last activity'], ['name', 'Name A to Z'], ['hours', 'Most hours'], ['members', 'Most members']];
-const M_STATUS = [['all', 'All'], ['Open', 'Open'], ['Ongoing', 'Ongoing'], ['Closed', 'Closed'], ['locked', 'Locked'], ['joint', 'Joint'], ['Unlisted', 'Not on the list']];
+const M_STATUS = [['all', 'All'], ['Open', 'Open'], ['Ongoing', 'Ongoing'], ['Completed', 'Completed'], ['Closed', 'Closed'], ['locked', 'Locked'], ['joint', 'Joint'], ['Unlisted', 'Not on the list']];
 function missionView(all, admin) {
   const q = String(S.mQ || '').trim().toLowerCase(), st = S.mStatus || 'all', yr = S.mYear || 'all', sort = S.mSort || 'date';
   const yearOf = m => String(m.date || m.last || '').slice(0, 4);
@@ -2397,11 +2429,11 @@ function missionView(all, admin) {
   if (cmp) list.sort(cmp);
   const years = {}; all.forEach(m => { const y = yearOf(m); if (y) years[y] = 1; });
   const opt = (v, l, cur) => `<option value="${esc(v)}" ${v === cur ? 'selected' : ''}>${esc(l)}</option>`;
-  const bar = `<div class="mfbar"><input type="search" id="mq" class="full" placeholder="🔍 Search mission names" value="${esc(S.mQ || '')}" aria-label="Search mission names">
+  const bar = `<div class="mfbar"><input type="search" id="mq" class="full" placeholder="Search mission names" value="${esc(S.mQ || '')}" aria-label="Search mission names">
     <div><div class="fl">Sort</div><select id="msort">${M_SORTS.map(([v, l]) => opt(v, l, sort)).join('')}</select></div>
     <div><div class="fl">Year</div><select id="myear">${opt('all', 'All years', yr)}${Object.keys(years).sort().reverse().map(y => opt(y, y, yr)).join('')}</select></div>
     <div><div class="fl">Type</div><select id="mfil" aria-label="Filter by type">${typeOptions(S.mFilter, true)}</select></div>
-    <div><div class="fl">Status</div><select id="mstatf">${M_STATUS.concat(admin ? [['attn', 'Needs attention']] : []).map(([v, l]) => opt(v, l, st)).join('')}</select></div></div>
+    <div><div class="fl">Status</div><select id="mstatf">${M_STATUS.filter(x => ['Open', 'Ongoing'].indexOf(x[0]) < 0).concat(admin ? [['attn', 'Needs attention']] : []).map(([v, l]) => opt(v, l, st)).join('')}</select></div></div>
     <div class="mcnt">Showing ${list.length} of ${all.length} mission${all.length === 1 ? '' : 's'}${q || st !== 'all' || yr !== 'all' || S.mFilter !== 'all' ? ' · <button type="button" class="link" id="mclr">Clear filters</button>' : ''}</div>`;
   return { list: list, bar: bar };
 }
@@ -2421,19 +2453,21 @@ function hookMissionFilters() {
   };
 }
 
+/** The two buttons at the top of the Missions tab (members get only Past Missions / Events). */
+function missionButtons(admin) {
+  const b = (p, cls, label) =>  `<button type="button" id="mk${p}" class="mpanel ${cls}${S.mPanel === p ? ' on' : ''}" data-p="${p}" aria-expanded="${S.mPanel === p}">${label}</button>`;
+  return `<div class="mbtns${admin ? '' : ' one'}">${admin ? b('new', 'mbn1', '+ New Mission / Event') : ''}${b('past', 'mbn2', 'Past Missions / Events')}</div>`;
+}
+
 function renderMissions() {
   const d = S.d, admin = d.me.admin, conn = d.conn || {};
   if (!S.mSort) { try { S.mSort = localStorage.getItem('missionSort') || 'date'; } catch (e) { S.mSort = 'date'; } }
-  const mv = missionView(d.missionList, admin), list = mv.list;
   let html = addResultPanel();
 
   if (admin) {
-    const thisMeet = meetingNameFor(todayYmd());
-    const hasMeet = d.missionList.some(m => m.name === thisMeet);
-    html += `<div class="mtop"><button type="button" class="btn" id="mknew">${S.showNewMission ? 'Close the new mission form' : '+ New Mission / Event'}</button>
-      <button type="button" class="btn ghost" id="mkmeet">${hasMeet ? esc(thisMeet) : "+ This month's meeting"}</button></div>`;
-    if (S.showNewMission == null) { const dr = draftLoad('mission'); S.showNewMission = !!(dr && (dr.mn || dr.mloc || dr.mnotes || dr.mxtra)); }
-    if (S.showNewMission) html += addMissionForm();
+    html += missionButtons(true);
+    if (S.showNewMission == null) { const dr = draftLoad('mission'); S.showNewMission = !!(dr && (dr.mn || dr.mloc || dr.mnotes || dr.mxtra)); if (S.showNewMission) S.mPanel = 'new'; }
+    if (S.mPanel === 'new') html += addMissionForm();
     const sims = similarGroups(d.missionList);
     S.sims = sims;
     if (sims.length) {
@@ -2446,7 +2480,20 @@ function renderMissions() {
             <div class="r"><button class="btn small mg" data-g="${gi}">Merge into the selected name</button></div></div>`;
         }).join(''));
     } else S.simsHtml = '';
-  } else S.simsHtml = '';
+  } else { S.simsHtml = ''; html += missionButtons(false); }
+  html += doneReminders();
+
+  /* V1.6.9: ACTIVE NOW cards, then one folded "Open & ongoing (N)" line; everything else is under "Past Missions / Events" */
+  const actNames = {}; activeList().forEach(a => { actNames[a.name] = a; });
+  const isOpenish = m => m.status === 'Open' || m.status === 'Ongoing';
+  const actives = d.missionList.filter(m => actNames[m.name]).sort((a, b) => (b.type === 'Callout') - (a.type === 'Callout') || a.name.localeCompare(b.name));
+  const rank = m => isMeetingName(m.name) ? 0 : m.status === 'Ongoing' ? 1 : 2;
+  const openOg = d.missionList.filter(m => !actNames[m.name] && isOpenish(m))
+    .sort((a, b) => rank(a) - rank(b) || (rank(a) === 2 ? String(b.date || '').localeCompare(String(a.date || '')) : rank(a) === 0 ? meetingYM(b.name).localeCompare(meetingYM(a.name)) : a.name.localeCompare(b.name)));
+  const pastAll = d.missionList.filter(m => !actNames[m.name] && !isOpenish(m));
+  const pv = S.mPanel === 'past' ? missionView(pastAll, admin) : { list: [], bar: '' };
+  const list = actives.concat(S.mOpenFold ? openOg : []).concat(pv.list);
+  const kindOf = m => actNames[m.name] ? (m.type === 'Callout' ? 'act red' : 'act yel') : '';
 
   const me = d.posse ? d.posse.short : 'This posse';
   const cards = list.map((m, i) => {
@@ -2457,7 +2504,7 @@ function renderMissions() {
     const dates = og ? (m.last ? 'Last logged ' + fmtDate(m.last) : '')
       : !m.first ? '' : m.first === m.last ? fmtDate(m.first) : fmtDate(m.first) + ' – ' + fmtDate(m.last);
     const status = locked ? '<span class="tag lock">🔒 Locked</span>' : m.status === 'Open' ? '<span class="tag good">Open</span>' : og ? '<span class="tag good">Ongoing</span>'
-      : m.status === 'Closed' ? '<span class="tag">Closed</span>' : '';
+      : m.status === 'Closed' ? '<span class="tag">Closed</span>' : m.status === 'Completed' ? '<span class="tag">Completed</span>' : '';
     const nums = m.members ? `${m.members} member${m.members === 1 ? '' : 's'} · ${n1(m.h)} hr · ${n1(m.mi)} mi` : 'No time logged yet';
     const ot = m.other || null;
     const pl = k => `${k} member${k === 1 ? '' : 's'}`;
@@ -2496,8 +2543,8 @@ function renderMissions() {
           <label>Details for members (shows on the active-mission banner)<textarea class="mdt grow1" rows="2" maxlength="2000">${esc(m.details || '')}</textarea></label>
           ${bannerControl(m)}
           ${url ? '' : `<label>CalTopo map link<input class="mml" placeholder="Paste a link like https:\/\/caltopo.com/m/AB12C" value=""></label>`}`
-        : (m.caseNo || m.location || m.staging || m.primary || m.backup || m.details ? `<div class="kvl">${m.caseNo ? `<div><span>MCSO case #</span>${esc(m.caseNo)}</div>` : ''}${m.location ? `<div><span>Incident Location</span>${esc(m.location)}</div>` : ''}
-            ${m.staging ? `<div><span>Staging Point</span>${esc(m.staging)}</div>` : ''}${m.primary ? `<div><span>Primary Ch</span>${esc(m.primary)}</div>` : ''}${m.backup ? `<div><span>Backup Ch</span>${esc(m.backup)}</div>` : ''}${m.details ? `<div><span>Details</span>${esc(m.details)}</div>` : ''}</div>` : '');
+        : (m.caseNo || m.location || m.staging || m.primary || m.backup || m.details ? `<div class="kvl">${m.caseNo ? `<div><span>MCSO case #</span>${esc(m.caseNo)}</div>` : ''}${m.location ? `<div><span>Incident Location</span>${esc(placeName(m.location))}${dirButtons(m.location)}</div>` : ''}
+            ${m.staging ? `<div><span>Staging Point</span>${esc(placeName(m.staging))}${dirButtons(m.staging)}</div>` : ''}${m.primary ? `<div><span>Primary Ch</span>${esc(m.primary)}</div>` : ''}${m.backup ? `<div><span>Backup Ch</span>${esc(m.backup)}</div>` : ''}${m.details ? `<div><span>Details</span>${esc(m.details)}</div>` : ''}</div>` : '');
       const exps = m.expenses || [];
       const etotal = exps.reduce((a, x) => a + (x.amount || 0), 0);
       const erows = exps.map((x, k) => `<tr><td>${esc(fmtDate(x.date).replace(/, \d{4}$/, ''))}</td>
@@ -2520,6 +2567,7 @@ function renderMissions() {
         ${mapPart ? `<div style="margin-bottom:6px">${mapPart}</div>` : ''}
         ${details}
         <h5>Who logged time${m.joint ? ' · ' + esc(me) : ''}</h5>${who || '<span class="muted">Nobody yet.</span>'}
+        ${edit ? '<div style="margin:8px 0 2px"><button class="btn small ghost matime" type="button">+ Add time for members…</button></div>' : ''}
         ${m.joint ? `<h5>Who logged time · ${esc(ot.short)}</h5>${(ot.who || []).map(whoLine).join('<br>') || '<span class="muted">Nobody yet.</span>'}` : ''}
         <h5>Operational notes</h5>
         ${edit ? `<textarea class="mno" rows="4" maxlength="5000" placeholder="Location, agencies involved, outcome…">${esc(m.notes || '')}</textarea>
@@ -2528,7 +2576,7 @@ function renderMissions() {
           <select class="mtype mini" style="border:1px solid var(--line)" aria-label="Type">${typeOptions(m.type)}</select>
           <select class="mstat mini" style="border:1px solid var(--line)" aria-label="Status">
             ${m.status === 'Unlisted' ? '<option value="" selected disabled>Not on the list</option>' : ''}
-            ${[['Open', 'Open'], ['Ongoing', 'Ongoing (no end date)'], ['Closed', 'Closed']].map(([v, l]) => `<option value="${v}" ${m.status === v ? 'selected' : ''}>${l}</option>`).join('')}
+            ${[['Open', 'Open'], ['Ongoing', 'Ongoing (no end date)'], ['Completed', 'Completed (members can still log)'], ['Closed', 'Closed (final)']].map(([v, l]) => `<option value="${v}" ${m.status === v ? 'selected' : ''}>${l}</option>`).join('')}
           </select>
         </div>
         <label class="chk" style="margin:12px 0 0"><input type="checkbox" class="mjt" ${m.joint ? 'checked' : ''}> Joint mission (East &amp; West)</label>`
@@ -2548,24 +2596,43 @@ function renderMissions() {
         <div class="mdone"><button class="btn mclose" type="button">Done</button></div>
       </div>`;
     }
-    return `<div class="mcard${open ? ' isopen' : ''}" data-i="${i}">
-      <div class="mhead" tabindex="0" role="button" aria-expanded="${open}"><div><div class="mname">${esc(m.name)}<span class="tag">${esc(m.type)}</span>${m.joint ? '<span class="tag joint">Joint</span>' : ''}${status}${m.mapId ? '<span class="tag">🗺 Map</span>' : ''}${m.photoCount ? `<span class="tag">📷 ${m.photoCount}</span>` : ''}${attn.length ? '<span class="tag attn">Needs attention</span>' : ''}</div>
-        <div class="meta small muted">${dates ? esc(dates) + (m.joint ? '' : ' · ') : ''}${m.joint ? '' : nums}${mine}</div>${jline}${warn}</div>
+    const act = actNames[m.name];
+    const onNow = act ? boardData().filter(g => g.mission === m.name).reduce((t, g) => t + g.on.length, 0) : 0;
+    const badges = act ? `<span class="tag actb">ACTIVE · ${esc(m.type)}</span>${m.joint ? '<span class="tag actb">Joint</span>' : ''}`
+      : `<span class="tag">${esc(m.type)}</span>${m.joint ? '<span class="tag joint">Joint</span>' : ''}${status}${m.mapId ? '<span class="tag">🗺 Map</span>' : ''}${m.photoCount ? `<span class="tag">📷 ${m.photoCount}</span>` : ''}${attn.length ? '<span class="tag attn">Needs attention</span>' : ''}`;
+    const meta = act ? [act.created ? 'Started ' + shortDay(act.created) + ' ' + clock(act.created) : m.date ? shortDate(m.date) : '', admin && onNow ? onNow + ' on duty' : '', m.members ? m.members + ' member' + (m.members === 1 ? '' : 's') : ''].filter(Boolean).join(' · ')
+      : (dates ? esc(dates) + (m.joint ? '' : ' · ') : '') + (m.joint ? '' : nums) + mine;
+    return `<div class="mcard ${kindOf(m)}${open ? ' isopen' : ''}" data-i="${i}">
+      <div class="mhead" tabindex="0" role="button" aria-expanded="${open}"><div><div class="mname">${esc(m.name)}</div><div class="mbadges">${badges}</div>
+        <div class="meta small ${act ? '' : 'muted'}">${act ? esc(meta) : meta}</div>${act ? '' : jline + warn}</div>
         <div class="chev">${open ? '▾' : '▸'}</div></div>${body}</div>`;
-  }).join('');
+  });
 
-  html += section('Missions & Events', mv.bar +
-    (cards || '<p class="muted">No missions match.</p>') +
-    `<p class="muted small">Tap a mission for its map, notes, photos, expenses and who logged time${admin ? ', or to close, lock, merge or rename it' : ''}.</p>`);
-  main(html + (S.simsHtml || ''));
+  const cardAt = (from, n) => cards.slice(from, from + n).join('');
+  const nA = actives.length, nO = S.mOpenFold ? openOg.length : 0;
+  if (S.mPanel === 'past') {
+    html += section('Past Missions / Events', pv.bar + (cardAt(nA + nO, pv.list.length) || '<p class="muted">No missions match.</p>') +
+      `<p class="muted small">Completed and closed missions. Tap one for its map, notes, photos, expenses and who logged time${admin ? ', or to reopen, lock, merge or rename it' : ''}.</p>`);
+    html += S.simsHtml || '';
+  }
+  html += `<div class="mhl">ACTIVE NOW</div>${cardAt(0, nA) || '<p class="muted" style="margin:0 2px 12px">No active missions.</p>'}`;
+  if (openOg.length) html += `<div class="mfold${S.mOpenFold ? ' on' : ''}"><button type="button" class="mfoldb" id="mfold" aria-expanded="${!!S.mOpenFold}"><span>Open &amp; ongoing (${openOg.length})</span><span>${S.mOpenFold ? '▾' : '▸'}</span></button>
+    ${S.mOpenFold ? `<div class="mfoldl">${cardAt(nA, nO)}</div>` : ''}</div>`;
+  main(html);
+  if ($('mfold')) $('mfold').onclick = () => { S.mOpenFold = !S.mOpenFold; S.openMission = null; const y = window.scrollY; render(); window.scrollTo(0, y); };
+  document.querySelectorAll('.mpanel').forEach(b => b.onclick = () => {
+    S.mPanel = S.mPanel === b.dataset.p ? null : b.dataset.p; S.openMission = null;
+    if (b.dataset.p === 'new') S.showNewMission = S.mPanel === 'new';
+    render(); window.scrollTo(0, 0); if (S.mPanel === 'new' && $('mn')) $('mn').focus();
+  });
+  hookDoneReminders();
 
-  hookMissionFilters();
+  if ($('msort')) hookMissionFilters();
   if (admin) refreshPlaceList();
   hookAddResult();
   loadThumbs();
   if (admin) {
     if ($('mkmeet')) $('mkmeet').onclick = openMeetingSheet;
-    $('mknew').onclick = () => { S.showNewMission = !S.showNewMission; render(); window.scrollTo(0, 0); if (S.showNewMission && $('mn')) $('mn').focus(); };
     if ($('mf')) hookAddMission();
     document.querySelectorAll('.mg').forEach(b => b.onclick = async () => {
       const g = S.sims[+b.dataset.g];
@@ -2659,6 +2726,7 @@ function renderMissions() {
       render(); window.scrollTo(0, 0);
     });
     if (q('.mscrub')) q('.mscrub').onclick = () => openScrub(m.name);
+    if (q('.matime')) q('.matime').onclick = () => openAddTime(m.name);
     if (!q('.msave')) return;
     hookChannel('cp' + card.dataset.i, 'cpo' + card.dataset.i); hookChannel('cb' + card.dataset.i, 'cbo' + card.dataset.i);
     q('.mpk').onclick = () => pickStaging(q('.mst'), splitPlace(placeValue(q('.mlc'))).pt || q('.mlc').value.trim() || m.location || '');
@@ -2673,8 +2741,7 @@ function renderMissions() {
       if (!on && !confirm(`Make “${m.name}” this posse's mission only? The other posse will no longer see it in their list.`)) { ev.target.checked = true; return; }
       save({ joint: on }, on ? 'Now a joint mission.' : 'No longer joint.');
     };
-    q('.mstat').onchange = ev => save({ status: ev.target.value },
-      { Open: 'Mission is open.', Ongoing: 'Marked ongoing.', Closed: 'Mission closed.' }[ev.target.value]);
+    q('.mstat').onchange = ev => saveStatus(m, ev.target.value).then(okd => { if (!okd) ev.target.value = m.status || 'Open'; });
     q('.mgo').onclick = () => missionDialog(m, 'merge');
     q('.rno').onclick = () => missionDialog(m, 'rename');
     body.querySelectorAll('.xdel').forEach(b => b.onclick = () => {
@@ -2765,6 +2832,47 @@ function renderMissionReport() {
 }
 
 /** Keeps a copy of a new Mission Report in the mission's Google Drive folder (quietly; the report is on screen either way). */
+/**
+ * V1.6.9: change a mission's status. Completed or Closed with units still on duty: ask first, then put them all off duty
+ * at the time picked (default now) and change the status. Resolves true when saved.
+ */
+async function saveStatus(m, status) {
+  const base = { name: m.name, date: m.first || m.date, type: m.type, status: status };
+  const msgs = { Open: 'Mission is open.', Ongoing: 'Marked ongoing.', Completed: 'Marked Completed. Members can still log time.', Closed: 'Mission closed.' };
+  try {
+    let r = await run('apiSaveMission', S.creds, base);
+    if (r && r.needOff) {
+      const n = r.needOff.length, verb = status === 'Closed' ? 'Closing' : 'Marking it Completed';
+      const who = r.needOff.map(x => esc(x.unit + ' ' + String(x.name || '').split(' ').slice(-1)[0]) + (x.posse ? ' <span class="muted">(' + esc(x.posse) + ')</span>' : '')).join(', ');
+      const k = await askSheet((status === 'Closed' ? 'Close ' : 'Complete ') + m.name + '?',
+        `<b>${n} unit${n === 1 ? ' is' : 's are'} still on duty:</b> ${who}.<br><br>${verb} puts ${n === 1 ? 'them' : 'them all'} off duty at:
+         <input type="datetime-local" id="cfOff" value="${toLocal(Date.now())}" max="${toLocal(Date.now())}" style="margin-top:6px">
+         <div class="muted small" style="margin-top:6px">Miles are left blank (unknown). Each member gets a note.</div>`,
+        [['go', 'Put them off duty and ' + (status === 'Closed' ? 'close' : 'complete')], ['', 'Cancel']], 'red');
+      if (k !== 'go') return false;
+      const v = (askSheet.vals || {}).cfOff, t = v ? new Date(v) : null;
+      r = await run('apiSaveMission', S.creds, Object.assign(base, { offAt: t && !isNaN(t.getTime()) ? t.toISOString() : 'now' }));
+    }
+    setData(r); toast(msgs[status] || 'Saved.');
+    return true;
+  } catch (e) { toast(clean(e), true); return false; }
+}
+
+/** Admins: "X has been Completed for 30 days. Close it?" (Home and Missions tab). */
+function doneReminders() {
+  const list = (S.d && S.d.doneOld) || [];
+  if (!list.length || !(S.d.me && S.d.me.admin)) return '';
+  return list.map(x => `<div class="card donerem" style="border-left:5px solid #b7791f;background:#fffaf0;display:flex;gap:10px;align-items:center;justify-content:space-between">
+      <div><b>${esc(x.name)}</b> has been Completed for ${x.days} days. Close it?</div>
+      <button type="button" class="btn small drclose" data-n="${esc(x.name)}">Close</button></div>`).join('');
+}
+function hookDoneReminders(root) {
+  (root || document).querySelectorAll('.drclose').forEach(b => b.onclick = () => {
+    const m = (S.d.missionList || []).find(x => x.name === b.dataset.n) || { name: b.dataset.n, type: '' };
+    busyBtn(b, async () => { await saveStatus(m, 'Closed'); render(); });
+  });
+}
+
 async function saveReportCopy(el, name) {
   try {
     if (!window.html2pdf) await loadScript('https:\/\/cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js');
@@ -3000,7 +3108,7 @@ function renderYearEnd() {
   const member = isAll ? null : { unit: who, name: nameOf(who) };
   const thru = year === today.getFullYear() ? ` (through ${fmtDate(todayStr())})` : '';
 
-  // Month table
+  /* Month table */
   let mrows = '';
   for (let m = 0; m < 12; m++) {
     const mt = sum(rows.filter(e => e.date.slice(5, 7) === pad(m + 1)));
@@ -3015,7 +3123,7 @@ function renderYearEnd() {
     : `<table><tr><th>Month</th><th>Functions</th><th>Hours</th><th>Miles</th></tr>${mrows}
       <tr class="tot"><td>Total</td><td>${n1(t.f)}</td><td>${n1(t.h)}</td><td>${n1(t.mi)}</td></tr></table>`;
 
-  // Type table
+  /* Type table */
   const byType = {};
   rows.forEach(e => { (byType[e.type] = byType[e.type] || []).push(e); });
   const order = d.types.concat(['Monthly report']);
@@ -3349,14 +3457,29 @@ function renderSettings() {
 function dutyNow() { return Date.now(); }
 function hm(ms) { const m = Math.max(0, Math.floor(ms / 60000)); return Math.floor(m / 60) + ' h ' + pad2(m % 60) + ' m'; }
 function pad2(n) { return String(n).padStart(2, '0'); }
-function clock(t) { if (!t) return ''; const d = new Date(t); let h = d.getHours(); const ap = h < 12 ? 'AM' : 'PM'; h = h % 12 || 12; return h + ':' + pad2(d.getMinutes()) + ' ' + ap; }
+function toLocal(t) { const d = new Date(t); return d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(d.getDate()) + 'T' + pad2(d.getHours()) + ':' + pad2(d.getMinutes()); }
+async function busyBtn(btn, fn) { if (btn) btn.disabled = true; try { await fn(); } catch (e) { toast(clean(e), true); } finally { if (btn && document.body.contains(btn)) btn.disabled = false; } }
+function clock(t) { if (!t) return ''; const d = new Date(t); return pad2(d.getHours()) + ':' + pad2(d.getMinutes()); }
 function halfUpHrs(min) { return Math.max(0.5, Math.ceil(min / 30) / 2); }
 function lastName(n) { return String(n || '').trim().split(/\s+/).slice(-1)[0].toUpperCase(); }
 function dirLink(place) {
   const pt = splitPlace(place || '').pt;
+  return pt ? 'https:\/\/www.google.com/maps/dir/?api=1&destination=' + encodeURIComponent(pt.replace(/\s+/g, '')) : '';
+}
+/** V1.6.9: "Directions (Google Maps)" for everyone; iPhones also get a small "Apple Maps" link. */
+function dirButtons(place) {
+  const pt = splitPlace(place || '').pt;
   if (!pt) return '';
   const q = encodeURIComponent(pt.replace(/\s+/g, ''));
-  return /iPhone|iPad|iPod/.test(navigator.userAgent) ? 'https:\/\/maps.apple.com/?daddr=' + q : 'https:\/\/www.google.com/maps/dir/?api=1&destination=' + q;
+  const ios = /iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  return `<div class="dirs"><a class="btn dirg" href="${dirLink(place)}" target="_blank" rel="noopener">Directions (Google Maps)</a>` +
+    (ios ? `<a class="dira" href="https:\/\/maps.apple.com/?daddr=${q}" target="_blank" rel="noopener">Apple Maps</a>` : '') + '</div>';
+}
+/** A place for display: the name only (the coordinates stay behind the Directions buttons). */
+function placeName(p) { if (!p) return ''; const sp = splitPlace(p); return sp.name || (sp.pt ? 'Map point' : String(p)); }
+function placeHtml(p) { return p ? '<div>' + esc(placeName(p)) + '</div>' + dirButtons(p) : ''; }
+function commsHtml(primary, backup) {
+  return [primary ? 'Primary Ch: ' + esc(primary) : '', backup ? 'Backup Ch: ' + esc(backup) : ''].filter(Boolean).join('<br>');
 }
 function dutyInfo() { return (S.d && S.d.duty) || { active: [], mine: null }; }
 function activeList() { return dutyInfo().active || []; }
@@ -3365,7 +3488,7 @@ function activeList() { return dutyInfo().active || []; }
 function renderHome() {
   const d = S.d, act = activeList(), mine = dutyInfo().mine;
   const sec = (h, v) => v ? `<div class="hsec"><div class="hl">${h}</div><div class="hv">${v}</div></div>` : '';
-  const place = p => { if (!p) return ''; const sp = splitPlace(p), u = dirLink(p); return esc(sp.name || p) + (u ? ` <a class="dir" href="${u}" target="_blank" rel="noopener">Directions ›</a>` : ''); };
+  const place = placeHtml;
   const card = (a, isAct) => {
     const onHere = mine && mine.mission === a.name;
     const kind = a.type === 'Callout' ? 'red' : isAct ? 'yel' : 'grn';
@@ -3379,7 +3502,7 @@ function renderHome() {
         ${url ? `<a class="btn hmap" href="${url}" target="_blank" rel="noopener">CalTopo Map</a>` : '<button type="button" class="btn hmap" disabled>No map yet</button>'}</div>
       ${onHere && mine.assignment ? `<div class="hasg"><div class="hl">YOUR ASSIGNMENT</div><div class="ht">${esc(mine.assignment)}</div></div>` : ''}
       ${sec('Staging point', place(a.staging))}${sec('Incident location', place(a.location))}
-      ${sec('Comms', [a.primary ? esc(a.primary) : '', a.backup ? 'backup ' + esc(a.backup) : ''].filter(Boolean).join(' · '))}
+      ${sec('Comms Plan', commsHtml(a.primary, a.backup))}
       ${sec('Details', a.details ? esc(a.details).replace(/\n/g, '<br>') : '')}
     </div>`;
   };
@@ -3403,7 +3526,8 @@ function renderHome() {
       ${next.length ? `<div class="hnext"><div class="hl">COMING UP</div>${next.map(m => `<div class="row"><span>${esc(m.name)}</span><b>${esc(shortDate(m.date))}</b></div>`).join('')}</div>` : ''}
       <div class="htiles"><div><b>${n1(t.h)}</b><span>hours this month</span></div><div><b>${n1(t.f)}</b><span>functions this month</span></div></div>`;
   }
-  main(`<div class="home">${html}</div>`);
+  main(`<div class="home">${doneReminders()}${html}</div>`);
+  hookDoneReminders();
   document.querySelectorAll('.hgo').forEach(b => b.onclick = () => b.dataset.off ? openOffDuty() : goOnDuty(b.dataset.n));
   if ($('hBoard')) $('hBoard').onclick = () => { S.tab = 'board'; buildTabs(); render(); window.scrollTo(0, 0); };
   if ($('hLog')) $('hLog').onclick = () => { S.tab = 'log'; buildTabs(); render(); window.scrollTo(0, 0); };
@@ -3449,7 +3573,7 @@ function openActive(name, which) {
   const onHere = mine && mine.mission === a.name;
   const url = mapLink(a.mapId);
   const sec = (h, v) => v ? `<div class="ams"><h6>${h}</h6><div class="v">${v}</div></div>` : '';
-  const place = p => { if (!p) return ''; const sp = splitPlace(p), d = dirLink(p); return esc(sp.name || p) + (sp.pt ? `<div class="muted small">${esc(sp.pt)}</div>` : '') + (d ? `<a class="dir" href="${d}" target="_blank" rel="noopener">Directions ›</a>` : ''); };
+  const place = placeHtml;
   const others = act.filter(x => x.name !== a.name);
   document.body.insertAdjacentHTML('beforeend', `<div class="amsh" id="amsh"><div class="ambox" role="dialog" aria-label="${esc(a.name)}">
     <div class="amhead ${kind}"><div class="k">${isAct ? 'ACTIVE ' + esc(String(a.type).toUpperCase()) : esc(String(a.type || 'Mission').toUpperCase())}</div><div class="n">${esc(a.name)}</div>
@@ -3459,7 +3583,7 @@ function openActive(name, which) {
       ${url ? `<a class="btn" href="${url}" target="_blank" rel="noopener">CalTopo Map</a>` : '<button type="button" class="btn" disabled>No map yet</button>'}</div>
     ${onHere && mine.assignment ? sec('Your assignment', esc(mine.assignment)) : ''}
     ${sec('Incident Location', place(a.location))}${sec('Staging Point', place(a.staging))}
-    ${sec('Comms Plan', [a.primary ? 'Primary Ch: ' + esc(a.primary) : '', a.backup ? 'Backup Ch: ' + esc(a.backup) : ''].filter(Boolean).join('<br>'))}
+    ${sec('Comms Plan', commsHtml(a.primary, a.backup))}
     ${sec('Details', a.details ? esc(a.details).replace(/\n/g, '<br>') : '')}
     ${S.d.me.admin && isAct ? `<div class="amlinks"><button type="button" class="link" id="amBoard" style="color:var(--navy);padding:0">Open the Duty Board ›</button></div>` : ''}
     ${others.length ? `<div class="amlinks">Also active: ${others.map((o, i) => `<button type="button" class="link amo" data-i="${i}" style="color:var(--navy);padding:0 6px">${esc(o.name)}</button>`).join('')}</div>` : ''}
@@ -3483,7 +3607,7 @@ async function goOnDuty(name) {
     closeActive(); openOffDuty(name); return;
   }
   S.dutyRid = S.dutyRid || newRid();
-  // Show it right away; the save finishes in the background.
+  /* Show it right away; the save finishes in the background. */
   const before = S.d.duty, act = activeList().find(x => x.name === name), ml = (S.d.missionList || []).find(x => x.name === name) || {};
   S.d.duty = Object.assign({}, before, { mine: { id: 'pending', unit: S.d.me.unit, name: S.d.me.name, mission: name, type: (act && act.type) || ml.type || '', on: dutyNow(), assignment: '' } });
   S.dutyPending = true;
@@ -3562,7 +3686,7 @@ function openOffDuty(thenOn, pre) {
     S.offRid = S.offRid || newRid();
     const changed = $('offT').value !== startVal;
     const pre = { offT: changed ? $('offT').value : '', mi: mi, notes: $('offNo').value };
-    // Close right away; the save (which also reloads your totals) finishes in the background.
+    /* Close right away; the save (which also reloads your totals) finishes in the background. */
     const before = S.d.duty;
     closeActive();
     S.d.duty = Object.assign({}, before, { mine: null });
@@ -3664,7 +3788,7 @@ function renderBoard() {
   const alsoHtml = also.length ? `<div class="also"><b>Also on duty, not an active mission:</b>${also.map(s =>
     `<button type="button" class="alsoi" data-id="${esc(s.id)}">${esc(s.unit)} ${esc(tcName(s.name))} · ${esc(s.mission)} · <span class="tick" data-on="${s.on}">${hm(dutyNow() - s.on)}</span> ›</button>`).join('')}</div>` : '';
   const top = `<div class="btop"><div class="bseg" role="group" aria-label="Board layout"><button type="button" data-m="detail" class="${mode === 'detail' ? 'on' : ''}">Detail</button><button type="button" data-m="list" class="${mode === 'list' ? 'on' : ''}">List</button></div>
-    <button type="button" class="btn bputon" id="bputon">+ Add Units</button></div>`;
+    <div class="bmany">${groups.some(g => g.on.length) ? '<button type="button" class="btn bcout" id="bcout">Check out…</button>' : ''}<button type="button" class="btn bputon" id="bputon">+ Add Units</button></div></div>`;
   main(section('Duty Board', `${top}${due.length ? `<div class="duebar">🔔 Security check due: ${esc(due.join(', '))}</div>` : ''}
     ${html || '<p class="muted">No active callout, training or event right now. Use the dropdown above to look at today, this month, or any mission.</p>'}
     ${alsoHtml}
@@ -3673,6 +3797,7 @@ function renderBoard() {
   hookBoardView();
   document.querySelectorAll('.bseg button').forEach(b => b.onclick = () => setBoardMode(b.dataset.m));
   $('bputon').onclick = () => openPutOn(null);
+  if ($('bcout')) $('bcout').onclick = () => openCheckOut();
   document.querySelectorAll('.bfold').forEach(b => b.onclick = () => { const g = groups[+b.dataset.g]; S.boardOffOpen[g.mission] = !S.boardOffOpen[g.mission]; const y = window.scrollY; render(); window.scrollTo(0, y); });
   document.querySelectorAll('.bev').forEach(sel => sel.onchange = async () => {
     const g = groups[+sel.dataset.g]; sel.disabled = true;
@@ -3737,7 +3862,7 @@ function openEditTimes(id) {
   const isOn = s.status === 'On', now = dutyNow();
   const p2 = n => String(n).padStart(2, '0');
   const toLocal = t => { const d = new Date(t); return d.getFullYear() + '-' + p2(d.getMonth() + 1) + '-' + p2(d.getDate()) + 'T' + p2(d.getHours()) + ':' + p2(d.getMinutes()); };
-  const was = t => new Date(t).toLocaleString(undefined, { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' });
+  const was = t => shortDay(t) + ' ' + clock(t);
   closeActive();
   document.body.insertAdjacentHTML('beforeend', `<div class="amsh" id="amsh"><div class="ambox form" role="dialog" aria-label="Edit times">
     <div class="amhead grn2"><div class="k">EDIT TIMES</div><div class="n">${esc(s.unit)} ${esc(lastName(s.name))} · ${esc(s.mission || (shiftGroup(id) || {}).mission || '')}</div><button type="button" class="amx" id="amx" aria-label="Close">✕</button></div>
@@ -3796,7 +3921,7 @@ function openPutOn(mission) {
   const startT = $('poT').value;
   const isJoint = n => groups.some(g => g.mission === n && g.joint) || (S.d.missionList || []).some(m => m.name === n && m.joint);
   const item = (r, val, tag, busyAt) => busyAt
-    ? `<div class="poi dis"><span><b>${esc(r.unit)}</b> ${esc(r.name)}${tag}</span><span class="muted small">on duty${busyAt === $('poM').value ? '' : ' · ' + esc(busyAt)}</span></div>`
+    ? `<label class="poi dis"><input type="checkbox" disabled> <span><b>${esc(r.unit)}</b> ${esc(r.name)}${tag}</span><span class="muted small pon">on duty${busyAt === $('poM').value ? '' : ' · ' + esc(busyAt)}</span></label>`
     : `<label class="poi" data-q="${esc((r.unit + ' ' + r.name + ' ' + (r.short || '')).toLowerCase())}"><input type="checkbox" value="${esc(val)}"> <span><b>${esc(r.unit)}</b> ${esc(r.name)}${tag}</span></label>`;
   const drawList = () => {
     const was = {}; [].forEach.call(document.querySelectorAll('#poL input:checked'), x => { was[x.value] = 1; });
@@ -3836,6 +3961,98 @@ function openPutOn(mission) {
       if (S.otherRoster) S.otherRoster.at = 0;
       toast((r.done.length ? r.done.join(', ') + ' on duty.' : 'Nobody was put on duty.') + (r.skipped.length ? ' Skipped: ' + r.skipped.join('; ') : ''), !!r.skipped.length, r.skipped.length ? 8000 : 4000);
     } catch (e) { b.disabled = false; upd(); toast(clean(e), true, 6000); }
+  };
+}
+
+/* ---------------- V1.6.9 Admin: check out several units at once ---------------- */
+function openCheckOut(mission) {
+  const groups = boardData().filter(g => g.on.length && (!mission || g.mission === mission));
+  if (!groups.length) { toast('Nobody is on duty.'); return; }
+  closeActive();
+  const now = dutyNow();
+  document.body.insertAdjacentHTML('beforeend', `<div class="amsh" id="amsh"><div class="ambox form" role="dialog" aria-label="Check out several">
+    <div class="amhead grn2"><div class="k">CHECK OUT</div><div class="n">Put several units off duty</div><button type="button" class="amx" id="amx" aria-label="Close">✕</button></div>
+    <div class="pol" id="coL" style="margin-top:12px">${groups.map((g, gi) => `<label class="poi" style="background:#eef3f0"><input type="checkbox" class="coAll" data-g="${gi}" checked> <span><b>${esc(g.mission)}</b> · everyone (${g.on.length})</span></label>` +
+      g.on.slice().sort(byUnit).map(x => `<label class="poi"><input type="checkbox" class="coU" data-g="${gi}" value="${esc(x.id)}" checked> <span><b>${esc(x.unit)}</b> ${esc(tcName(x.name))}${ptag(x)}</span><span class="muted small pon">on ${clock(x.on)}</span></label>`).join('')).join('')}</div>
+    <label style="margin:10px 16px 8px">Off-duty time <span class="muted small">(same for everyone checked; never earlier than their own start)</span><input type="datetime-local" id="coT" value="${toLocal(now)}" max="${toLocal(now)}"></label>
+    <label style="margin:0 16px 10px">Reason<input type="text" id="coNo" maxlength="200" placeholder="e.g. Mission over, everyone released"></label>
+    <button type="button" class="btn wide offb" id="coGo">Put them off duty</button>
+    <div class="center"><button type="button" class="link" id="coC" style="color:var(--muted)">Cancel</button></div>
+    <p class="muted small" style="margin:6px 16px 14px">Miles are left blank (unknown) and each member can fix theirs. Each gets a note and it all goes on the Board Log.</p></div></div>`);
+  document.documentElement.classList.add('msopen');
+  const start = $('coT').value;
+  const picked = () => [].map.call(document.querySelectorAll('#coL .coU:checked'), x => x.value);
+  const upd = () => { const n = picked().length; $('coGo').disabled = !n; $('coGo').textContent = n ? 'Put ' + n + ' unit' + (n === 1 ? '' : 's') + ' off duty' : 'Check at least one unit'; };
+  document.querySelectorAll('#coL .coAll').forEach(a => a.onchange = () => { document.querySelectorAll('#coL .coU[data-g="' + a.dataset.g + '"]').forEach(x => { x.checked = a.checked; }); upd(); });
+  document.querySelectorAll('#coL .coU').forEach(x => x.onchange = upd);
+  upd();
+  $('amx').onclick = closeActive; $('coC').onclick = closeActive;
+  $('coGo').onclick = async () => {
+    const b = $('coGo'); b.disabled = true; b.textContent = 'Saving…';
+    S.coRid = S.coRid || newRid();
+    const v = $('coT').value;
+    try {
+      const r = await run('apiAdminOffMany', S.creds, { ids: picked(), off: v && v !== start ? new Date(v).toISOString() : '', notes: $('coNo').value, rid: S.coRid });
+      S.coRid = null; closeActive(); applyDuty(r);
+      toast((r.done.length ? r.done.join(', ') + ' off duty.' : 'Nobody was put off duty.') + (r.skipped.length ? ' Skipped: ' + r.skipped.join('; ') : ''), !!r.skipped.length, r.skipped.length ? 8000 : 4000);
+    } catch (e) { upd(); toast(clean(e), true, 6000); }
+  };
+}
+
+/* ---------------- V1.6.9 Admin: add time for members (any mission, any time, even after it's over) ---------------- */
+function openAddTime(mission) {
+  const ml = (S.d.missionList || []).find(m => m.name === mission) || { name: mission };
+  const units = (S.d.roster || []).filter(r => r.name && r.name !== '(vacant)').sort(byUnit);
+  const now = new Date(), today = now.getFullYear() + '-' + pad2(now.getMonth() + 1) + '-' + pad2(now.getDate());
+  const day = ml.date && ml.date <= today ? ml.date : today;
+  closeActive();
+  document.body.insertAdjacentHTML('beforeend', `<div class="amsh" id="amsh"><div class="ambox form" role="dialog" aria-label="Add time">
+    <div class="amhead grn2"><div class="k">ADD TIME FOR MEMBERS</div><div class="n">${esc(mission)}</div><button type="button" class="amx" id="amx" aria-label="Close">✕</button></div>
+    <label style="margin:12px 16px 4px">Units <span class="muted small">(everyone who gets this time)</span><input type="text" id="atF" placeholder="Type to find a unit or name" autocomplete="off"></label>
+    <div class="pol" id="atL"></div>
+    <label style="margin:10px 16px 8px">Date<input type="date" id="atD" value="${day}" max="${today}"></label>
+    <div style="display:flex;gap:10px;margin:0 16px"><label style="flex:1;margin:0">On <span class="muted small">(24 h)</span><input type="text" id="atOn" placeholder="08:00" inputmode="numeric" maxlength="5"></label>
+      <label style="flex:1;margin:0">Off<input type="text" id="atOff" placeholder="14:30" inputmode="numeric" maxlength="5"></label></div>
+    <label style="margin:8px 16px 8px">…or hours <span class="muted small">(if you don't know the times)</span><input type="number" id="atH" min="0.5" max="72" step="0.5" inputmode="decimal"></label>
+    <label style="margin:0 16px 8px">Miles <span class="muted small">(each; blank = 0)</span><input type="number" id="atMi" min="0" max="2000" step="1" inputmode="numeric"></label>
+    <label style="margin:0 16px 10px">Note<input type="text" id="atNo" maxlength="200" placeholder="e.g. Forgot to log, helped at staging"></label>
+    <button type="button" class="btn wide" id="atGo" disabled>Pick units above</button>
+    <div class="center"><button type="button" class="link" id="atC" style="color:var(--muted)">Cancel</button></div>
+    <p class="muted small" style="margin:6px 16px 14px">Each unit gets a normal Duty Log entry noted "Added by ${esc(S.d.me.unit)} ${esc(tcName(S.d.me.name))}", and it goes on the Board Log. Works on Completed and Closed missions too.</p></div></div>`);
+  document.documentElement.classList.add('msopen');
+  const draw = () => {
+    let html = units.map(r => `<label class="poi" data-q="${esc((r.unit + ' ' + r.name).toLowerCase())}"><input type="checkbox" value="${esc(r.unit)}"> <span><b>${esc(r.unit)}</b> ${esc(r.name)}</span></label>`).join('');
+    if (ml.joint) {
+      const o = S.otherRoster;
+      if (!o) html += '<div class="poi muted small">Loading the other posse\'s roster…</div>';
+      else if (o.err) html += `<div class="poi err small">${esc(o.err)}</div>`;
+      else if (o.roster.length) html += `<div class="poh">${esc(o.roster[0].short)} roster</div>` + o.roster.slice().sort(byUnit).map(r => `<label class="poi" data-q="${esc((r.unit + ' ' + r.name).toLowerCase())}"><input type="checkbox" value="${esc(r.key + ':' + r.unit)}"> <span><b>${esc(r.unit)}</b> ${esc(r.name)} <span class="tag ptag">${esc(r.short.split(' ')[0])}</span></span></label>`).join('');
+    }
+    const was = {}; [].forEach.call(document.querySelectorAll('#atL input:checked'), x => { was[x.value] = 1; });
+    $('atL').innerHTML = html;
+    [].forEach.call(document.querySelectorAll('#atL input'), x => { if (was[x.value]) x.checked = true; });
+  };
+  const picked = () => [].map.call(document.querySelectorAll('#atL input:checked'), x => x.value);
+  const upd = () => { const n = picked().length; $('atGo').disabled = !n; $('atGo').textContent = n ? 'Add time for ' + (n === 1 ? picked()[0].replace(/^[a-z]+:/, '') : n + ' units') : 'Pick units above'; };
+  draw(); upd();
+  if (ml.joint && !(S.otherRoster && !S.otherRoster.err)) run('apiOtherRoster', S.creds).then(o => { S.otherRoster = Object.assign(o, { at: Date.now() }); if ($('atL')) { draw(); upd(); } })
+    .catch(e => { S.otherRoster = { err: "Couldn't load the other posse's roster: " + clean(e) }; if ($('atL')) draw(); });
+  $('atL').onchange = upd;
+  $('atF').oninput = () => { const q = $('atF').value.trim().toLowerCase(); document.querySelectorAll('#atL .poi').forEach(el => { el.style.display = !q || (el.dataset.q && el.dataset.q.indexOf(q) >= 0) ? '' : 'none'; }); };
+  const tfix = el => { el.onblur = () => { const v = el.value.trim().replace(/[.h]/, ':'); const m = /^(\d{1,2}):?(\d{2})$/.exec(v); if (m && +m[1] < 24 && +m[2] < 60) el.value = pad2(+m[1]) + ':' + m[2]; }; };
+  tfix($('atOn')); tfix($('atOff'));
+  $('amx').onclick = closeActive; $('atC').onclick = closeActive;
+  $('atGo').onclick = async () => {
+    $('atOn').onblur(); $('atOff').onblur();
+    const on = $('atOn').value.trim(), off = $('atOff').value.trim();
+    if ((on || off) && !(/^\d{2}:\d{2}$/.test(on) && /^\d{2}:\d{2}$/.test(off))) { toast('Enter both times like 08:00 and 14:30, or leave them blank and enter hours.', true, 6000); return; }
+    const b = $('atGo'); b.disabled = true; b.textContent = 'Saving…';
+    S.atRid = S.atRid || newRid();
+    try {
+      const r = await run('apiAdminAddTime', S.creds, { mission: mission, units: picked(), date: $('atD').value, on: on, off: off, hours: $('atH').value, miles: $('atMi').value, notes: $('atNo').value, rid: S.atRid });
+      S.atRid = null; closeActive(); setData(r.data);
+      toast((r.done.length ? 'Time added for ' + r.done.join(', ') + '.' : 'No time was added.') + (r.skipped.length ? ' Skipped: ' + r.skipped.join('; ') : ''), !!r.skipped.length, r.skipped.length ? 8000 : 4000);
+    } catch (e) { upd(); toast(clean(e), true, 6000); }
   };
 }
 
@@ -4073,7 +4290,7 @@ S.refreshTick = 0;
 setInterval(() => {
   if (!S.d || (S.d.me && S.d.me.admin)) return;
   S.refreshTick++;
-  // On duty: check every minute so a new assignment arrives quickly. Otherwise every 5 minutes.
+  /* On duty: check every minute so a new assignment arrives quickly. Otherwise every 5 minutes. */
   if (dutyInfo().mine || S.refreshTick % 5 === 0) dutyRefresh();
 }, 60000);
 document.addEventListener('visibilitychange', () => { if (!document.hidden) dutyRefresh(); });
