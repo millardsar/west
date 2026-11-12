@@ -221,6 +221,14 @@
   .hquiet .big { font-size: 21px; font-weight: 900; color: var(--navy); margin-bottom: 6px; } .hquiet .btn { margin-top: 16px; font-size: 18px; padding: 15px; }
   .hnext { background: #fff; border-radius: 14px; padding: 12px 16px; margin-bottom: 14px; }
   .hnext .row { display: flex; justify-content: space-between; gap: 10px; padding: 8px 0; border-bottom: 1px solid #eef1ef; }
+  .hbadge { text-align: center; margin: 22px 0 10px; } .hbadge img { width: 62%; max-width: 280px; opacity: .8; }
+  .hadded { background: #fff; border: 2px solid #2f855a; border-radius: 14px; padding: 10px 14px 12px; margin: 4px 0 14px; font-size: 15.5px; }
+  .hadded .hah { display: flex; justify-content: space-between; align-items: center; font-weight: 900; color: var(--navy); font-size: 16px; }
+  .hadded .hah .amx { position: static; color: var(--muted); background: none; border: 0; font-size: 20px; padding: 2px 6px; cursor: pointer; }
+  .hadded .har { padding: 8px 0; border-top: 1px solid #eef1ef; } .hadded .har:first-of-type { border-top: 0; }
+  .hadded .hare { color: var(--navy); font-weight: 800; padding: 4px 0 0; text-decoration: underline; background: none; border: 0; font: inherit; cursor: pointer; }
+  .actbar .an { display: block; font-size: 18px; font-weight: 900; overflow-wrap: anywhere; line-height: 1.2; }
+  .actbar .t > small:first-child { font-size: 12px; font-weight: 800; letter-spacing: .5px; opacity: .92; }
   .htiles { display: flex; gap: 12px; } .htiles div { flex: 1; background: #fff; border-radius: 12px; padding: 12px; text-align: center; }
   .htiles b { display: block; font-size: 24px; color: var(--navy); } .htiles span { font-size: 13px; color: var(--muted); }
   .myasg { display: block; font-size: 12px; font-weight: 700; margin-top: 2px; opacity: .95; }
@@ -411,6 +419,24 @@
   @keyframes slideR { from { transform: translateX(-28px); opacity: .4; } to { transform: none; opacity: 1; } }
   @media (prefers-reduced-motion: reduce) { .slide-l, .slide-r { animation: none; } }
   .mdone { margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--line); }
+  /* V1.7.0: mission card buttons. Large = finishes a section (full width). Medium = a tool (two per row). Red = delete. */
+  .mbody .btn.blg { display: block; width: 100%; min-width: 0; margin: 12px 0 0; padding: 13px 12px; font-size: 17px; border-radius: 10px; white-space: normal; text-align: center; }
+  .mbody .btn.blg.bout { background: #fff; color: var(--navy); border: 2px solid var(--navy); }
+  .mbody .btn.bmd { display: flex; align-items: center; justify-content: center; gap: 6px; width: 100%; min-width: 0; min-height: 44px; margin: 0; padding: 9px 10px;
+    font-size: 15px; border-radius: 9px; white-space: normal; text-align: center; line-height: 1.2; background: #fff; color: var(--navy); border: 1.5px solid #9fb5a7; }
+  .mbody .btn.bmd.bsolid { background: var(--navy); color: #fff; border-color: var(--navy); }
+  .mbody .btn.bmd.bred { background: #fff; color: #c53030; border-color: #c53030; }
+  .mbody .btn.bmd:disabled { background: #f1f3f2; color: #8a948f; border-color: #d5dbd7; opacity: 1; cursor: default; }
+  .mbody .btn.bfull { width: 100%; }
+  .mbody .bpair { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .mbody .bpair > .btn:only-child { grid-column: 1 / -1; }
+  .mbody .addx .bfull { margin-top: 10px; }
+  .mbody .msec { margin-top: 16px; padding-top: 4px; border-top: 1px solid var(--line); }
+  .mbody .msec .row2 > label { flex: 1 1 160px; }
+  .mbody .dzone h5 { color: #c53030; }
+  .mbody .mdone .btn { margin-top: 0; }
+  /* V1.7.0: long names wrap inside their own row instead of riding up over the row above */
+  .wl { align-items: start; } .wl > span { min-width: 0; overflow-wrap: anywhere; } .wl .lg { margin: 0 0 6px; }
   .tag.joint { background: #f6ecd2; color: #7a5a12; }
   .jline { font-size: 15px; color: var(--muted); margin-top: 4px; display: flex; flex-wrap: wrap; gap: 2px 16px; }
   .jline span { white-space: nowrap; }
@@ -576,9 +602,18 @@ const POSSE_INFO = {"key":"west","short":"West Posse","header":"West Millard She
 </script>
 <script>
 /* ================= Duty Log: core (shared by the East and West posses) ================= */
-const APP_VERSION = 'V1.6.9';
-const APP_DATE = 'October 25, 2026';
+const APP_VERSION = 'V1.7.0';
 const CHANGELOG = [
+  { v: 'V1.7.0', date: 'November 12, 2026', items: [
+    'Mission card tidied up: details, notes, who logged time, photos and expenses first; Mission status (type, status, joint, Save changes), the report, Mission tools and the Danger zone at the bottom, then Done.',
+    'Buttons follow one rule: large full-width buttons finish something (Save changes, Create Mission Report, Done); medium buttons are tools, two to a row; Delete is the only red button.',
+    'Long names in Who logged time wrap inside their own line instead of running over the line above.',
+    'Deleting a mission is much faster and runs in the background: the mission leaves the list right away and you can keep working.',
+    'Log page: if the date isn\'t the mission day (or the day after), the app asks whether to use the mission date or keep yours.',
+    'Home: the stats boxes are gone; on a quiet day the badge shows instead. When an admin adds time for you, Home shows a notice with a link to review the entry.',
+    'Admins: "+ Add time for members" is now in Mission tools (grayed out on a locked mission until it is unlocked).',
+    'The colored bar under the tabs shows a small label on top and the mission name in big letters.',
+    'About shows the right release date for each version.'] },
   { v: 'V1.6.9', date: 'November 11, 2026', items: [
     'Faster: going off duty, logging time, opening the app and refreshing the Duty Board do much less work on Google\'s side.',
     'Missions tab: two buttons, "+ New Mission / Event" and "Past Missions / Events". Below them, active missions as red (callouts) or yellow cards, then a folded "Open & ongoing" line. The monthly meeting link moved into the New Mission header.',
@@ -1413,6 +1448,7 @@ function hookEntryForm() {
     $('simbox').classList.add('hidden');
     const m = S.d.missions.find(x => x.name === v);
     if (m) $('et').value = m.type;
+    if (m) askMissionDate(v);
   });
   $('em').addEventListener('input', () => { clearTimeout(S.simTimer); S.simTimer = setTimeout(() => showSim(false), 400); });
   $('em').addEventListener('change', () => showSim(false));
@@ -1531,8 +1567,31 @@ async function meetingDupSheet(md) {
 }
 function shortDate(ymd) { const d = new Date(ymd + 'T12:00:00'); return d.toLocaleDateString(undefined, { month: 'short', day: 'numeric' }); }
 
+/**
+ * V1.7.0: the entry date should match the mission. The mission day and the day after are fine (missions run past
+ * midnight); any other date asks the member to confirm. Skips meetings (they have their own month check),
+ * ongoing items and missions planned for the future.
+ */
+function missionDateOff(mission, date) {
+  const m = (S.d.missions || []).find(x => x.name === mission);
+  if (!m || !m.date || m.ongoing || isMeetingName(mission) || !date || m.date > todayStr()) return null;
+  const n = dayDiff(m.date, date);
+  return n === 0 || n === 1 ? null : m;
+}
+async function askMissionDate(mission) {
+  const date = $('ed') ? $('ed').value : '';
+  const m = missionDateOff(mission, date);
+  if (!m || S.dateOk === mission + '|' + date) return true;
+  const k = await askSheet('Check the date', `<b>${esc(mission)}</b> was on <b>${esc(fmtDate(m.date))}</b>.<br>Your entry is dated <b>${esc(fmtDate(date))}</b>.`,
+    [['use', 'Use ' + shortDate(m.date)], ['keep', 'Keep ' + shortDate(date)]], 'yel');
+  if (k === 'use') { $('ed').value = m.date; return true; }
+  if (k === 'keep') { S.dateOk = mission + '|' + date; return true; }
+  return false;
+}
+
 async function saveEntry(force) {
   if (!checkMissionName()) return;
+  if (!force && !(await askMissionDate(missionValue()))) return;
   const e = entryValues();
   if (!force && isMeetingName(e.mission) && e.date && e.date.slice(0, 7) !== meetingYM(e.mission)) {
     const alt = meetingNameFor(e.date), has = (S.d.missions || []).some(x => x.name === alt);
@@ -1613,7 +1672,7 @@ function renderAbout() {
       ${LOGO ? `<img class="signlogo" src="${LOGO}" alt="" style="width:101px;height:101px">` : ''}
       <p style="text-align:center;font-weight:700;font-size:17px;margin-top:0">${esc(POSSE_INFO.header)} | Duty Log</p>
       <p><b>Version:</b> ${APP_VERSION}</p>
-      <p><b>Released:</b> ${APP_DATE}</p>
+      <p><b>Released:</b> ${esc(cur.date)}</p>
       <p><button class="link" id="showlog" style="padding:0;color:var(--navy2);font-weight:600">${S.showLog ? 'Hide' : 'See'} what's new in ${APP_VERSION}</button></p>
       ${S.showLog ? list(cur) : ''}
     </div>`)
@@ -2347,11 +2406,22 @@ async function openScrub(name) {
   if ($('scW')) {
     $('scW').oninput = () => { $('scGo').disabled = $('scW').value.trim().toUpperCase() !== 'SCRUB'; };
     $('scGo').onclick = async () => {
-      const b = $('scGo'); b.disabled = true; b.textContent = 'Deleting…';
+      /* V1.7.0: runs in the background. The mission leaves the list right away and the admin can keep working. */
+      const word = $('scW').value, k = String(name).toLowerCase();
+      const keep = { missionList: S.d.missionList, missions: S.d.missions };
+      closeActive(); S.openMission = null;
+      S.d.missionList = (S.d.missionList || []).filter(m => m.name.toLowerCase() !== k);
+      S.d.missions = (S.d.missions || []).filter(m => m.name.toLowerCase() !== k);
+      S.scrubbing = (S.scrubbing || 0) + 1;
+      render(); toast('Deleting ' + p.name + '… You can keep working.', false, 4000);
       try {
-        const r = await run('apiScrubMission', S.creds, name, $('scW').value);
-        closeActive(); S.openMission = null; setData(r.data); toast(r.name + ' and all its time were deleted.');
-      } catch (e) { b.disabled = false; b.textContent = 'Delete everything'; toast(clean(e), true, 6000); }
+        const r = await run('apiScrubMission', S.creds, name, word);
+        S.scrubbing--; applyFresh(r.data); toast(r.name + ' and all its time were deleted.');
+      } catch (e) {
+        S.scrubbing--;
+        if (S.d.missionList && !S.d.missionList.some(m => m.name.toLowerCase() === k)) { S.d.missionList = keep.missionList; S.d.missions = keep.missions; }
+        render(); toast("Couldn't delete " + p.name + ': ' + clean(e), true, 8000);
+      }
     };
   }
 }
@@ -2526,17 +2596,17 @@ function renderMissions() {
       const url = mapLink(m.mapId);
       const lockbar = locked ? `<div class="lockbar"><b>🔒 Locked for reporting</b>${m.reportNo ? 'Report ' + esc(m.reportNo) + ' · ' : ''}Locked ${lockedWhen(m.locked)}.
           Time, notes and expenses can't be changed. Photos can still be added.
-          ${admin ? `<div class="btnrow" style="margin-top:10px">${m.reportNo ? '<button class="btn small mrdl" type="button">Download report</button>' : '<button class="btn small mrep" type="button">Create report</button>'}
-            <button class="btn small ghost munlock" type="button">Unlock to edit</button></div>` : ''}</div>` : '';
+          ${admin ? `<div class="bpair" style="margin-top:10px">${m.reportNo ? '<button class="btn bmd bsolid mrdl" type="button">Download report</button>' : '<button class="btn bmd bsolid mrep" type="button">Create report</button>'}
+            <button class="btn bmd munlock" type="button">Unlock to edit</button></div>` : ''}</div>` : '';
       const mapPart = url ? `<a class="mapbtn" href="${url}" target="_blank" rel="noopener">🗺 Open CalTopo map</a>
-          <div class="btnrow" style="margin-top:8px"><button class="btn small ghost mcopy" type="button">Copy map link</button>
-          ${admin && conn.caltopo ? '<button class="btn small ghost mbak" type="button">Back up map now</button>' : ''}</div>`
-        : edit && conn.caltopo ? `<button class="btn small ghost mmk" type="button">🗺 Create CalTopo map</button>` : '';
-      const details = edit ? `<label>MCSO case #<input class="mcs" maxlength="40" value="${esc(m.caseNo || '')}" style="max-width:300px"></label>
+          <div class="bpair" style="margin-top:8px"><button class="btn bmd mcopy" type="button">Copy map link</button>
+          ${admin && conn.caltopo ? '<button class="btn bmd mbak" type="button">Back up map now</button>' : ''}</div>`
+        : edit && conn.caltopo ? `<button class="btn bmd bfull mmk" type="button">🗺 Create CalTopo map</button>` : '';
+      const details = edit ? `<h5>Details</h5><label>MCSO case #<input class="mcs" maxlength="40" value="${esc(m.caseNo || '')}" style="max-width:300px"></label>
           <label>Incident Location<textarea class="mlc grow1" rows="1" maxlength="200">${esc(m.location || '')}</textarea></label>
-          <div class="locrow2"><button class="btn small ghost mlpk" type="button">🗺 Pick on map</button><button class="btn small ghost mlsv" type="button">★ Saved</button></div>
+          <div class="bpair"><button class="btn bmd mlpk" type="button">🗺 Pick on map</button><button class="btn bmd mlsv" type="button">★ Saved</button></div>
           <label style="margin-top:12px">Staging Point<textarea class="mst grow1" rows="1" maxlength="120">${esc(m.staging || '')}</textarea></label>
-          <div class="locrow2" style="margin-bottom:12px"><button class="btn small ghost mpk" type="button">🗺 Pick on map</button><button class="btn small ghost mssv" type="button">★ Saved</button></div>
+          <div class="bpair" style="margin-bottom:12px"><button class="btn bmd mpk" type="button">🗺 Pick on map</button><button class="btn bmd mssv" type="button">★ Saved</button></div>
           <div class="row2">
             <label>Primary${channelSelect('cp' + i, m.primary, true)}<input id="cpo${i}" class="hidden chother" maxlength="60" placeholder="Type the channel"></label>
             <label>Backup${channelSelect('cb' + i, m.backup, true)}<input id="cbo${i}" class="hidden chother" maxlength="60" placeholder="Type the channel"></label></div>
@@ -2558,42 +2628,46 @@ function renderMissions() {
             <label>What was it?<input class="xs" maxlength="200" placeholder="e.g. Headlamp lost on scree slope"></label>
             <label>Paid by<input class="xp" maxlength="60" value="Posse" list="xpl"></label>
             <datalist id="xpl"><option value="Posse">${d.roster.filter(r => r.name).map(r => `<option value="${esc(r.unit)}">${esc(r.name)}</option>`).join('')}</datalist>
-            <div class="lbl2">Receipt (optional)<div class="btnrow" style="margin-top:4px">
-              <label class="btn small ghost filebtn">📷 Take photo<input type="file" class="xr1" accept="image/*" capture="environment"></label>
-              <label class="btn small ghost filebtn">🖼 Choose from photos<input type="file" class="xr2" accept="image/*"></label></div>
+            <div class="lbl2">Receipt (optional)<div class="bpair" style="margin-top:4px">
+              <label class="btn bmd filebtn">📷 Take photo<input type="file" class="xr1" accept="image/*" capture="environment"></label>
+              <label class="btn bmd filebtn">🖼 Choose from photos<input type="file" class="xr2" accept="image/*"></label></div>
               <span class="xrp muted small"></span></div>
-            <button class="btn small xadd" type="button">Add expense</button></div>` : '');
+            <button class="btn bmd bsolid bfull xadd" type="button">Add expense</button></div>` : '');
+      const notesPart = edit ? `<h5>Operational notes</h5><textarea class="mno" rows="4" maxlength="5000" placeholder="Location, agencies involved, outcome…">${esc(m.notes || '')}</textarea>`
+        : `<h5>Operational notes</h5>${m.notes ? `<div class="ro">${esc(m.notes)}</div>` : '<span class="muted">None.</span>'}`;
+      const statusPart = edit ? `<div class="msec"><h5>Mission status</h5>
+          <div class="row2"><label>Type<select class="mtype">${typeOptions(m.type)}</select></label>
+          <label>Status<select class="mstat">
+            ${m.status === 'Unlisted' ? '<option value="" selected disabled>Not on the list</option>' : ''}
+            ${[['Open', 'Open'], ['Ongoing', 'Ongoing (no end date)'], ['Completed', 'Completed (members can still log)'], ['Closed', 'Closed (final)']].map(([v, l]) => `<option value="${v}" ${m.status === v ? 'selected' : ''}>${l}</option>`).join('')}
+          </select></label></div>
+          <label class="chk" style="margin:10px 0 0"><input type="checkbox" class="mjt" ${m.joint ? 'checked' : ''}> Joint mission (East &amp; West)</label>
+          <button class="btn blg msave" type="button">Save changes</button>
+          <p class="muted small" style="margin:6px 0 0">Saves the details and notes above. Type, status and joint save as soon as you change them.</p></div>` : '';
+      const reportPart = edit ? `<div class="msec"><h5>Mission report</h5><div class="rpt"><button class="btn blg mrep" type="button" style="margin-top:0">Create Mission Report (PDF)</button>
+          <p class="muted small" style="margin:8px 0 0">Creating the report <b>locks the mission</b>: no new time, edits or expenses. Photos can still be added. An admin can unlock it.</p>
+          <p class="small" style="margin:8px 0 0">🔓 Unlocked · <button class="link mlock" type="button" style="color:var(--navy);padding:0">Lock now without a report</button></p></div></div>` : '';
+      const toolsPart = admin ? `<div class="msec"><h5>Mission tools</h5>
+          <button class="btn bmd bfull matime" type="button" ${locked ? 'disabled' : ''}>+ Add time for members…</button>
+          ${locked ? '<p class="muted small" style="margin:4px 0 0">Unlock this mission to add time.</p>' : ''}
+          ${edit ? '<div class="bpair" style="margin-top:8px"><button class="btn bmd mgo" type="button">Merge…</button><button class="btn bmd rno" type="button">Rename…</button></div>' : ''}</div>` : '';
       body = `<div class="mbody form">${lockbar}
         ${mapPart ? `<div style="margin-bottom:6px">${mapPart}</div>` : ''}
         ${details}
+        ${notesPart}
         <h5>Who logged time${m.joint ? ' · ' + esc(me) : ''}</h5>${who || '<span class="muted">Nobody yet.</span>'}
-        ${edit ? '<div style="margin:8px 0 2px"><button class="btn small ghost matime" type="button">+ Add time for members…</button></div>' : ''}
         ${m.joint ? `<h5>Who logged time · ${esc(ot.short)}</h5>${(ot.who || []).map(whoLine).join('<br>') || '<span class="muted">Nobody yet.</span>'}` : ''}
-        <h5>Operational notes</h5>
-        ${edit ? `<textarea class="mno" rows="4" maxlength="5000" placeholder="Location, agencies involved, outcome…">${esc(m.notes || '')}</textarea>
-        <div class="btnrow" style="margin-top:8px">
-          <button class="btn small msave" type="button">Save</button>
-          <select class="mtype mini" style="border:1px solid var(--line)" aria-label="Type">${typeOptions(m.type)}</select>
-          <select class="mstat mini" style="border:1px solid var(--line)" aria-label="Status">
-            ${m.status === 'Unlisted' ? '<option value="" selected disabled>Not on the list</option>' : ''}
-            ${[['Open', 'Open'], ['Ongoing', 'Ongoing (no end date)'], ['Completed', 'Completed (members can still log)'], ['Closed', 'Closed (final)']].map(([v, l]) => `<option value="${v}" ${m.status === v ? 'selected' : ''}>${l}</option>`).join('')}
-          </select>
-        </div>
-        <label class="chk" style="margin:12px 0 0"><input type="checkbox" class="mjt" ${m.joint ? 'checked' : ''}> Joint mission (East &amp; West)</label>`
-        : (m.notes ? `<div class="ro">${esc(m.notes)}</div>` : '<span class="muted">None.</span>')}
         <h5>Photos (${m.photoCount || 0})</h5>
         ${photos ? `<div class="thumbs" style="margin:0 0 6px">${photos}</div>` : '<span class="muted">No photos yet.</span>'}
         ${admin && m.folderId ? `<div><a href="https:\/\/drive.google.com/drive/folders/${esc(m.folderId)}" target="_blank" rel="noopener">Open the mission folder in Google Drive ↗</a></div>` : ''}
         <h5>Expenses</h5>${expPart}
-        ${edit ? `<h5>Mission report</h5><div class="rpt"><button class="btn mrep" type="button">Create Mission Report (PDF)</button>
-          <p class="muted small" style="margin:8px 0 0">Creating the report <b>locks the mission</b>: no new time, edits or expenses. Photos can still be added. An admin can unlock it.</p>
-          <p class="small" style="margin:8px 0 0">🔓 Unlocked · <button class="link mlock" type="button" style="color:var(--navy);padding:0">Lock now without a report</button></p></div>
-        <div class="btnrow" style="margin-top:16px"><button class="btn small ghost mgo" type="button">Merge…</button>
-          <button class="btn small ghost rno" type="button">Rename…</button></div>` : ''}
-        ${admin && !m.joint ? `<div class="dzone"><button class="btn small mscrub" type="button">Delete mission and all its time…</button>
+        ${statusPart}
+        ${reportPart}
+        ${toolsPart}
+        ${admin && !m.joint ? `<div class="dzone"><h5>Danger zone</h5><button class="btn bmd bred mscrub" type="button">Delete mission and all its time…</button>
           <p class="muted small" style="margin:6px 0 0">For mock or practice missions that shouldn't count toward service hours.</p></div>` : ''}
         ${admin ? '' : '<p class="muted small" style="margin:14px 0 0">Only admins can change a mission. Add your time and photos on the Log tab.</p>'}
-        <div class="mdone"><button class="btn mclose" type="button">Done</button></div>
+        <div class="mdone"><button class="btn blg bout mclose" type="button">Done</button></div>
       </div>`;
     }
     const act = actNames[m.name];
@@ -3519,15 +3593,14 @@ function renderHome() {
   if (!html) {
     const now = new Date(), ym = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0');
     const today = ym + '-' + String(now.getDate()).padStart(2, '0');
-    const t = sum((d.mine || []).filter(e => !e.exclude && e.date.slice(0, 7) === ym));
     const next = (d.missions || []).filter(m => m.date && m.date > today).sort((a, b) => a.date.localeCompare(b.date)).slice(0, 3);
     html = `<div class="hquiet"><div class="big">No active missions</div><div class="muted">You'll see callouts and trainings here the moment they're sent.</div>
         <button type="button" class="btn onb" id="hLog">Log Time</button></div>
       ${next.length ? `<div class="hnext"><div class="hl">COMING UP</div>${next.map(m => `<div class="row"><span>${esc(m.name)}</span><b>${esc(shortDate(m.date))}</b></div>`).join('')}</div>` : ''}
-      <div class="htiles"><div><b>${n1(t.h)}</b><span>hours this month</span></div><div><b>${n1(t.f)}</b><span>functions this month</span></div></div>`;
+      ${LOGO ? `<div class="hbadge"><img src="${LOGO}" alt=""></div>` : ''}`;
   }
-  main(`<div class="home">${doneReminders()}${html}</div>`);
-  hookDoneReminders();
+  main(`<div class="home">${addedNotice()}${doneReminders()}${html}</div>`);
+  hookDoneReminders(); hookAddedNotice();
   document.querySelectorAll('.hgo').forEach(b => b.onclick = () => b.dataset.off ? openOffDuty() : goOnDuty(b.dataset.n));
   if ($('hBoard')) $('hBoard').onclick = () => { S.tab = 'board'; buildTabs(); render(); window.scrollTo(0, 0); };
   if ($('hLog')) $('hLog').onclick = () => { S.tab = 'log'; buildTabs(); render(); window.scrollTo(0, 0); };
@@ -3546,6 +3619,33 @@ function checkAssignment() {
   toast('New assignment: ' + mine.assignment, false, 8000);
 }
 
+/* ---------------- V1.7.0: "An admin added time for you" (Home) ---------------- */
+function addedList() {
+  const d = S.d; if (!d || !d.mine) return [];
+  const seen = d.me.addSeen || '';
+  return d.mine.filter(e => /^Added by /.test(e.notes || '') && e.logged && e.logged > seen && (e.notes.indexOf('Added by ' + d.me.unit + ' ') !== 0))
+    .sort((a, b) => b.logged.localeCompare(a.logged));
+}
+function addedNotice() {
+  const l = addedList(); if (!l.length) return '';
+  const by = e => { const m = /^Added by (.+?)(?::| · |$)/.exec(e.notes); return m ? m[1] : 'An admin'; };
+  return `<div class="hadded"><div class="hah"><span>⏱ Time added for you</span><button type="button" class="amx" id="haX" aria-label="Dismiss">✕</button></div>
+    ${l.slice(0, 5).map(e => `<div class="har"><div>${esc(by(e))} added <b>${n1(e.h)} hr</b>${e.mi ? ' · ' + n1(e.mi) + ' mi' : ''} on <b>${esc(e.mission)}</b> (${esc(shortDate(e.date))}).</div>
+      <button type="button" class="link hare" data-id="${esc(e.id)}">Review entry ›</button></div>`).join('')}
+    ${l.length > 5 ? `<div class="muted small">+ ${l.length - 5} more on My Stats</div>` : ''}</div>`;
+}
+function hookAddedNotice() {
+  const l = addedList(); if (!l.length) return;
+  const upTo = l[0].logged;
+  const ack = () => { S.d.me.addSeen = upTo; run('apiAddedSeen', S.creds, upTo).catch(() => {}); };
+  if ($('haX')) $('haX').onclick = () => { ack(); render(); };
+  document.querySelectorAll('.hare').forEach(b => b.onclick = () => {
+    const e = (S.d.mine || []).find(x => x.id === b.dataset.id);
+    ack();
+    if (e) { S.edit = e; S.editBack = 'home'; S.tab = 'edit'; buildTabs(); render(); window.scrollTo(0, 0); } else render();
+  });
+}
+
 /* ---------------- The bar under the tabs ---------------- */
 function drawActBar() {
   const bar = $('actbar'); if (!bar) return;
@@ -3554,10 +3654,9 @@ function drawActBar() {
   const me = mine ? `<span class="mytag">● You're on duty${act.some(a => a.name === (mine && mine.mission)) ? '' : ' · ' + esc(mine.mission)} · <b class="tick" data-on="${mine.on}">${hm(dutyNow() - mine.on)}</b></span>${mine.assignment ? `<span class="myasg">Assignment: ${esc(mine.assignment)}</span>` : ''}` : '';
   if (act.length) {
     const a = act[0], red = a.type === 'Callout';
-    bar.innerHTML = `<button type="button" class="actbar ${red ? 'red' : 'yel'}" id="abtn"><span class="dot"></span><span class="t">ACTIVE ${esc(a.type.toUpperCase())}
-      <small>${esc(a.name)}${act.length > 1 ? ' · +' + (act.length - 1) + ' more' : ''}</small>${me}</span><span class="go">Details ›</span></button>`;
+    bar.innerHTML = `<button type="button" class="actbar ${red ? 'red' : 'yel'}" id="abtn"><span class="dot"></span><span class="t"><small>ACTIVE ${esc(a.type.toUpperCase())}${act.length > 1 ? ' · +' + (act.length - 1) + ' MORE' : ''}</small><span class="an">${esc(a.name)}</span>${me}</span><span class="go">Details ›</span></button>`;
   } else if (mine) {
-    bar.innerHTML = `<button type="button" class="actbar grn" id="abtn"><span class="dot"></span><span class="t">ON DUTY<small>${esc(mine.mission)} · <b class="tick" data-on="${mine.on}">${hm(dutyNow() - mine.on)}</b></small>${mine.assignment ? `<span class="myasg">Assignment: ${esc(mine.assignment)}</span>` : ''}</span><span class="go">Details ›</span></button>`;
+    bar.innerHTML = `<button type="button" class="actbar grn" id="abtn"><span class="dot"></span><span class="t"><small>ON DUTY · <b class="tick" data-on="${mine.on}">${hm(dutyNow() - mine.on)}</b></small><span class="an">${esc(mine.mission)}</span>${mine.assignment ? `<span class="myasg">Assignment: ${esc(mine.assignment)}</span>` : ''}</span><span class="go">Details ›</span></button>`;
   } else { bar.innerHTML = ''; return; }
   $('abtn').onclick = () => openActive(act.length ? act[0].name : mine.mission);
 }
