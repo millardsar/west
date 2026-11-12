@@ -418,6 +418,16 @@
   @keyframes slideL { from { transform: translateX(28px); opacity: .4; } to { transform: none; opacity: 1; } }
   @keyframes slideR { from { transform: translateX(-28px); opacity: .4; } to { transform: none; opacity: 1; } }
   @media (prefers-reduced-motion: reduce) { .slide-l, .slide-r { animation: none; } }
+  .ustiles { display: flex; gap: 10px; margin-bottom: 12px; } .ustiles div { flex: 1; background: var(--soft); border-radius: 10px; padding: 10px; text-align: center; }
+  .ustiles b { display: block; font-size: 24px; color: var(--navy); } .ustiles span { font-size: 13px; color: var(--muted); }
+  .usbars { display: flex; align-items: flex-end; gap: 4px; height: 90px; padding: 0 2px; border-bottom: 1px solid var(--line); }
+  .usbars div { flex: 1; height: 100%; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; position: relative; }
+  .usbars span { display: block; width: 100%; background: #2f855a; border-radius: 3px 3px 0 0; min-height: 2px; }
+  .usbars i { font-style: normal; font-size: 11px; color: var(--muted); position: absolute; top: -2px; }
+  .ustbl td, .ustbl th { white-space: nowrap; } .ustbl tr.usbad td { color: #9b2c2c; } .ustbl td.usold { background: #f6ecd2; font-weight: 700; }
+  .edel { margin-top: 22px; padding-top: 14px; border-top: 1px dashed #e0a0a0; }
+  .edel .edelb { display: block; width: 100%; background: #fff; color: #c53030; border: 1.5px solid #c53030; font-size: 16px; padding: 11px; border-radius: 9px; }
+  .ewho { margin: 0 0 10px; font-size: 16px; background: #f6ecd2; border-radius: 8px; padding: 8px 12px; }
   .mdone { margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--line); }
   /* V1.7.0: mission card buttons. Large = finishes a section (full width). Medium = a tool (two per row). Red = delete. */
   .mbody .btn.blg { display: block; width: 100%; min-width: 0; margin: 12px 0 0; padding: 13px 12px; font-size: 17px; border-radius: 10px; white-space: normal; text-align: center; }
@@ -602,8 +612,11 @@ const POSSE_INFO = {"key":"west","short":"West Posse","header":"West Millard She
 </script>
 <script>
 /* ================= Duty Log: core (shared by the East and West posses) ================= */
-const APP_VERSION = 'V1.7.0';
+const APP_VERSION = 'V1.7.1';
 const CHANGELOG = [
+  { v: 'V1.7.1', date: 'November 12, 2026', items: [
+    'Delete an entry from its Edit screen ("Delete this entry…" under Save). Members can delete their own; admins can delete anyone\'s, and the screen shows whose entry it is. A copy goes to the Sheet\'s hidden "Deleted" tab.',
+    'Admins: App Usage on the Report tab. Who used the app this week and in the last 30 days, a weekly chart, and for each member when they last used it, how often, the app version on their phone and the phone type. Members not seen in 30 days (or never signed in) show in red.'] },
   { v: 'V1.7.0', date: 'November 12, 2026', items: [
     'Mission card tidied up: details, notes, who logged time, photos and expenses first; Mission status (type, status, joint, Save changes), the report, Mission tools and the Danger zone at the bottom, then Done.',
     'Buttons follow one rule: large full-width buttons finish something (Save changes, Create Mission Report, Done); medium buttons are tools, two to a row; Delete is the only red button.',
@@ -820,11 +833,22 @@ function viaScriptRun(fn, args) {
   });
 }
 
+/** V1.7.1: a short phone description for the admin App Usage list (no location, nothing personal). */
+function deviceKind() {
+  if (deviceKind.v) return deviceKind.v;
+  const u = navigator.userAgent || '';
+  const dev = /iPhone/.test(u) ? 'iPhone' : /iPad/.test(u) || (/Macintosh/.test(u) && navigator.maxTouchPoints > 1) ? 'iPad' : /Android/.test(u) ? 'Android'
+    : /Windows/.test(u) ? 'Windows' : /Macintosh/.test(u) ? 'Mac' : 'Other';
+  const br = /SamsungBrowser/.test(u) ? 'Samsung' : /EdgA?[/]/.test(u) ? 'Edge' : /CriOS|Chrome[/]/.test(u) ? 'Chrome' : /FxiOS|Firefox[/]/.test(u) ? 'Firefox' : /Safari[/]/.test(u) ? 'Safari' : '';
+  let home = false; try { home = (window.matchMedia && matchMedia('(display-mode: standalone)').matches) || navigator.standalone === true; } catch (e) {}
+  deviceKind.v = dev + (br ? ' · ' + br : '') + (home ? ' · Home screen' : '');
+  return deviceKind.v;
+}
 async function viaFetch(fn, args) {
   const ctl = new AbortController();
   const timer = setTimeout(() => ctl.abort(), 60000);
   try {
-    const r = await fetch(EXEC_URL, { method: 'POST', body: JSON.stringify({ fn: fn, args: args }), signal: ctl.signal });
+    const r = await fetch(EXEC_URL, { method: 'POST', body: JSON.stringify({ fn: fn, args: args, cv: APP_VERSION, ua: deviceKind() }), signal: ctl.signal });
     const j = await r.json();
     if (!j.ok) { const e = new Error(j.error); e.server = true; throw e; }
     return j.data;
@@ -1500,8 +1524,23 @@ function renderEdit() {
   if (!e) { S.tab = 'stats'; render(); return; }
   const back = () => { S.edit = null; S.tab = S.editBack || 'stats'; S.editBack = null; buildTabs(); render(); };
   if (e.source === 'App') {
-    main(section('Edit Entry', entryForm(e, 'Save changes', true)));
+    /* V1.7.1: Delete on the Edit screen (your own entry, or any entry for admins). */
+    const me = S.d.me, mineE = e.unit === me.unit;
+    const who = (S.d.roster || []).find(r => r.unit === e.unit);
+    const whoTxt = esc(e.unit + (who && who.name ? ' ' + who.name : ''));
+    const canDel = mineE || me.admin;
+    main(section('Edit Entry', (mineE ? '' : `<p class="ewho">Entry for <b>${whoTxt}</b></p>`) + entryForm(e, 'Save changes', true)
+      + (canDel ? `<div class="edel"><button class="btn edelb" type="button" id="edel">Delete this entry…</button>
+        <p class="muted small" style="margin:6px 0 0">Removes it from ${mineE ? 'your' : 'their'} hours and every report. A copy is kept in the Sheet's hidden "Deleted" tab.</p></div>` : '')));
     hookEntryForm();
+    if ($('edel')) $('edel').onclick = async () => {
+      const k = await askSheet('Delete this entry?', `${mineE ? '' : `<b>${whoTxt}</b><br>`}<b>${n1(e.h)} hr · ${n1(e.mi)} mi</b> on ${esc(fmtDate(e.date))}${e.mission ? '<br>' + esc(e.mission) : ''}`,
+        [['del', 'Delete entry'], ['', 'Cancel']], 'red');
+      if (k !== 'del') return;
+      const b = $('edel'); b.disabled = true; b.textContent = 'Deleting…';
+      try { const d = await run('apiDeleteEntry', S.creds, e.id); S.edit = null; S.tab = S.editBack || 'stats'; S.editBack = null; setData(d); toast('Entry deleted.'); }
+      catch (err) { b.disabled = false; b.textContent = 'Delete this entry…'; toast(clean(err), true); }
+    };
   } else {
     main(section(`Edit Monthly Report · ${fmtMonth(e.date)}`, `<form id="ef" class="form">
         <div class="row2">
@@ -1550,7 +1589,7 @@ function askSheet(title, html, btns, kind) {
     document.body.insertAdjacentHTML('beforeend', `<div class="amsh" id="asksh"><div class="ambox form" role="dialog" aria-label="${esc(title)}">
       <div class="amhead ${kind || 'grn2'}"><div class="n">${esc(title)}</div><button type="button" class="amx" data-k="" aria-label="Close">✕</button></div>
       <div style="padding:14px 16px 4px;font-size:16px">${html}</div>
-      <div style="padding:4px 16px 18px">${btns.map(([k, l], i) => `<button type="button" class="btn${i ? ' ghost' : ''}" data-k="${esc(k)}" style="width:100%;margin-top:8px">${esc(l)}</button>`).join('')}</div></div></div>`);
+      <div style="padding:4px 16px 18px">${btns.map(([k, l], i) => `<button type="button" class="btn${i ? ' ghost' : ''}" data-k="${esc(k)}" style="width:100%;margin-top:8px${!i && kind === 'red' && k === 'del' ? ';background:#c53030' : ''}">${esc(l)}</button>`).join('')}</div></div></div>`);
     document.documentElement.classList.add('msopen');
     const done = k => { const x = $('asksh'); askSheet.vals = {}; if (x) { x.querySelectorAll('input,select,textarea').forEach(i => { if (i.id) askSheet.vals[i.id] = i.type === 'checkbox' ? i.checked : i.value; }); x.remove(); } if (!$('amsh') && !$('mssh')) document.documentElement.classList.remove('msopen'); res(k); };
     $('asksh').querySelectorAll('[data-k]').forEach(b => b.onclick = () => done(b.dataset.k));
@@ -3108,8 +3147,8 @@ function renderReport() {
     + section(title, `<div class="tblwrap"><table><tr><th>Unit</th><th class="l">Name</th><th>Functions</th><th>Hours</th><th>Miles</th><th>Value</th>${R.mode === 'year' ? '<th>Goal</th>' : ''}</tr>
       ${rows}<tr class="tot"><td>Total</td><td class="l">Turnouts</td><td>${n1(tot.f)}</td><td>${n1(tot.h)}</td><td>${n1(tot.mi)}</td><td>${money(tot.v)}</td>${R.mode === 'year' ? '<td></td>' : ''}</tr></table></div>
       ${R.mode === 'year' && R.year === cy ? `<p class="muted small">"On pace" means at least ${n1(pace)} functions by the end of ${MONTHS_LONG[now.getMonth()]}.</p>` : ''}`)
-    + meetingAttendance(R, cy));
-  hookMeetingAttendance();
+    + meetingAttendance(R, cy) + usageSection());
+  hookMeetingAttendance(); hookUsage();
   $('yeb').onclick = () => openYearEnd(+$('yey').value, $('yem').value);
   $('rm').onchange = ev => { R.mode = ev.target.value; render(); };
   $('ry').onchange = ev => { R.year = +ev.target.value; render(); };
@@ -3156,6 +3195,51 @@ function hookMeetingAttendance() {
     const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'Meeting attendance ' + R.mty + '.csv';
     document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 500);
   };
+}
+
+/* ---------------- V1.7.1: App Usage (admins) ---------------- */
+function usageAgo(ts) {
+  if (!ts) return '';
+  const t = new Date(ts.replace(' ', 'T')), now = new Date();
+  const days = Math.floor((new Date(now.getFullYear(), now.getMonth(), now.getDate()) - new Date(t.getFullYear(), t.getMonth(), t.getDate())) / 86400000);
+  const hm = ts.slice(11, 16);
+  return days <= 0 ? 'Today ' + hm : days === 1 ? 'Yesterday ' + hm : days + ' days ago';
+}
+function usageSection() {
+  const U = S.usage;
+  if (!U) return section('App Usage', '<p class="muted" id="usld">Loading…</p>');
+  const sortBy = S.usageSort || 'last';
+  const days = m => m.last ? Math.floor((Date.now() - new Date(m.last.replace(' ', 'T'))) / 86400000) : 9999;
+  const list = U.members.slice().sort((a, b) => sortBy === 'unit' ? a.unit.localeCompare(b.unit)
+    : sortBy === 'most' ? b.n30 - a.n30 || a.unit.localeCompare(b.unit)
+    : (days(b) >= 30) - (days(a) >= 30) || (b.last || '').localeCompare(a.last || '') || a.unit.localeCompare(b.unit));
+  const wk = U.weeks, max = Math.max(1, ...wk.map(w => w.n));
+  const active7 = U.members.filter(m => m.n7).length, active30 = U.members.filter(m => m.n30).length;
+  const old = m => m.v && m.v !== U.version;
+  const rows = list.map(m => {
+    const d = days(m), bad = m.last ? d >= 30 : !m.hasPin;
+    return `<tr class="${bad ? 'usbad' : ''}"><td class="l"><b>${esc(m.unit)}</b> ${esc(m.name)}</td>
+      <td class="l">${m.last ? esc(usageAgo(m.last)) : m.hasPin ? 'Not since tracking began' : '<b>Never signed in</b>'}</td>
+      <td>${m.n7}</td><td>${m.n30}</td><td class="l${old(m) ? ' usold' : ''}">${esc(m.v || '')}</td><td class="l small">${esc(m.ua || '')}</td></tr>`;
+  }).join('');
+  const sel = `<select id="ussort" class="mini" aria-label="Sort"><option value="last" ${sortBy === 'last' ? 'selected' : ''}>Needs a nudge first</option>
+    <option value="most" ${sortBy === 'most' ? 'selected' : ''}>Most use</option><option value="unit" ${sortBy === 'unit' ? 'selected' : ''}>Unit number</option></select>`;
+  return section('App Usage', `<div class="ustiles"><div><b>${active7}</b><span>used it this week</span></div><div><b>${active30}</b><span>in the last 30 days</span></div><div><b>${U.members.length}</b><span>members</span></div></div>
+    <div class="usbars" aria-label="Members using the app each week">${wk.map(w => `<div title="Week of ${esc(w.start)}: ${w.n}"><span style="height:${Math.round(w.n / max * 100)}%"></span><i>${w.n}</i></div>`).join('')}</div>
+    <p class="muted small" style="margin:2px 0 12px">Members using the app each week, last 12 weeks.</p>
+    <div class="tblwrap"><table class="ustbl"><tr><th class="l">Member</th><th class="l">Last used</th><th>7 days</th><th>30 days</th><th class="l">Version</th><th class="l">Phone</th></tr>${rows}</table></div>
+    <p class="muted small">7 / 30 days = hours the app was open (counted once per hour). Red = not used in 30 days, or never signed in. A gold version means their phone is behind (${esc(U.version)}): ask them to tap the update bar or reload.
+    ${U.since ? 'Tracking since ' + esc(fmtDate(U.since.slice(0, 10))) + '.' : 'Tracking starts now; it fills in as members open the app.'} Full list: the "Usage" tab in the Google Sheet.</p>`, sel);
+}
+function hookUsage() {
+  if ($('ussort')) $('ussort').onchange = ev => { S.usageSort = ev.target.value; const y = window.scrollY; render(); window.scrollTo(0, y); };
+  if (S.usage && Date.now() - S.usageAt < 120000) return;
+  if (S.usageLoading) return;
+  S.usageLoading = true;
+  run('apiUsage', S.creds).then(u => {
+    S.usage = u; S.usageAt = Date.now(); S.usageLoading = false;
+    if (S.tab === 'report' && !S.report && safeToRedraw()) { const y = window.scrollY; render(); window.scrollTo(0, y); }
+  }).catch(e => { S.usageLoading = false; if ($('usld')) $('usld').textContent = "Couldn't load usage: " + clean(e); });
 }
 
 /* ---------------- Year-end Member Activity Report ---------------- */
