@@ -36,6 +36,9 @@
   .tabs button { background: none; border: 0; color: #cfe3d7; padding: 11px 14px; font: inherit; font-weight: 600;
     cursor: pointer; white-space: nowrap; border-bottom: 3px solid transparent; }
   .tabs button.on { color: #fff; border-bottom-color: var(--gold); }
+  /* V1.8.2: active tab is a gold pill */
+  .tabs { align-items: center; }
+  .tabs button.on { background: var(--gold); color: #1b3a2a; border-radius: 999px; margin: 6px 0; padding: 6px 14px; font-weight: 800; border-bottom-color: transparent; }
   .hidden { display: none !important; }
   main { padding-top: 16px; padding-bottom: 40px; }
   .sec { background: var(--card); border-radius: 10px; box-shadow: 0 1px 3px rgba(0,0,0,.08); margin-bottom: 16px; overflow: hidden; }
@@ -322,6 +325,21 @@
   .mcard .mbody { border-top: 1px solid var(--line); background: #f8fbf9; padding: 10px 12px; font-size: 14px; }
   .mcard .mbody h5 { margin: 12px 0 4px; font-size: 12px; text-transform: uppercase; letter-spacing: .4px; color: var(--navy); }
   .mcard .mbody h5:first-child { margin-top: 0; }
+  /* V1.8.2: Save + Cancel side by side everywhere (primary left, wider) */
+  .bpair { display: flex; gap: 8px; align-items: stretch; margin: 14px 0 10px; }
+  .bpair .btn.btn { width: auto !important; min-width: 0 !important; margin: 0 !important; flex: 2 1 0; font-size: 17px; font-weight: 700; padding: 14px 8px !important; text-align: center; white-space: normal; line-height: 1.2; }
+  .bpair .btn.btn.ghost { flex: 1 1 0; border: 1.5px solid #9fb5a7; }
+  .bpair.bpm { margin: 14px 16px 12px; }
+  .barback { background: #fff; color: var(--navy); border: 0; border-radius: 7px; padding: 6px 12px; font: inherit; font-weight: 800; font-size: 15px; cursor: pointer; }
+  .rcr.tap { cursor: pointer; } .entry.tap { cursor: pointer; } .entry.tap:active { background: #eef4f0; }
+  .etap { display: inline-block; margin-top: 4px; color: var(--navy); font-weight: 800; font-size: 14px; }
+  .tapnote { margin: 4px 0 2px; font-size: 14px; color: var(--navy); font-weight: 700; }
+  #morehint { position: fixed; left: 50%; bottom: 18px; transform: translateX(-50%); z-index: 40; background: var(--navy); color: #fff; border: 0;
+    border-radius: 999px; padding: 9px 16px; font: inherit; font-size: 15px; font-weight: 800; box-shadow: 0 4px 14px rgba(0,0,0,.25);
+    transition: opacity .25s; cursor: pointer; }
+  #morehint.gone { opacity: 0; pointer-events: none; }
+  #morehint span { display: inline-block; margin: 0 4px; animation: mhb 1.4s ease-in-out infinite; }
+  @keyframes mhb { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(3px); } }
   .btnrow { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
   .about p { margin: 6px 0; }
   .changelog { margin: 8px 0 0; padding-left: 20px; }
@@ -653,8 +671,14 @@ const POSSE_INFO = {"key":"west","short":"West Posse","header":"West Millard She
 </script>
 <script>
 /* ================= Duty Log: core (shared by the East and West posses) ================= */
-const APP_VERSION = 'V1.8.1';
+const APP_VERSION = 'V1.8.2';
 const CHANGELOG = [
+  { v: 'V1.8.2', date: 'November 26, 2026', items: [
+    'My Stats: tap anywhere on an entry to edit it. The Edit Entry page has a Back button in its header.',
+    'Save and Cancel (and similar pairs) now sit side by side on one line everywhere in the app.',
+    'Home: your last 5 entries at the bottom, tap one to edit it.',
+    'A small "More" bubble at the bottom shows when a page continues below. Tap it to scroll.',
+    'The tab you are on is a gold pill.'] },
   { v: 'V1.8.1', date: 'November 26, 2026', items: [
     'Log tab: Save entry and Clear sit side by side, and the This Month boxes are gone (your month totals are on My Stats).',
     'Only admins add new missions and events. Members pick from the list, and the entry takes that mission\u2019s type, so there is no Type box for members. Can\u2019t find a mission? Ask an admin to add it.'] },
@@ -1408,6 +1432,24 @@ function render() {
   $('main').classList.remove('widemain');
   fn();
   drawActBar();
+  moreHint();
+}
+
+/* V1.8.2: a small "More below" pill when the page continues past the bottom of the screen. Hides once you scroll. */
+function moreHint() {
+  let h = $('morehint');
+  if (!h) {
+    document.body.insertAdjacentHTML('beforeend', '<button type="button" id="morehint" class="gone" aria-label="Scroll down for more"><span>▾</span> More <span>▾</span></button>');
+    h = $('morehint');
+    h.onclick = () => window.scrollBy({ top: Math.round(window.innerHeight * 0.7), behavior: 'smooth' });
+    moreHint.upd = () => {
+      const left = document.documentElement.scrollHeight - (window.scrollY + window.innerHeight);
+      h.classList.toggle('gone', left < 120 || window.scrollY > 60 || document.documentElement.classList.contains('msopen') || !!S.report);
+    };
+    window.addEventListener('scroll', moreHint.upd, { passive: true });
+    window.addEventListener('resize', moreHint.upd);
+  }
+  setTimeout(moreHint.upd, 80);
 }
 
 function renderPin() {
@@ -1548,9 +1590,8 @@ function entryForm(e, button, cancel) {
       <label>Add photos (optional)<input type="file" id="ep" accept="image/*" multiple>
         <span class="hint">Saved to the mission's photo folder. Everyone in the posse can see them on the Missions tab.</span></label>
       <div id="pprev" class="thumbs"></div>
-      <div class="btnrow" style="flex-wrap:nowrap"><button class="btn" type="submit" id="eb" style="flex:2 1 0;width:auto;min-width:0">${button}</button>
-        ${cancel ? '' : '<button class="btn ghost" type="button" id="eclr" style="flex:1 1 0;width:auto;min-width:0;text-align:center">Clear</button>'}</div>
-      ${cancel ? '<button class="btn gray" type="button" id="ec" style="margin-top:8px">Cancel</button>' : ''}
+      <div class="bpair"><button class="btn" type="submit" id="eb">${button}</button>
+        ${cancel ? '<button class="btn ghost" type="button" id="ec">Cancel</button>' : '<button class="btn ghost" type="button" id="eclr">Clear</button>'}</div>
     </form>`;
 }
 
@@ -1644,15 +1685,15 @@ function recentEntries() {
       const t = x.kind === 'log' ? x.on + '–' + x.off : x.kind === 'off' ? 'Go Off Duty at ' + clock(x.off) : n1(x.e.hours) + ' hr';
       return `<div class="rcr"><div class="rcl"><div class="rcm">${esc(mis)}</div><div class="rcs">${esc(t)}${x.miles != null ? ' · ' + x.miles + ' mi' : x.e ? ' · ' + x.e.miles + ' mi' : ''}</div><div class="rcn">${x.state === 'fail' ? '⚠ Not saved: ' + esc(x.err || '') : '⏳ Waiting for signal'}</div></div></div>`; }
     const lk = locked.indexOf(e.mission) >= 0, cl = closed[e.mission] && !d.me.admin, tt = entryTimes(e);
-    return `<div class="rcr"><div class="rcl"><div class="rcm">${esc(e.mission || e.type)}</div>
+    return `<div class="rcr${lk || cl ? '' : ' tap'}" data-id="${esc(e.id)}"><div class="rcl"><div class="rcm">${esc(e.mission || e.type)}</div>
       <div class="rcs">${esc(shortDate(e.date))}${tt ? ' · ' + tt.on + '–' + tt.off : ''} · <b>${n1(e.h)} hr</b> · ${n1(e.mi)} mi</div>
       ${lk ? '<div class="rcn">🔒 Locked for the report. Ask an admin to change it.</div>' : cl ? '<div class="rcn">Mission closed. Ask an admin to change it.</div>' : ''}</div>
       ${lk || cl ? '' : `<button class="rce" type="button" data-id="${esc(e.id)}">✏️ Edit</button>`}</div>`;
   };
-  return section('My recent entries', list.map(row).join('') + '<button class="link" id="rcAll" type="button" style="color:var(--navy);padding:8px 0 0;font-weight:700">See all on My Stats ›</button>');
+  return section('My recent entries', '<p class="tapnote">Tap an entry to edit it.</p>' + list.map(row).join('') + '<button class="link" id="rcAll" type="button" style="color:var(--navy);padding:8px 0 0;font-weight:700">See all on My Stats ›</button>');
 }
 function hookRecent() {
-  document.querySelectorAll('.rce').forEach(b => b.onclick = () => openEntryById(b.dataset.id));
+  document.querySelectorAll('.rcr.tap').forEach(b => b.onclick = () => openEntryById(b.dataset.id));
   if ($('rcAll')) $('rcAll').onclick = () => { S.tab = 'stats'; buildTabs(); render(); window.scrollTo(0, 0); };
 }
 
@@ -1689,7 +1730,8 @@ function renderLog() {
 function renderEdit() {
   const e = S.edit;
   if (!e) { S.tab = 'stats'; render(); return; }
-  const back = () => { S.edit = null; S.tab = S.editBack || 'stats'; S.editBack = null; buildTabs(); render(); };
+  const back = () => { const y = S.editY; S.edit = null; S.editY = null; S.tab = S.editBack || 'stats'; S.editBack = null; buildTabs(); render(); if (y) window.scrollTo(0, y); };
+  const backBtn = '<button type="button" class="barback" id="eback">‹ Back</button>';
   if (e.source === 'App') {
     /* V1.7.1: Delete on the Edit screen (your own entry, or any entry for admins). */
     const me = S.d.me, mineE = e.unit === me.unit;
@@ -1698,7 +1740,7 @@ function renderEdit() {
     const canDel = mineE || me.admin;
     main(section('Edit Entry', (mineE ? '' : `<p class="ewho">Entry for <b>${whoTxt}</b></p>`) + entryForm(e, 'Save changes', true)
       + (canDel ? `<div class="edel"><button class="btn edelb" type="button" id="edel">Delete this entry…</button>
-        <p class="muted small" style="margin:6px 0 0">Removes it from ${mineE ? 'your' : 'their'} hours and every report. A copy is kept in the Sheet's hidden "Deleted" tab.</p></div>` : '')));
+        <p class="muted small" style="margin:6px 0 0">Removes it from ${mineE ? 'your' : 'their'} hours and every report. A copy is kept in the Sheet's hidden "Deleted" tab.</p></div>` : ''), backBtn));
     hookEntryForm();
     if ($('edel')) $('edel').onclick = async () => {
       const k = await askSheet('Delete this entry?', `${mineE ? '' : `<b>${whoTxt}</b><br>`}<b>${n1(e.h)} hr · ${n1(e.mi)} mi</b> on ${esc(fmtDate(e.date))}${e.mission ? '<br>' + esc(e.mission) : ''}`,
@@ -1716,12 +1758,11 @@ function renderEdit() {
         </div>
         <label>Miles<input type="number" id="ei" min="0" max="20000" step="1" required value="${e.mi == null ? '' : e.mi}"></label>
         <label>Notes (optional)<textarea id="en" rows="2" maxlength="500">${esc(e.notes)}</textarea></label>
-        <button class="btn" type="submit" id="eb">Save changes</button>
-        <button class="btn gray" type="button" id="ec" style="margin-top:8px">Cancel</button>
-      </form>`));
+        <div class="bpair"><button class="btn" type="submit" id="eb">Save changes</button><button class="btn ghost" type="button" id="ec">Cancel</button></div>
+      </form>`, backBtn));
   }
   if (finePointer()) ($('ed') || $('ef_f')).focus();
-  $('ec').onclick = back;
+  $('ec').onclick = back; if ($('eback')) $('eback').onclick = back;
   $('ef').onsubmit = async ev => {
     ev.preventDefault();
     if (e.source === 'App' && !checkMissionName()) return;
@@ -1756,7 +1797,7 @@ function askSheet(title, html, btns, kind) {
     document.body.insertAdjacentHTML('beforeend', `<div class="amsh" id="asksh"><div class="ambox form" role="dialog" aria-label="${esc(title)}">
       <div class="amhead ${kind || 'grn2'}"><div class="n">${esc(title)}</div><button type="button" class="amx" data-k="" aria-label="Close">✕</button></div>
       <div style="padding:14px 16px 4px;font-size:16px">${html}</div>
-      <div style="padding:4px 16px 18px">${btns.map(([k, l], i) => `<button type="button" class="btn${i ? ' ghost' : ''}" data-k="${esc(k)}" style="width:100%;margin-top:8px${!i && kind === 'red' && k === 'del' ? ';background:#c53030' : ''}">${esc(l)}</button>`).join('')}</div></div></div>`);
+      <div style="padding:4px 16px 18px" class="${btns.length === 2 && btns[1][0] === '' ? 'bpair' : ''}">${btns.map(([k, l], i) => `<button type="button" class="btn${i ? ' ghost' : ''}" data-k="${esc(k)}" style="width:100%;margin-top:8px${!i && kind === 'red' && (k === 'del' || k === 'go') ? ';background:#c53030' : ''}">${esc(l)}</button>`).join('')}</div></div></div>`);
     document.documentElement.classList.add('msopen');
     const done = k => { const x = $('asksh'); askSheet.vals = {}; if (x) { x.querySelectorAll('input,select,textarea').forEach(i => { if (i.id) askSheet.vals[i.id] = i.type === 'checkbox' ? i.checked : i.value; }); x.remove(); } if (!$('amsh') && !$('mssh')) document.documentElement.classList.remove('msopen'); res(k); };
     $('asksh').querySelectorAll('[data-k]').forEach(b => b.onclick = () => done(b.dataset.k));
@@ -1922,7 +1963,7 @@ function renderStats() {
     rows += `<tr class="click ${mt.f || mt.h ? '' : 'dim'}" data-ym="${key}" tabindex="0"><td><span class="chev">${open ? '▾' : '▸'}</span>${MONTHS_LONG[m]}</td><td>${n1(mt.f)}</td><td>${n1(mt.h)}</td><td>${n1(mt.mi)}</td><td>${money(mt.v)}</td></tr>`;
     if (open) {
       const mine = d.mine.filter(e => e.date.slice(0, 7) === key).sort(byNewest);
-      rows += `<tr><td colspan="5" class="detail">${mine.map(entryItem).join('') || '<p class="muted small" style="margin:8px 0 0">Nothing logged this month.</p>'}
+      rows += `<tr><td colspan="5" class="detail">${mine.length ? '<p class="tapnote">Tap an entry to edit it.</p>' : ''}${mine.map(entryItem).join('') || '<p class="muted small" style="margin:8px 0 0">Nothing logged this month.</p>'}
         <button class="addm" data-ym="${key}">+ Add an entry for ${MONTHS_LONG[m]}</button></td></tr>`;
     }
   }
@@ -1931,7 +1972,7 @@ function renderStats() {
       <p class="muted small">Tap a month to see, edit or add its entries.</p>`);
 
   const list = d.mine.filter(P.test).sort(byNewest);
-  html += section(`Entries · ${esc(P.label)}`, list.map(entryItem).join('') || '<p class="muted">No entries for this period.</p>');
+  html += section(`Entries · ${esc(P.label)}`, (list.length ? '<p class="tapnote">Tap an entry to edit it.</p>' : '') + list.map(entryItem).join('') || '<p class="muted">No entries for this period.</p>');
 
   const stYears = years.filter(v => v <= cy);
   html += section('Year-End Statement', `<div class="form"><div class="row2">
@@ -1951,10 +1992,11 @@ function renderStats() {
     S.prefill = b.dataset.ym === todayStr().slice(0, 7) ? todayStr() : first;
     S.tab = 'log'; buildTabs(); render(); window.scrollTo(0, 0);
   });
-  document.querySelectorAll('.del').forEach(b => b.onclick = () => delEntry(b.dataset.id));
-  document.querySelectorAll('.edt').forEach(b => b.onclick = () => {
-    S.edit = d.mine.find(x => x.id === b.dataset.id);
-    S.tab = 'edit'; buildTabs(); render(); window.scrollTo(0, 0);
+  document.querySelectorAll('.entry.tap').forEach(r => {
+    const go = ev => { if (ev && ev.target.closest('.nt')) return; S.edit = d.mine.find(x => x.id === r.dataset.id); S.editBack = 'stats'; S.editY = window.scrollY;
+      S.tab = 'edit'; buildTabs(); render(); window.scrollTo(0, 0); };
+    r.onclick = go;
+    r.onkeydown = ev => { if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); go(); } };
   });
   $('ysb').onclick = () => openYearEnd(+$('ysy').value, d.me.unit);
 }
@@ -1964,10 +2006,11 @@ function entryItem(e) {
   const pc = (S.d.myPhotos || {})[e.id];
   const title = legacy ? `Monthly report · ${fmtMonth(e.date)}` : `${esc(e.type)}${e.mission ? ' · ' + esc(e.mission) : ''}`;
   const lock = !legacy && e.mission && isLockedName(e.mission);
-  return `<div class="entry"><div><div class="what">${title}${lock ? '<span class="tag lock">🔒 Locked</span>' : ''}${e.exclude ? '<span class="tag bad">excluded</span>' : ''}${pc ? `<span class="tag">📷 ${pc}</span>` : ''}</div>
+  const tap = !lock && !e.exclude;
+  return `<div class="entry${tap ? ' tap' : ''}" ${tap ? `data-id="${esc(e.id)}" role="button" tabindex="0"` : ''}><div><div class="what">${title}${lock ? '<span class="tag lock">🔒 Locked</span>' : ''}${e.exclude ? '<span class="tag bad">excluded</span>' : ''}${pc ? `<span class="tag">📷 ${pc}</span>` : ''}</div>
       <div class="meta">${legacy ? 'Submitted ' + esc(e.logged.slice(0, 10)) : esc(fmtDate(e.date))}${e.notes ? ` · <button class="nt" type="button" data-id="${esc(e.id)}">Notes</button>` : ''}</div></div>
       <div class="nums">${legacy ? n1(e.f) + ' fn · ' : ''}${n1(e.h)} hr · ${n1(e.mi)} mi
-      ${lock ? '' : `<br><button class="edt" data-id="${esc(e.id)}">Edit</button>${legacy ? '' : ` <button class="del" data-id="${esc(e.id)}">Delete</button>`}`}</div></div>`;
+      ${tap ? '<br><span class="etap">✏️ Edit ›</span>' : ''}</div></div>`;
 }
 
 /* Notes pop-up: a "Notes" link on each entry instead of the full text in the list */
@@ -2591,8 +2634,7 @@ async function openScrub(name) {
         <li>The mission itself</li></ul>
       ${block ? `<div class="stopbox">${esc(block)}</div>` : onDuty}</div>
     ${block || p.onDuty.length ? '' : `<label style="margin:4px 16px 8px">Type <span style="color:#c53030">SCRUB</span> to confirm<input type="text" id="scW" autocomplete="off" autocapitalize="characters" spellcheck="false"></label>
-    <button type="button" class="btn wide scgo" id="scGo" disabled>Delete everything</button>`}
-    <div class="center"><button type="button" class="link" id="scC" style="color:var(--muted)">Cancel</button></div>
+    `}<div class="bpair bpm">${block || p.onDuty.length ? '' : '<button type="button" class="btn scgo" id="scGo" disabled>Delete everything</button>'}<button type="button" class="btn ghost" id="scC">Cancel</button></div>
     <p class="muted small" style="margin:6px 16px 16px">A copy goes to the hidden "Deleted" tab of the Google Sheet, so a mistake can be undone. The CalTopo map, GroupMe posts and photo files in Google Drive aren't touched.</p></div></div>`);
   document.documentElement.classList.add('msopen');
   const close = () => closeActive();
@@ -3946,8 +3988,8 @@ function renderHome() {
       ${next.length ? `<div class="hnext"><div class="hl">COMING UP</div>${next.map(m => `<div class="row"><span>${esc(m.name)}</span><b>${esc(shortDate(m.date))}</b></div>`).join('')}</div>` : ''}
       ${LOGO ? `<div class="hbadge"><img src="${LOGO}" alt=""></div>` : ''}`;
   }
-  main(`<div class="home">${homeTip()}${changeNotices()}${addedNotice()}${doneReminders()}${html}</div>`);
-  hookDoneReminders(); hookAddedNotice(); hookChangeNotices(); hookHomeTip();
+  main(`<div class="home">${homeTip()}${changeNotices()}${addedNotice()}${doneReminders()}${html}</div>${recentEntries()}`);
+  hookRecent(); hookDoneReminders(); hookAddedNotice(); hookChangeNotices(); hookHomeTip();
   document.querySelectorAll('.hgo').forEach(b => b.onclick = () => b.dataset.off ? openOffDuty() : openGoOn(b.dataset.n));
   document.querySelectorAll('.hlog').forEach(b => b.onclick = () => openLogMyTime(b.dataset.n));
   document.querySelectorAll('.hstart').forEach(b => b.onclick = () => openChangeStart());
@@ -4224,8 +4266,7 @@ async function openGoOn(name) {
       ${timeBox('goT', Date.now(), 'Start time')}
       <p class="tbhint">Edit your time before going on duty. ${TB_HINT}</p>
       ${!name ? '<p class="muted small" style="margin:6px 0 0">No signal: this is saved on your phone and matched to the callout when it sends.</p>' : ''}
-      <button type="button" class="btn wide onb" id="goSave" style="margin:14px 0 0;width:100%"></button>
-      <div class="center" style="margin:8px 0 10px"><button type="button" class="link" id="goC" style="color:var(--muted)">Cancel</button></div></div></div></div>`);
+      <div class="bpair"><button type="button" class="btn onb" id="goSave"></button><button type="button" class="btn ghost" id="goC">Cancel</button></div></div></div></div>`);
   document.documentElement.classList.add('msopen');
   const upd = () => { const hmv = tbHM('goT'); $('goSave').textContent = hmv ? 'Go On Duty at ' + hmv : 'Enter the start time'; $('goSave').disabled = !hmv; };
   hookTimeBox('goT', upd); upd(); $('goT').onnow = upd; tbFollowNow('goT');
@@ -4248,8 +4289,7 @@ function openChangeStart(shift) {
     <div class="amhead grn2"><div class="k">CHANGE START TIME${mineToo ? '' : ' · ' + esc(s.unit) + ' ' + esc(tcName(s.name))}</div><div class="n">${esc(s.mission)}</div><button type="button" class="amx" id="amx" aria-label="Close">✕</button></div>
     <div style="padding:14px 16px 4px">${timeBox('csT', s.on, 'Start time')}
       <p class="tbhint">${TB_HINT}</p>
-      <button type="button" class="btn wide" id="csSave" style="margin:14px 0 0;width:100%"></button>
-      <div class="center" style="margin:8px 0 10px"><button type="button" class="link" id="csC" style="color:var(--muted)">Cancel</button></div></div></div></div>`);
+      <div class="bpair"><button type="button" class="btn" id="csSave"></button><button type="button" class="btn ghost" id="csC">Cancel</button></div></div></div></div>`);
   document.documentElement.classList.add('msopen');
   const upd = () => { const v = tbHM('csT'); $('csSave').textContent = v ? 'Change start to ' + v : 'Enter the start time'; $('csSave').disabled = !v; };
   hookTimeBox('csT', upd); upd();
@@ -4284,8 +4324,7 @@ function openLogMyTime(name) {
       <div class="tbsum" id="lmSum">Enter both times.</div>
       <label style="margin:10px 0 0">Miles driven<input type="number" id="lmMi" min="0" max="2000" step="1" inputmode="numeric" placeholder="Round trip" style="max-width:170px;font-size:22px;font-weight:700"></label>
       <label style="margin:10px 0 0">Notes (optional)<textarea id="lmNo" rows="2" maxlength="300"></textarea></label>
-      <button type="button" class="btn wide onb" id="lmSave" style="margin:14px 0 0;width:100%">Save my time</button>
-      <div class="center" style="margin:8px 0 10px"><button type="button" class="link" id="lmC" style="color:var(--muted)">Cancel</button></div></div></div></div>`);
+      <div class="bpair"><button type="button" class="btn onb" id="lmSave">Save my time</button><button type="button" class="btn ghost" id="lmC">Cancel</button></div></div></div></div>`);
   document.documentElement.classList.add('msopen');
   const mins = () => { const a = tbHM('lmOn'), b = tbHM('lmOff'); if (!a || !b) return null; let m = (+b.slice(0, 2) * 60 + +b.slice(3)) - (+a.slice(0, 2) * 60 + +a.slice(3)); if (m <= 0) m += 1440; return m; };
   const upd = () => { const m = mins(); $('lmSum').innerHTML = m ? `⏱ <b>${Math.floor(m / 60)} h ${pad2(m % 60)} m</b>${m > 0 && tbHM('lmOff') < tbHM('lmOn') ? ' (past midnight)' : ''} → <b>${halfUpHrs(m)} hr</b> logged` : 'Enter both times.'; };
@@ -4335,9 +4374,8 @@ function openEntrySheet(e) {
         <button type="button" class="link" id="eeAddT" style="padding:8px 0;color:var(--navy);font-weight:700">+ Add on/off times</button></div>
       <label style="margin:12px 0 0">Miles<input type="number" id="eeMi" min="0" max="2000" step="1" inputmode="numeric" value="${e.mi}" style="max-width:130px;font-size:22px;font-weight:700"></label>
       <label style="margin:10px 0 0">Notes (optional)<textarea id="eeNo" rows="2" maxlength="400">${esc(plainNotes(e.notes))}</textarea></label>
-      <button type="button" class="btn wide" id="eeSave" style="margin:14px 0 0;width:100%">Save</button>
-      ${canDel ? '<button type="button" class="btn wide" id="eeDel" style="margin:10px 0 0;width:100%;background:#fff;color:#c53030;border:1.5px solid #c53030">Delete entry…</button>' : ''}
-      <div class="center" style="margin:8px 0 10px"><button type="button" class="link" id="eeC" style="color:var(--muted)">Cancel</button></div>
+      <div class="bpair"><button type="button" class="btn" id="eeSave">Save changes</button><button type="button" class="btn ghost" id="eeC">Cancel</button></div>
+      ${canDel ? '<button type="button" class="btn wide" id="eeDel" style="margin:4px 0 14px;width:100%;background:#fff;color:#c53030;border:1.5px solid #c53030">Delete entry…</button>' : ''}
       ${mineE ? '' : '<p class="muted small" style="margin:0 0 12px">They get a notice listing exactly what you changed. It also goes on the Board Log.</p>'}</div></div></div>`);
   document.documentElement.classList.add('msopen');
   if (tt) { $('eeOnH').value = tt.on.slice(0, 2); $('eeOnM').value = tt.on.slice(3); $('eeOffH').value = tt.off.slice(0, 2); $('eeOffM').value = tt.off.slice(3);
@@ -4412,8 +4450,7 @@ function openOffDuty(thenOn, pre) {
       <div class="tbsum" id="ofSum"></div>
       <label style="margin:10px 0 0">Miles driven<input type="number" id="offMi" min="0" max="2000" step="1" inputmode="numeric" placeholder="Round trip" style="max-width:170px;font-size:22px;font-weight:700"></label>
       <label style="margin:10px 0 0">Notes (optional)<textarea id="offNo" rows="2" maxlength="400">${mine.assignment ? 'Assignment: ' + esc(mine.assignment) : ''}</textarea></label>
-      <button type="button" class="btn wide offb" id="offSave" style="margin:14px 0 0;width:100%"></button>
-      <div class="center" style="margin:8px 0 10px"><button type="button" class="link" id="offCancel" style="color:var(--muted)">Cancel (stay on duty)</button></div></div></div></div>`);
+      <div class="bpair"><button type="button" class="btn offb" id="offSave"></button><button type="button" class="btn ghost" id="offCancel">Cancel</button></div></div></div></div>`);
   document.documentElement.classList.add('msopen');
   const times = () => { const off = tbAt('ofOff'); const on = off == null ? null : tbAt('ofOn', off); return { on: on, off: off }; };
   const upd = () => {
@@ -4608,8 +4645,7 @@ function openEditTimes(id) {
     ${isOn ? '' : `<label style="margin:4px 16px 2px">Off-duty time<input type="datetime-local" id="etOff" value="${toLocal(s.off)}" max="${toLocal(now)}"></label><div class="muted small" style="margin:0 16px 8px">Was ${esc(was(s.off))}</div>`}
     <div class="sum"><div><span>Time on shift</span><span id="etEl"></span></div><div class="tot"><span>Logged as</span><span id="etHr"></span></div></div>
     <label style="margin:0 16px 10px">Reason<input type="text" id="etNo" maxlength="200" placeholder="e.g. Started at the staging point before going on duty in the app"></label>
-    <button type="button" class="btn wide" id="etSave">Save times</button>
-    <div class="center"><button type="button" class="link" id="etC" style="color:var(--muted)">Cancel</button></div>
+    <div class="bpair bpm"><button type="button" class="btn" id="etSave">Save times</button><button type="button" class="btn ghost" id="etC">Cancel</button></div>
     <p class="muted small" style="margin:6px 16px 14px">${isOn ? 'They stay on duty; the clock starts from the new time.' : 'Their logged hours update to match.'} Old and new times and who changed them go on the Board Log.</p></div></div>`);
   document.documentElement.classList.add('msopen');
   const onAt = () => { const v = $('etOn').value; return v === toLocal(s.on) ? s.on : new Date(v).getTime(); };
@@ -4652,8 +4688,7 @@ function openPutOn(mission) {
     <div class="pol" id="poL"></div>
     <div style="margin:10px 16px 8px">${timeBox('poT', now, 'On-duty time')}<p class="tbhint">Now, or when they really started. ${TB_HINT}</p></div>
     <label style="margin:0 16px 10px">Assignment <span class="muted small">(optional, for everyone checked)</span><input type="text" id="poA" maxlength="300"></label>
-    <button type="button" class="btn wide" id="poGo" disabled>Pick units above</button>
-    <div class="center"><button type="button" class="link" id="poC" style="color:var(--muted)">Cancel</button></div>
+    <div class="bpair bpm"><button type="button" class="btn" id="poGo" disabled>Pick units above</button><button type="button" class="btn ghost" id="poC">Cancel</button></div>
     <p class="muted small" style="margin:6px 16px 14px">Shows on the board right away with "Put on duty by ${esc(S.d.me.unit)} ${esc(tcName(S.d.me.name))}" and goes on the Board Log. If they open the app, they see they're on duty and can go off duty themselves.</p></div></div>`);
   document.documentElement.classList.add('msopen');
   hookTimeBox('poT'); tbFollowNow('poT');
@@ -4715,8 +4750,7 @@ function openCheckOut(mission) {
       g.on.slice().sort(byUnit).map(x => `<label class="poi"><input type="checkbox" class="coU" data-g="${gi}" value="${esc(x.id)}" checked> <span><b>${esc(x.unit)}</b> ${esc(tcName(x.name))}${ptag(x)}</span><span class="muted small pon">on ${clock(x.on)}</span></label>`).join('')).join('')}</div>
     <div style="margin:10px 16px 8px">${timeBox('coT', now, 'Off-duty time')}<p class="tbhint">Same for everyone checked (never earlier than their own start). ${TB_HINT}</p></div>
     <label style="margin:0 16px 10px">Reason<input type="text" id="coNo" maxlength="200" placeholder="e.g. Mission over, everyone released"></label>
-    <button type="button" class="btn wide offb" id="coGo">Put them off duty</button>
-    <div class="center"><button type="button" class="link" id="coC" style="color:var(--muted)">Cancel</button></div>
+    <div class="bpair bpm"><button type="button" class="btn offb" id="coGo">Put them off duty</button><button type="button" class="btn ghost" id="coC">Cancel</button></div>
     <p class="muted small" style="margin:6px 16px 14px">Miles are left blank (unknown) and each member can fix theirs. Each gets a note and it all goes on the Board Log.</p></div></div>`);
   document.documentElement.classList.add('msopen');
   hookTimeBox('coT'); tbFollowNow('coT');
@@ -4755,8 +4789,7 @@ function openAddTime(mission) {
     <label style="margin:8px 16px 8px">…or hours <span class="muted small">(if you don't know the times)</span><input type="number" id="atH" min="0.5" max="72" step="0.5" inputmode="decimal"></label>
     <label style="margin:0 16px 8px">Miles <span class="muted small">(each; blank = 0)</span><input type="number" id="atMi" min="0" max="2000" step="1" inputmode="numeric"></label>
     <label style="margin:0 16px 10px">Note<input type="text" id="atNo" maxlength="200" placeholder="e.g. Forgot to log, helped at staging"></label>
-    <button type="button" class="btn wide" id="atGo" disabled>Pick units above</button>
-    <div class="center"><button type="button" class="link" id="atC" style="color:var(--muted)">Cancel</button></div>
+    <div class="bpair bpm"><button type="button" class="btn" id="atGo" disabled>Pick units above</button><button type="button" class="btn ghost" id="atC">Cancel</button></div>
     <p class="muted small" style="margin:6px 16px 14px">Each unit gets a normal Duty Log entry noted "Added by ${esc(S.d.me.unit)} ${esc(tcName(S.d.me.name))}", and it goes on the Board Log. Works on Completed and Closed missions too.</p></div></div>`);
   document.documentElement.classList.add('msopen');
   const draw = () => {
@@ -4812,8 +4845,7 @@ function openAdminOff(id) {
     <div style="margin:4px 16px 10px">${timeBox('aoT', now, 'Off-duty time')}<p class="tbhint">When they really stopped, if you know. ${TB_HINT}</p></div>
     <label style="margin:0 16px 10px">Miles <span class="muted small">(leave blank if you don't know; they can fix it)</span><input type="number" id="aoMi" min="0" max="2000" step="1" inputmode="numeric" placeholder="Unknown"></label>
     <label style="margin:0 16px 10px">Reason<input type="text" id="aoNo" maxlength="200" placeholder="e.g. Forgot to go off duty, couldn't reach them"></label>
-    <button type="button" class="btn wide offb" id="aoSave">Put ${esc(s.unit)} off duty</button>
-    <div class="center"><button type="button" class="link" id="aoCancel" style="color:var(--muted)">Cancel</button></div>
+    <div class="bpair bpm"><button type="button" class="btn offb" id="aoSave">Put ${esc(s.unit)} off duty</button><button type="button" class="btn ghost" id="aoCancel">Cancel</button></div>
     <p class="muted small" style="margin:6px 16px 14px">Saved as their entry with the note "Put off duty by ${esc(S.d.me.unit)} ${esc(tcName(S.d.me.name))}" and recorded on the Board Log. They see a notice next time they open the app.</p></div></div>`);
   document.documentElement.classList.add('msopen');
   const offAt = () => { const t = tbAt('aoT'); return t == null ? dutyNow() : t; };

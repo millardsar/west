@@ -1,5 +1,5 @@
-/* Duty Log offline helper V1.8.1 */
-const CACHE = 'dutylog-V1.8.1';
+/* Duty Log offline helper V1.8.2 */
+const CACHE = 'dutylog-V1.8.2';
 const CORE = ['./', 'index.html', 'manifest.json', 'favicon.png', 'apple-touch-icon.png', 'icon-192.png'];
 self.addEventListener('install', e => { e.waitUntil(caches.open(CACHE).then(c => Promise.all(CORE.map(u => c.add(new Request(u, { cache: 'reload' })).catch(() => null)))).then(() => self.skipWaiting())); });
 self.addEventListener('activate', e => { e.waitUntil(caches.keys().then(ks => Promise.all(ks.filter(k => k.indexOf('dutylog-') === 0 && k !== CACHE).map(k => caches.delete(k)))).then(() => self.clients.claim())); });
