@@ -653,8 +653,11 @@ const POSSE_INFO = {"key":"west","short":"West Posse","header":"West Millard She
 </script>
 <script>
 /* ================= Duty Log: core (shared by the East and West posses) ================= */
-const APP_VERSION = 'V1.8.0';
+const APP_VERSION = 'V1.8.1';
 const CHANGELOG = [
+  { v: 'V1.8.1', date: 'November 26, 2026', items: [
+    'Log tab: Save entry and Clear sit side by side, and the This Month boxes are gone (your month totals are on My Stats).',
+    'Only admins add new missions and events. Members pick from the list, and the entry takes that mission\u2019s type, so there is no Type box for members. Can\u2019t find a mission? Ask an admin to add it.'] },
   { v: 'V1.8.0', date: 'November 26, 2026', items: [
     'Go On Duty asks you to confirm the start time first (change it if you started earlier). Go Off Duty shows On Duty and Off Duty times you can both change.',
     'Times are typed in two small boxes (hours : minutes, 24-hour). No more scroll wheels anywhere.',
@@ -1462,7 +1465,7 @@ function missionSelect(current) {
       ${ongoing.length ? `<optgroup label="Ongoing">${ongoing.map(optO).join('')}</optgroup>` : ''}
       ${dated.length ? `<optgroup label="Missions & events, newest first">${dated.map(optD).join('')}</optgroup>` : ''}
       ${doneRecent.length ? `<optgroup label="Recently completed">${doneRecent.map(optD).join('')}</optgroup>` : ''}
-      <option value="__new">+ New Mission / Event…</option>
+      ${d.me && d.me.admin ? '<option value="__new">+ New Mission / Event…</option>' : ''}
     </select>`;
 }
 
@@ -1526,13 +1529,15 @@ function closeMs() { const x = $('mssh'); if (x) x.remove(); document.documentEl
 function entryForm(e, button, cancel) {
   const d = S.d;
   const types = d.types.map(t => `<option ${e && e.type === t ? 'selected' : ''}>${esc(t)}</option>`).join('');
+  const adm = !!(d.me && d.me.admin);
+  /* V1.8.1: only admins add missions or pick the type; for members the type comes from the mission they pick. */
   return `<form id="ef" class="form">
-      <div class="row2">
-        <label>Date<input type="date" id="ed" value="${e ? e.date : todayStr()}" max="${todayStr()}" required></label>
-        <label>Type<select id="et">${types}</select></label>
+      <div class="${adm ? 'row2' : ''}">
+        <label>Date<input type="date" id="ed" value="${e ? e.date : todayStr()}" max="${todayStr()}" required${adm ? '' : ' style="max-width:210px"'}></label>
+        <label class="${adm ? '' : 'hidden'}">Type<select id="et">${types}</select></label>
       </div>
       <label>Mission / Event${missionSelect(e ? e.mission : '')}
-        <span class="hint">Pick from the list so everyone's time lands on the same mission. Can't find it? Choose “+ New”.${(S.d.missions || []).some(m => m.locked) ? ' Locked missions have been reported. Ask an admin if you need to add time.' : ''}</span></label>
+        <span class="hint">${adm ? 'Pick from the list so everyone\u2019s time lands on the same mission. Can\u2019t find it? Choose “+ New”.' : 'Can\u2019t find it? Ask an admin to add it.'}${(S.d.missions || []).some(m => m.locked) ? ' Locked missions have been reported. Ask an admin if you need to add time.' : ''}</span></label>
       <label id="emwrap" class="hidden">New Mission / Event name<textarea id="em" class="grow1" rows="1" maxlength="80" autocomplete="off" placeholder="e.g. LOST HIKER CHALK CREEK"></textarea></label>
       <div id="simbox" class="simbox hidden"></div>
       <div class="row2">
@@ -1543,8 +1548,8 @@ function entryForm(e, button, cancel) {
       <label>Add photos (optional)<input type="file" id="ep" accept="image/*" multiple>
         <span class="hint">Saved to the mission's photo folder. Everyone in the posse can see them on the Missions tab.</span></label>
       <div id="pprev" class="thumbs"></div>
-      <div class="btnrow"><button class="btn" type="submit" id="eb" style="flex:1;width:auto">${button}</button>
-        ${cancel ? '' : '<button class="btn ghost" type="button" id="eclr" style="width:auto">Clear</button>'}</div>
+      <div class="btnrow" style="flex-wrap:nowrap"><button class="btn" type="submit" id="eb" style="flex:2 1 0;width:auto;min-width:0">${button}</button>
+        ${cancel ? '' : '<button class="btn ghost" type="button" id="eclr" style="flex:1 1 0;width:auto;min-width:0;text-align:center">Clear</button>'}</div>
       ${cancel ? '<button class="btn gray" type="button" id="ec" style="margin-top:8px">Cancel</button>' : ''}
     </form>`;
 }
@@ -1653,19 +1658,17 @@ function hookRecent() {
 
 function renderLog() {
   const d = S.d, now = new Date();
-  const live = d.mine.filter(e => !e.exclude);
-  const mtd = sum(live.filter(e => e.date.slice(0, 7) === ym(now.getFullYear(), now.getMonth())));
   const pre = S.prefill ? { date: S.prefill, type: d.types[0], mission: '', h: '', mi: '', notes: '' } : null;
   S.prefill = null;
-  main(section('Log Activity', dutyLogStrip() + entryForm(pre, 'Save entry', false))
-    + section(`This Month · ${MONTHS_LONG[now.getMonth()]}`, tiles(mtd)) + recentEntries());
+  main(section('Log Activity', dutyLogStrip() + entryForm(pre, 'Save entry', false)) + recentEntries());
   hookEntryForm(); hookDutyStrip(); hookRecent();
   /* Keep what the member is typing on the phone until it's saved */
   const ids = ['ed', 'et', 'ems', 'em', 'eh', 'ei', 'en'];
   const dr = pre ? null : draftLoad('entry');
   if (dr && (dr.em || dr.eh || dr.ei || dr.en || dr.ems)) {
     ids.forEach(id => { if (dr[id] != null && $(id)) $(id).value = dr[id]; });
-    if ($('ems').value !== dr.ems && dr.ems && dr.ems !== '__new') { /* mission no longer on the list */ $('ems').value = '__new'; $('em').value = dr.ems; }
+    if ($('ems').value !== dr.ems && dr.ems && dr.ems !== '__new') { /* mission no longer on the list */ if (S.d.me.admin) { $('ems').value = '__new'; $('em').value = dr.ems; } else $('ems').value = ''; }
+    if ($('ems').value === '__new' && !S.d.me.admin) $('ems').value = '';
     $('emwrap').classList.toggle('hidden', $('ems').value !== '__new');
     syncPick('ems');
     if ($('em').fit) $('em').fit();
@@ -1808,6 +1811,7 @@ async function saveEntry(force) {
   return saveEntryNow(e, force);
 }
 async function saveEntryNow(e, force) {
+  if (!S.d.me.admin && !e.mission) { toast('Pick the mission from the list. Can\u2019t find it? Ask an admin to add it.', true); if ($('ems_b')) { $('ems_b').focus(); openPick('ems'); } return; }
   if (e.type === 'Callout' && !e.mission) { toast('Pick the mission for a callout.', true); $('ems_b').focus(); openPick('ems'); return; }
   if (!force && Number(e.hours) > 16 && !confirm(e.hours + ' hours is a long stretch. Save it?')) return;
   if (!e.date || !(Number(e.hours) >= 0.5) || e.miles === '' || !(Number(e.miles) >= 0)) { toast('Fill in the date, hours and miles.', true); return; }
@@ -4324,7 +4328,7 @@ function openEntrySheet(e) {
       ${mineE ? '' : `<p class="ewho" style="margin:0 0 12px">Entry for <b>${esc(whoTxt)}</b></p>`}
       <label style="margin:0 0 10px">Date<input type="date" id="eeD" value="${esc(e.date)}" max="${todayStr()}" style="max-width:210px"></label>
       <label style="margin:0 0 10px">Mission / Event<select id="eeM"><option value="">— None —</option>${names.map(n => `<option ${n === e.mission ? 'selected' : ''}>${esc(n)}</option>`).join('')}</select></label>
-      <label style="margin:0 0 12px">Type<select id="eeT" style="max-width:240px">${typeOptions(e.type)}</select></label>
+      <label style="margin:0 0 12px" class="${me.admin ? '' : 'hidden'}">Type<select id="eeT" style="max-width:240px">${typeOptions(e.type)}</select></label>
       <div id="eeTimes" class="${tt ? '' : 'hidden'}"><div class="tbpair">${timeBox('eeOn', 0, 'On Duty:')}${timeBox('eeOff', 0, 'Off Duty:')}</div>
         <p class="tbhint">${TB_HINT}</p><div class="tbsum" id="eeSum"></div></div>
       <div id="eeHrs" class="${tt ? 'hidden' : ''}"><label style="margin:0">Hours<input type="number" id="eeH" min="0.5" max="72" step="0.5" inputmode="decimal" value="${e.h}" style="max-width:130px;font-size:22px;font-weight:700"></label>
@@ -4342,6 +4346,7 @@ function openEntrySheet(e) {
   const mins = () => { const a = tbHM('eeOn'), b = tbHM('eeOff'); if (!a || !b) return null; let m = (+b.slice(0, 2) * 60 + +b.slice(3)) - (+a.slice(0, 2) * 60 + +a.slice(3)); if (m <= 0) m += 1440; return m; };
   const upd = () => { const m = mins(); $('eeSum').innerHTML = m ? `⏱ <b>${Math.floor(m / 60)} h ${pad2(m % 60)} m</b> → <b>${halfUpHrs(m)} hr</b> logged${tt ? ' (was ' + e.h + ' hr)' : ''}` : 'Enter both times.'; };
   hookTimeBox('eeOn', upd); hookTimeBox('eeOff', upd); upd();
+  $('eeM').onchange = () => { const mm = (S.d.missions || []).find(x => x.name === $('eeM').value); if (mm && $('eeT').querySelector('option[value="' + mm.type + '"]')) $('eeT').value = mm.type; };
   $('eeAddT').onclick = () => { useTimes = true; $('eeTimes').classList.remove('hidden'); $('eeHrs').classList.add('hidden'); $('eeOnH').focus(); };
   $('amx').onclick = closeActive; $('eeC').onclick = closeActive;
   $('eeSave').onclick = async () => {
