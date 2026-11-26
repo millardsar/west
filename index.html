@@ -162,11 +162,11 @@
   .dtab .bfold { margin: 0; }
   .link.bet { color: var(--navy); padding: 0 0 0 4px; font-size: 13px; text-decoration: underline; }
   .lbox { margin-bottom: 6px; }
-  .lrow { display: grid; grid-template-columns: 50px minmax(0, 1fr) auto auto 40px; align-items: center; gap: 8px; border-bottom: 1px solid #edf0ee; padding: 9px 2px; cursor: pointer; }
+  .lrow { display: grid; grid-template-columns: auto minmax(0, 1fr) auto auto 36px; align-items: center; gap: 6px; border-bottom: 1px solid #edf0ee; padding: 9px 2px; cursor: pointer; }
   .lrow:hover { background: #f6f9f7; }
   .lrow .lu { font-weight: 800; color: var(--navy); }
-  .lrow .ln { font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } .lrow .lt { font-size: 13px; color: var(--muted); font-weight: 600; white-space: nowrap; }
-  .lrow .lst { font-size: 12px; font-weight: 700; border-radius: 999px; padding: 3px 9px; }
+  .lrow .ln { font-weight: 600; overflow-wrap: break-word; line-height: 1.2; min-width: 0; } .lrow .lt { font-size: 13px; color: var(--muted); font-weight: 600; white-space: nowrap; }
+  .lrow .lst { font-size: 12px; font-weight: 700; border-radius: 999px; padding: 3px 7px; }
   .lrow .lst.on { background: #e3f3e8; color: #22673f; } .lrow .lst.off { background: #eef0ef; color: #7a837e; }
   .lrow.dim .lu, .lrow.dim .ln { color: #9aa39e; }
   .lck { width: 36px; height: 30px; border-radius: 7px; border: 0; font-weight: 900; font-size: 13px; cursor: pointer; justify-self: end; }
@@ -425,6 +425,47 @@
   .usbars span { display: block; width: 100%; background: #2f855a; border-radius: 3px 3px 0 0; min-height: 2px; }
   .usbars i { font-style: normal; font-size: 11px; color: var(--muted); position: absolute; top: -2px; }
   .ustbl td, .ustbl th { white-space: nowrap; } .ustbl tr.usbad td { color: #9b2c2c; } .ustbl td.usold { background: #f6ecd2; font-weight: 700; }
+  .tbw { display: inline-block; } .tbl { font-weight: 700; font-size: 16px; color: var(--text); margin-bottom: 6px; }
+  .tbx { display: flex; align-items: center; gap: 6px; }
+  .form .tbx input { width: 62px; max-width: 62px; text-align: center; font-size: 26px; font-weight: 800; padding: 8px 2px; margin: 0; letter-spacing: 1px; }
+  .tbx b { font-size: 26px; font-weight: 900; color: var(--navy); }
+  .form .tbx input.tbbad { border-color: #c53030; background: #fff5f5; }
+  .tbpair { display: flex; gap: 10px; flex-wrap: wrap; } .tbpair > .tbw { flex: 1; min-width: 150px; border: 1.5px solid #b8c6bd; border-radius: 12px; padding: 10px 10px 12px; background: #f8fbf9; }
+  .tbpair .tbx { justify-content: center; } .tbhint { color: var(--muted); font-size: 15px; margin: 8px 0 0; }
+  .tbsum { background: #e8f1eb; border-radius: 8px; padding: 9px 12px; margin: 12px 0 4px; font-size: 16px; }
+  .hbtns .btn.hlog { background: #fff; color: var(--navy); border: 2px solid var(--navy); }
+  .hmapw { padding: 0 16px 8px; } .hmapw .btn.hmap { display: block; width: 100%; font-size: 16px; padding: 11px; border-radius: 12px; text-align: center; text-decoration: none; }
+  .hon b.tick { white-space: nowrap; }
+  button.hon { display: flex; width: 100%; border: 0; font: inherit; text-align: left; cursor: pointer; }
+  .hnudge { margin: 0 16px 8px; background: #fff7e0; color: #7a5a12; border-radius: 8px; padding: 8px 12px; font-size: 15px; }
+  .hmyt, .hmyt0 { display: flex; justify-content: space-between; gap: 8px; width: calc(100% - 32px); margin: 0 16px 8px; background: #eef4f0; border: 0; border-radius: 8px; padding: 9px 12px; font: inherit; font-size: 15px; color: var(--text); text-align: left; cursor: pointer; }
+  .hmyt .hme { color: var(--navy); font-weight: 800; white-space: nowrap; } .hmyt .hmt { flex: 1; min-width: 0; } .hmyt0 { cursor: default; color: #7a5a12; display: block; }
+  .hchg { border-color: #d69e2e; } .htip { display: flex; gap: 10px; align-items: flex-start; background: #eef4ff; border: 1px solid #b7c9ef; border-radius: 12px; padding: 10px 12px; margin: 4px 0 14px; font-size: 15px; }
+  .htip .amx { position: static; background: none; border: 0; font-size: 18px; color: var(--muted); cursor: pointer; }
+  .netbar { display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: center; justify-content: center; background: #4a5550; color: #fff; font-size: 14px; padding: 6px 12px; }
+  .netbar.off { background: #4a5550; } .netbar.bad { background: #9b2c2c; } .netbar .link { color: #fff; text-decoration: underline; font-weight: 800; padding: 0; }
+.rcr { display: flex; align-items: center; gap: 10px; padding: 11px 0; border-top: 1px solid #e6ece8; } .rcr:first-child { border-top: 0; }
+  .rcl { flex: 1; min-width: 0; } .rcm { font-weight: 800; font-size: 16px; overflow-wrap: anywhere; } .rcs { color: #4d5a52; font-size: 15px; margin-top: 2px; }
+  .rcn { color: #7a5a12; font-size: 13.5px; margin-top: 3px; }
+  .rce { flex: none; border: 1.5px solid #9fb5a7; background: #fff; color: var(--navy); border-radius: 9px; padding: 9px 12px; font: inherit; font-weight: 800; font-size: 15px; cursor: pointer; }
+  .rsum { display: flex; gap: 8px; margin-bottom: 12px; } .rsum div { flex: 1; background: #eef4f0; border-radius: 10px; padding: 8px; text-align: center; }
+  .rsum b { display: block; font-size: 22px; color: var(--navy); } .rsum span { font-size: 12.5px; color: #5b6a61; }
+  .rrow { border-top: 1px solid #e3e9e5; padding: 12px 2px; } .rtop { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+  .ru { color: var(--navy); font-size: 17px; } .rn { font-size: 17px; font-weight: 600; }
+  .rtag { font-size: 12.5px; font-weight: 800; border-radius: 999px; padding: 3px 10px; white-space: nowrap; }
+  .rtag.good { background: #e3f3e8; color: #22673f; } .rtag.gray { background: #eef0ef; color: #5f6a64; } .rtag.warn { background: #f6ecd2; color: #7a5a12; } .rtag.bad { background: #fbe3e3; color: #a12b2b; }
+  .rmeta { color: #5b6a61; font-size: 14.5px; margin-top: 3px; } .rold { color: #a12b2b; }
+  .rbtns { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px; } .rbtns:empty { display: none; }
+  .rb { min-height: 42px; border-radius: 9px; border: 1.5px solid #9fb5a7; background: #fff; color: var(--navy); font: inherit; font-weight: 800; font-size: 15px; cursor: pointer; }
+  .rb:only-child { grid-column: 1 / -1; } .rb.solid { background: var(--navy); color: #fff; border-color: var(--navy); }
+  .mr { display: flex; gap: 12px; padding: 10px 2px; border-top: 1px solid #e3e9e5; font-size: 17px; align-items: center; } .mr > b { color: var(--navy); min-width: 62px; }
+  .rme { margin-left: auto; font-size: 12.5px; font-weight: 800; background: #e3f3e8; color: #22673f; border-radius: 999px; padding: 2px 9px; }
+  .rad { margin-left: auto; font-size: 12.5px; font-weight: 700; color: #5f6a64; white-space: nowrap; }
+  .rh { font-weight: 900; color: var(--navy); font-size: 14px; letter-spacing: .5px; margin: 14px 0 4px; text-transform: uppercase; }
+  .rsw { display: flex; gap: 8px; margin-bottom: 10px; } .rsw button { flex: 1; border: 1.5px solid #9fb5a7; background: #fff; color: var(--navy); border-radius: 9px; padding: 8px; font: inherit; font-weight: 800; cursor: pointer; }
+  .rsw button.on { background: var(--navy); color: #fff; border-color: var(--navy); }
+  .rcode { display: flex; align-items: center; gap: 10px; margin-top: 14px; background: #eef4f0; border-radius: 10px; padding: 10px 12px; } .rcode b { font-size: 20px; letter-spacing: 1px; }
+  .rshare { margin-left: auto; display: flex; align-items: center; gap: 6px; border: 1.5px solid #9fb5a7; background: #fff; color: var(--navy); border-radius: 9px; padding: 8px 12px; font: inherit; font-weight: 800; cursor: pointer; }
   .edel { margin-top: 22px; padding-top: 14px; border-top: 1px dashed #e0a0a0; }
   .edel .edelb { display: block; width: 100%; background: #fff; color: #c53030; border: 1.5px solid #c53030; font-size: 16px; padding: 11px; border-radius: 9px; }
   .ewho { margin: 0 0 10px; font-size: 16px; background: #f6ecd2; border-radius: 8px; padding: 8px 12px; }
@@ -612,8 +653,20 @@ const POSSE_INFO = {"key":"west","short":"West Posse","header":"West Millard She
 </script>
 <script>
 /* ================= Duty Log: core (shared by the East and West posses) ================= */
-const APP_VERSION = 'V1.7.1';
+const APP_VERSION = 'V1.8.0';
 const CHANGELOG = [
+  { v: 'V1.8.0', date: 'November 26, 2026', items: [
+    'Go On Duty asks you to confirm the start time first (change it if you started earlier). Go Off Duty shows On Duty and Off Duty times you can both change.',
+    'Times are typed in two small boxes (hours : minutes, 24-hour). No more scroll wheels anywhere.',
+    'Works with no signal: the app opens, and Go On Duty, Go Off Duty and Log Time are saved on your phone and sent by themselves when you get signal. A bar shows when you are offline or something is waiting.',
+    'Callout card on Home: Log My Time (for when you never went on duty), tap your on-duty time to change it, and "Your time" with Edit afterwards.',
+    'Log page: My recent entries with Edit. Saving is instant.',
+    'Admins: tap a name under Who logged time to change anything about that entry (date, mission, on and off times, miles, notes) or delete it. Edit times on the Board opens the same window.',
+    'When an admin changes or deletes your entry, Home tells you exactly what changed.',
+    'New Roster tab: both posses for everyone. Admins also see PIN status and last use, with Unlock and Reset PIN, and can send the sign-in code by text. Team is now Team Stats.',
+    'Resetting a PIN (in the app, by ticking Reset PIN in the Google Sheet, or by clearing it) ends any 15-minute lockout right away.',
+    'Members who share a last name show with a first initial (C. Hare, M. Hare).',
+    'Faster: refreshes only send data when something changed, admin-only data loads when you open Report or Review, and long mission lists draw 30 at a time.'] },
   { v: 'V1.7.1', date: 'November 12, 2026', items: [
     'Delete an entry from its Edit screen ("Delete this entry…" under Save). Members can delete their own; admins can delete anyone\'s, and the screen shows whose entry it is. A copy goes to the Sheet\'s hidden "Deleted" tab.',
     'Admins: App Usage on the Report tab. Who used the app this week and in the last 30 days, a weekly chart, and for each member when they last used it, how often, the app version on their phone and the phone type. Members not seen in 30 days (or never signed in) show in red.'] },
@@ -850,6 +903,7 @@ async function viaFetch(fn, args) {
   try {
     const r = await fetch(EXEC_URL, { method: 'POST', body: JSON.stringify({ fn: fn, args: args, cv: APP_VERSION, ua: deviceKind() }), signal: ctl.signal });
     const j = await r.json();
+    if (S.offline && typeof setOffline === 'function') setOffline(false);
     if (!j.ok) { const e = new Error(j.error); e.server = true; throw e; }
     return j.data;
   } finally { clearTimeout(timer); }
@@ -860,6 +914,7 @@ async function viaFetch(fn, args) {
  * plain message and can tap the button again (nothing they typed is lost, and nothing is ever saved twice).
  */
 async function run(fn, ...args) {
+  if (navigator.onLine === false && fn !== 'apiClientError') throw new Error('No signal right now. Try again when you have service.');
   const scriptRun = !!(window.google && google.script && google.script.run);
   if (useFetch || !scriptRun) {
     try { return await viaFetch(fn, args); }
@@ -899,6 +954,64 @@ function growBox(el) {
   requestAnimationFrame(fit);
 }
 function setBox(el, v) { el.value = v; if (el.fit) el.fit(); }
+/* ---------------- V1.8.0: typed time boxes (HH : MM, 24-hour, no scroll wheels) ---------------- */
+const TB_HINT = 'Use 24-hour time (2:30 PM = 14:30).';
+/** Two boxes for hours and minutes. ms = the time to show (and to keep exactly if it isn't changed). */
+function timeBox(id, ms, label) {
+  const d = ms ? new Date(ms) : null;
+  const h = d ? pad2(d.getHours()) : '', m = d ? pad2(d.getMinutes()) : '';
+  return `<div class="tbw">${label ? `<div class="tbl">${label}</div>` : ''}<div class="tbx" id="${id}" data-orig="${ms || ''}" data-oh="${h}" data-om="${m}">
+    <input id="${id}H" inputmode="numeric" pattern="[0-9]*" maxlength="2" value="${h}" aria-label="${label || 'Time'} hours" autocomplete="off"><b>:</b>
+    <input id="${id}M" inputmode="numeric" pattern="[0-9]*" maxlength="2" value="${m}" aria-label="${label || 'Time'} minutes" autocomplete="off"></div></div>`;
+}
+/** Typing 2 digits in hours jumps to minutes; backspace in an empty minutes box jumps back. onChange runs on every change. */
+function hookTimeBox(id, onChange) {
+  const H = $(id + 'H'), M = $(id + 'M'); if (!H || !M) return;
+  const sel = el => () => { try { el.select(); } catch (e) {} };
+  H.addEventListener('focus', sel(H)); M.addEventListener('focus', sel(M));
+  H.addEventListener('input', () => {
+    H.value = H.value.replace(/\D/g, '').slice(0, 2);
+    if (H.value.length === 1 && +H.value > 2) H.value = '0' + H.value;
+    if (H.value.length === 2) { M.focus(); }
+    mark(); if (onChange) onChange();
+  });
+  M.addEventListener('input', () => {
+    M.value = M.value.replace(/\D/g, '').slice(0, 2);
+    if (M.value.length === 1 && +M.value > 5) M.value = '0' + M.value;
+    mark(); if (onChange) onChange();
+  });
+  M.addEventListener('keydown', ev => { if (ev.key === 'Backspace' && !M.value) { ev.preventDefault(); H.focus(); } });
+  H.addEventListener('blur', () => { if (H.value.length === 1) { H.value = '0' + H.value; mark(); if (onChange) onChange(); } });
+  M.addEventListener('blur', () => { if (M.value.length === 1) { M.value = '0' + M.value; mark(); if (onChange) onChange(); } });
+  function mark() { const bad = tbHM(id) == null; H.classList.toggle('tbbad', bad && H.value !== ''); M.classList.toggle('tbbad', bad && M.value !== ''); }
+}
+/** 'HH:MM', or null if the boxes don't hold a real time. */
+function tbHM(id) {
+  const H = $(id + 'H'), M = $(id + 'M'); if (!H || !M) return null;
+  const h = H.value, m = M.value;
+  if (!/^\d{1,2}$/.test(h) || !/^\d{1,2}$/.test(m) || +h > 23 || +m > 59) return null;
+  return pad2(+h) + ':' + pad2(+m);
+}
+function tbChanged(id) { const b = $(id); return !b || tbHM(id) !== (b.dataset.oh && b.dataset.om ? b.dataset.oh + ':' + b.dataset.om : null); }
+/** The time as ms: unchanged -> exactly what was shown; otherwise the latest HH:MM that isn't after notAfter (default now). */
+function tbAt(id, notAfter) {
+  const b = $(id), hm = tbHM(id); if (hm == null) return null;
+  if (b && b.dataset.orig && !tbChanged(id)) return Number(b.dataset.orig);
+  const lim = notAfter || Date.now() + 60000, d = new Date(lim);
+  let t = new Date(d.getFullYear(), d.getMonth(), d.getDate(), +hm.slice(0, 2), +hm.slice(3)).getTime();
+  if (t > lim) t -= 86400000;
+  return t;
+}
+/** Keeps a box showing "now" (moves every minute) until someone types in it. */
+function tbFollowNow(id) {
+  const tick = () => { const b = $(id); if (!b) return; if (tbChanged(id) && b.dataset.oh) return;
+    const d = new Date(), h = pad2(d.getHours()), m = pad2(d.getMinutes());
+    if (b.dataset.oh === h && b.dataset.om === m) { setTimeout(tick, 15000); return; }
+    b.dataset.oh = h; b.dataset.om = m; b.dataset.orig = d.getTime(); $(id + 'H').value = h; $(id + 'M').value = m;
+    if (b.onnow) b.onnow(); setTimeout(tick, 15000); };
+  setTimeout(tick, 15000);
+}
+
 function draftKey(k) { return 'draft_' + k + '_' + (S.creds ? S.creds.unit : ''); }
 function draftSave(k, o) { try { localStorage.setItem(draftKey(k), JSON.stringify(o)); } catch (e) {} }
 function draftLoad(k) { try { return JSON.parse(localStorage.getItem(draftKey(k)) || 'null'); } catch (e) { return null; } }
@@ -1019,13 +1132,37 @@ function typeOptions(sel, withAll) {
   return (withAll ? `<option value="all">All types</option>` : '') +
     S.d.types.map(t => `<option value="${esc(t)}" ${t === sel ? 'selected' : ''}>${esc(t)}</option>`).join('');
 }
-function setData(d) { S.d = d; buildTabs(); render(); cacheData(); checkLongShift(); showDutyNotices(); checkAssignment(); }
+function setData(d) {
+  if (!d || d.same) return;
+  keepAll(d); S.d = d; S.fullAt = Date.now(); S.dutyStamp = null; overlayOutbox(); buildTabs(); render(); cacheData(); checkLongShift(); showDutyNotices(); checkAssignment();
+}
+/* V1.8.0: admins' full entry list (Report / Review only) is loaded when needed and kept while the data stamp is the same. */
+function keepAll(d) {
+  if (d.all) { S.allData = d.all; S.allStamp = d.stamp; }
+  else if (S.allData && S.allStamp === d.stamp) d.all = S.allData;
+}
+function ensureAll() {
+  if (S.d.all && S.allStamp === S.d.stamp) return true;
+  if (S.allData && S.allStamp === S.d.stamp) { S.d.all = S.allData; return true; }
+  if (!S.allLoading) {
+    S.allLoading = true;
+    run('apiAllEntries', S.creds).then(r => {
+      S.allLoading = false; S.allData = r.all; S.allStamp = r.stamp;
+      if (r.stamp === S.d.stamp || r.stamp === 'w') { S.d.all = r.all; S.allStamp = S.d.stamp; }
+      else { S.d.all = r.all; }
+      render();
+    }).catch(e => { S.allLoading = false; toast(clean(e), true); });
+  }
+  return !!S.d.all;
+}
+/** V1.8.0: refresh arguments: the data stamp we have and how old our last full copy is. */
+function freshArgs() { return [S.creds, S.d && S.d.stamp, { age: Date.now() - (S.fullAt || 0) }]; }
 
 /* ---------------- Remembering the last load (shows instantly next time) ---------------- */
 
 function cacheData() {
   if (!S.creds || !S.d) return;
-  try { localStorage.setItem('posseData', JSON.stringify({ unit: S.creds.unit, at: Date.now(), v: APP_VERSION, d: S.d })); }
+  try { localStorage.setItem('posseData', JSON.stringify({ unit: S.creds.unit, at: Date.now(), v: APP_VERSION, d: Object.assign({}, S.d, { all: null, stamp: '', duty: S.dutyBase || S.d.duty }) })); }
   catch (e) { try { localStorage.removeItem('posseData'); } catch (x) {} }
 }
 
@@ -1038,8 +1175,10 @@ function safeToRedraw() {
 
 /** Fresh data arrived in the background: show it now if that's safe, otherwise keep it for the next screen. */
 function applyFresh(d) {
+  if (!d || d.same) { S.fullAt = S.fullAt || Date.now(); return; }   /* V1.8.0: nothing changed, nothing to redraw */
+  keepAll(d); S.fullAt = Date.now();
   if (safeToRedraw()) { const y = window.scrollY; setData(d); window.scrollTo(0, y); }
-  else { S.d = d; cacheData(); if (typeof drawActBar === 'function') { drawActBar(); checkLongShift(); } }
+  else { S.d = d; overlayOutbox(); cacheData(); if (typeof drawActBar === 'function') { drawActBar(); checkLongShift(); } }
 }
 
 /** A small note under the ribbon while saved numbers are showing ("Updating…"). */
@@ -1069,7 +1208,7 @@ async function keepCurrent(force) {
   /* Version check and fresh numbers go out together (one wait instead of two) */
   run('apiVersion').then(v => { if (v && v.version && v.version !== APP_VERSION) showUpdateBar(v.version); }).catch(() => {});
   if (!S.creds || !S.d) return;
-  try { applyFresh(await run('apiRefresh', S.creds)); }
+  try { applyFresh(await run.apply(null, ['apiRefresh'].concat(freshArgs()))); }
   catch (e) { /* signed out or offline: leave the screen as it is */ }
 }
 
@@ -1098,16 +1237,17 @@ async function init() {
     S.creds = c;
     resetView();
     S.tab = 'home';
-    S.d = saved.d; buildTabs(); render();
+    S.d = saved.d; S.savedAt = saved.at; overlayOutbox(); buildTabs(); render();
+    if (navigator.onLine === false) { setOffline(true); return; }
     syncNote('Updating…');
     try {
       const r = await run('apiStart', c);
       S.boot = r.boot; store('posseBoot', r.boot);
       syncNote(null);
-      if (r.data) { applyFresh(r.data); return; }
+      if (r.data) { applyFresh(r.data); flushOutbox(); return; }
       store('posseCreds', null); store('posseData', null); S.creds = null; S.d = null;
       showLogin(r.error || 'Please sign in again.');
-    } catch (e) { syncNote("Couldn't reach the server. Showing your saved numbers.", true); }
+    } catch (e) { syncNote(null); setOffline(true); }
     return;
   }
   if (!c && boot && boot.units && boot.units.length) {
@@ -1242,16 +1382,16 @@ function goTab(k, dir) {
 function buildTabs() {
   /* Members: Home, Log, Missions, My Stats, Team. Admins: Home, Board, Missions, Log, My Stats, Team, then admin tabs. */
   const t = S.d.me.admin
-    ? [['home', 'Home'], ['board', 'Board'], ['missions', 'Missions'], ['log', 'Log'], ['stats', 'My Stats'], ['team', 'Team'],
+    ? [['home', 'Home'], ['board', 'Board'], ['missions', 'Missions'], ['log', 'Log'], ['stats', 'My Stats'], ['team', 'Team Stats'], ['roster', 'Roster'],
        ['photos', 'Photos'], ['report', 'Report'], ['review', 'Review'], ['settings', 'Settings']]
-    : [['home', 'Home'], ['log', 'Log'], ['missions', 'Missions'], ['stats', 'My Stats'], ['team', 'Team']];
+    : [['home', 'Home'], ['log', 'Log'], ['missions', 'Missions'], ['stats', 'My Stats'], ['team', 'Team Stats'], ['roster', 'Roster']];
   t.push(['about', 'About']);
   S.tabList = t.map(x => x[0]);
   $('tabs').innerHTML = t.map(([k, l]) => `<button data-t="${k}" class="${S.tab === k ? 'on' : ''}">${l}</button>`).join('');
   $('tabs').classList.remove('hidden');
   $('tabs').querySelectorAll('button').forEach(b => b.onclick = () => { S.tab = b.dataset.t; S.report = null; buildTabs(); render(); window.scrollTo(0, 0); });
   $('who').innerHTML = `${esc(S.d.me.unit)} · ${esc(S.d.me.name)}<button class="link" id="cp">Account</button><button class="link" id="so">Sign out</button>`;
-  $('so').onclick = () => { store('posseCreds', null); store('posseData', null); S.creds = null; S.d = null; showLogin(); };
+  $('so').onclick = () => { if (obLoad().length && !confirm('Some of your time is still waiting to send. Signing out deletes it from this phone. Sign out anyway?')) return; store('posseCreds', null); store('posseData', null); S.creds = null; S.d = null; showLogin(); };
   $('cp').onclick = () => { S.tab = 'pin'; buildTabs(); render(); window.scrollTo(0, 0); };
   if (S.tab === 'pin' && S.d.me.mustSetPin) $('tabs').classList.add('hidden');
 }
@@ -1261,7 +1401,7 @@ function render() {
   S.touched = false;
   if (S.report) { if (S.report.kind === 'mission') renderMissionReport(); else renderYearEnd(); return; }
   const fn = { log: renderLog, stats: renderStats, team: renderTeam, report: renderReport, missions: renderMissions,
-    review: renderReview, settings: renderSettings, photos: renderPhotos, edit: renderEdit, pin: renderPin, about: renderAbout, board: renderBoard, home: renderHome }[S.tab] || renderHome;
+    review: renderReview, settings: renderSettings, photos: renderPhotos, edit: renderEdit, pin: renderPin, about: renderAbout, board: renderBoard, home: renderHome, roster: renderRoster }[S.tab] || renderHome;
   $('main').classList.remove('widemain');
   fn();
   drawActBar();
@@ -1487,6 +1627,30 @@ function entryValues() {
     hours: $('eh').value, miles: $('ei').value, notes: $('en').value.trim() };
 }
 
+/* V1.8.0: My recent entries (Log tab): the last 5, newest first, with Edit. */
+function recentEntries() {
+  const d = S.d, locked = d.locked || [], closed = {};
+  (d.missionList || []).forEach(m => { if (m.status === 'Closed') closed[m.name] = 1; });
+  const q = (S.queued || []).map(x => ({ waiting: true, x: x }));
+  const list = q.concat((d.mine || []).filter(e => e.source === 'App').slice().sort((a, b) => b.date.localeCompare(a.date) || String(b.logged).localeCompare(String(a.logged)))).slice(0, 5);
+  if (!list.length) return '';
+  const row = e => {
+    if (e.waiting) { const x = e.x, mis = x.kind === 'entry' ? (x.e.mission || x.e.type) : (x.mission || 'Current callout');
+      const t = x.kind === 'log' ? x.on + '–' + x.off : x.kind === 'off' ? 'Go Off Duty at ' + clock(x.off) : n1(x.e.hours) + ' hr';
+      return `<div class="rcr"><div class="rcl"><div class="rcm">${esc(mis)}</div><div class="rcs">${esc(t)}${x.miles != null ? ' · ' + x.miles + ' mi' : x.e ? ' · ' + x.e.miles + ' mi' : ''}</div><div class="rcn">${x.state === 'fail' ? '⚠ Not saved: ' + esc(x.err || '') : '⏳ Waiting for signal'}</div></div></div>`; }
+    const lk = locked.indexOf(e.mission) >= 0, cl = closed[e.mission] && !d.me.admin, tt = entryTimes(e);
+    return `<div class="rcr"><div class="rcl"><div class="rcm">${esc(e.mission || e.type)}</div>
+      <div class="rcs">${esc(shortDate(e.date))}${tt ? ' · ' + tt.on + '–' + tt.off : ''} · <b>${n1(e.h)} hr</b> · ${n1(e.mi)} mi</div>
+      ${lk ? '<div class="rcn">🔒 Locked for the report. Ask an admin to change it.</div>' : cl ? '<div class="rcn">Mission closed. Ask an admin to change it.</div>' : ''}</div>
+      ${lk || cl ? '' : `<button class="rce" type="button" data-id="${esc(e.id)}">✏️ Edit</button>`}</div>`;
+  };
+  return section('My recent entries', list.map(row).join('') + '<button class="link" id="rcAll" type="button" style="color:var(--navy);padding:8px 0 0;font-weight:700">See all on My Stats ›</button>');
+}
+function hookRecent() {
+  document.querySelectorAll('.rce').forEach(b => b.onclick = () => openEntryById(b.dataset.id));
+  if ($('rcAll')) $('rcAll').onclick = () => { S.tab = 'stats'; buildTabs(); render(); window.scrollTo(0, 0); };
+}
+
 function renderLog() {
   const d = S.d, now = new Date();
   const live = d.mine.filter(e => !e.exclude);
@@ -1494,8 +1658,8 @@ function renderLog() {
   const pre = S.prefill ? { date: S.prefill, type: d.types[0], mission: '', h: '', mi: '', notes: '' } : null;
   S.prefill = null;
   main(section('Log Activity', dutyLogStrip() + entryForm(pre, 'Save entry', false))
-    + section(`This Month · ${MONTHS_LONG[now.getMonth()]}`, tiles(mtd)));
-  hookEntryForm(); hookDutyStrip();
+    + section(`This Month · ${MONTHS_LONG[now.getMonth()]}`, tiles(mtd)) + recentEntries());
+  hookEntryForm(); hookDutyStrip(); hookRecent();
   /* Keep what the member is typing on the phone until it's saved */
   const ids = ['ed', 'et', 'ems', 'em', 'eh', 'ei', 'en'];
   const dr = pre ? null : draftLoad('entry');
@@ -1646,26 +1810,14 @@ async function saveEntry(force) {
 async function saveEntryNow(e, force) {
   if (e.type === 'Callout' && !e.mission) { toast('Pick the mission for a callout.', true); $('ems_b').focus(); openPick('ems'); return; }
   if (!force && Number(e.hours) > 16 && !confirm(e.hours + ' hours is a long stretch. Save it?')) return;
+  if (!e.date || !(Number(e.hours) >= 0.5) || e.miles === '' || !(Number(e.miles) >= 0)) { toast('Fill in the date, hours and miles.', true); return; }
+  /* V1.8.0: saved on the phone right away and sent in the background (works with no signal too) */
   const files = [].slice.call($('ep').files || []);
-  const b = $('eb'); b.disabled = true; b.textContent = 'Saving…';
-  S.entryRid = S.entryRid || newRid();
-  e.rid = S.entryRid;
-  try {
-    const r = await run('apiAddEntry', S.creds, e, force);
-    if (r.meetingDup) { b.disabled = false; b.textContent = 'Save entry'; S.entryRid = null; meetingDupSheet(r.meetingDup); return; }
-    if (r.dup) {
-      b.disabled = false; b.textContent = 'Save entry';
-      if (confirm('You already logged this mission on this date. Save another entry anyway?')) saveEntry(true);
-      return;
-    }
-    S.entryRid = null; draftClear('entry');
-    setData(r.data);
-    toast('Saved. Thanks!');
-    if (files.length) await uploadPhotos(files, { entryId: r.id, mission: e.mission, date: e.date });
-  } catch (err) {
-    b.disabled = false; b.textContent = 'Save entry';
-    toast(clean(err), true);
-  }
+  const rid = newRid();
+  if (files.length) { S.obFiles = S.obFiles || {}; S.obFiles[rid] = files; }
+  draftClear('entry');
+  obAdd({ kind: 'entry', rid: rid, e: e, force: !!force, files: files.length > 0 });
+  toast(S.offline ? 'Saved on your phone. It sends when you have signal.' : 'Saved. Thanks!');
 }
 
 /* ---------------- Photos ---------------- */
@@ -2544,7 +2696,10 @@ function missionView(all, admin) {
     <div><div class="fl">Type</div><select id="mfil" aria-label="Filter by type">${typeOptions(S.mFilter, true)}</select></div>
     <div><div class="fl">Status</div><select id="mstatf">${M_STATUS.filter(x => ['Open', 'Ongoing'].indexOf(x[0]) < 0).concat(admin ? [['attn', 'Needs attention']] : []).map(([v, l]) => opt(v, l, st)).join('')}</select></div></div>
     <div class="mcnt">Showing ${list.length} of ${all.length} mission${all.length === 1 ? '' : 's'}${q || st !== 'all' || yr !== 'all' || S.mFilter !== 'all' ? ' · <button type="button" class="link" id="mclr">Clear filters</button>' : ''}</div>`;
-  return { list: list, bar: bar };
+  /* V1.8.0: build 30 cards at a time (long lists were slow to draw on phones) */
+  const oi = S.openMission ? list.findIndex(m => m.name === S.openMission) : -1;
+  const lim = Math.max(S.mShow || 30, oi + 1);
+  return { list: list.slice(0, lim), bar: bar, more: list.length > lim ? list.length - lim : 0 };
 }
 function hookMissionFilters() {
   const re = () => { S.openMission = null; const y = window.scrollY; render(); window.scrollTo(0, y); };
@@ -2629,7 +2784,7 @@ function renderMissions() {
       const nameOf = {}; (d.roster || []).forEach(r => { nameOf[r.unit] = r.name; });
       const oddAt = m.date && !og ? (e => Math.abs(dayDiff(m.date, e[0])) > 7) : (() => false);
       const who = (m.ents || []).length ? `<div class="wl">${m.ents.map(e => { const odd = oddAt(e), nm = esc(e[1]) + ' ' + esc(nameOf[e[1]] || '');
-          return `<span class="d${odd ? ' odd' : ''}">${odd ? '⚠ ' : ''}${esc(entDay(e[0], m.date))}</span><span>${admin && e[5] ? `<button type="button" class="went" data-id="${esc(e[5])}">${nm}</button>` : nm}</span><span class="r">${n1(e[2])} hr · ${n1(e[3])} mi</span>` +
+          return `<span class="d${odd ? ' odd' : ''}">${odd ? '⚠ ' : ''}${esc(entDay(e[0], m.date))}</span><span>${admin && e[5] ? `<button type="button" class="went" data-id="${esc(e[5])}">${nm} ✏️</button>` : nm}</span><span class="r">${n1(e[2])} hr · ${n1(e[3])} mi</span>` +
             (admin && e[4] ? `<span class="lg">logged ${esc(entDay(e[4], m.date))}${odd ? ' · tap the name to fix the date' : ''}</span>` : ''); }).join('')}</div>` : '';
       const photos = (m.photos || []).map((p, k) => `<button type="button" class="thumb" data-pk="${k}" title="${esc(p.unit)} · ${esc(p.date)}"><img alt="Photo from ${esc(p.unit)}" data-fid="${esc(p.fileId)}" ${(S.thumbs || {})[p.fileId] ? `src="${S.thumbs[p.fileId]}"` : ''}></button>`).join('');
       const url = mapLink(m.mapId);
@@ -2694,7 +2849,7 @@ function renderMissions() {
         ${mapPart ? `<div style="margin-bottom:6px">${mapPart}</div>` : ''}
         ${details}
         ${notesPart}
-        <h5>Who logged time${m.joint ? ' · ' + esc(me) : ''}</h5>${who || '<span class="muted">Nobody yet.</span>'}
+        <h5>Who logged time${m.joint ? ' · ' + esc(me) : ''}${admin && !locked && (m.ents || []).length ? ' · <span style="text-transform:none;font-weight:600">tap a name to edit</span>' : ''}</h5>${who || '<span class="muted">Nobody yet.</span>'}
         ${m.joint ? `<h5>Who logged time · ${esc(ot.short)}</h5>${(ot.who || []).map(whoLine).join('<br>') || '<span class="muted">Nobody yet.</span>'}` : ''}
         <h5>Photos (${m.photoCount || 0})</h5>
         ${photos ? `<div class="thumbs" style="margin:0 0 6px">${photos}</div>` : '<span class="muted">No photos yet.</span>'}
@@ -2725,6 +2880,7 @@ function renderMissions() {
   const nA = actives.length, nO = S.mOpenFold ? openOg.length : 0;
   if (S.mPanel === 'past') {
     html += section('Past Missions / Events', pv.bar + (cardAt(nA + nO, pv.list.length) || '<p class="muted">No missions match.</p>') +
+      (pv.more ? `<button type="button" class="btn ghost" id="mmore" style="margin:4px 0 10px">Show ${Math.min(30, pv.more)} more (${pv.more} left)</button>` : '') +
       `<p class="muted small">Completed and closed missions. Tap one for its map, notes, photos, expenses and who logged time${admin ? ', or to reopen, lock, merge or rename it' : ''}.</p>`);
     html += S.simsHtml || '';
   }
@@ -2732,6 +2888,7 @@ function renderMissions() {
   if (openOg.length) html += `<div class="mfold${S.mOpenFold ? ' on' : ''}"><button type="button" class="mfoldb" id="mfold" aria-expanded="${!!S.mOpenFold}"><span>Open &amp; ongoing (${openOg.length})</span><span>${S.mOpenFold ? '▾' : '▸'}</span></button>
     ${S.mOpenFold ? `<div class="mfoldl">${cardAt(nA, nO)}</div>` : ''}</div>`;
   main(html);
+  if ($('mmore')) $('mmore').onclick = () => { S.mShow = (S.mShow || 30) + 30; const y = window.scrollY; render(); window.scrollTo(0, y); };
   if ($('mfold')) $('mfold').onclick = () => { S.mOpenFold = !S.mOpenFold; S.openMission = null; const y = window.scrollY; render(); window.scrollTo(0, y); };
   document.querySelectorAll('.mpanel').forEach(b => b.onclick = () => {
     S.mPanel = S.mPanel === b.dataset.p ? null : b.dataset.p; S.openMission = null;
@@ -2766,9 +2923,11 @@ function renderMissions() {
     if (!body) return;
     const q = sel => body.querySelector(sel);
     body.querySelectorAll('.went').forEach(b => b.onclick = async () => {
+      if (m.locked) { toast('This mission is locked. Unlock it to change time.'); return; }
       b.disabled = true;
-      try { const e = await run('apiGetEntry', S.creds, b.dataset.id); S.edit = e; S.editBack = 'missions'; S.tab = 'edit'; buildTabs(); render(); window.scrollTo(0, 0); }
-      catch (e) { b.disabled = false; toast(clean(e), true); }
+      try { openEntrySheet(await run('apiGetEntry', S.creds, b.dataset.id)); }
+      catch (e) { toast(clean(e), true); }
+      finally { if (document.body.contains(b)) b.disabled = false; }
     });
     const busy = async (btn, fn) => { if (btn) btn.disabled = true; try { await fn(); } catch (e) { toast(clean(e), true); } finally { if (btn && document.body.contains(btn)) btn.disabled = false; } };
     const save = async (patch, msg) => {
@@ -2957,13 +3116,17 @@ async function saveStatus(m, status) {
     if (r && r.needOff) {
       const n = r.needOff.length, verb = status === 'Closed' ? 'Closing' : 'Marking it Completed';
       const who = r.needOff.map(x => esc(x.unit + ' ' + String(x.name || '').split(' ').slice(-1)[0]) + (x.posse ? ' <span class="muted">(' + esc(x.posse) + ')</span>' : '')).join(', ');
-      const k = await askSheet((status === 'Closed' ? 'Close ' : 'Complete ') + m.name + '?',
+      const pr = askSheet((status === 'Closed' ? 'Close ' : 'Complete ') + m.name + '?',
         `<b>${n} unit${n === 1 ? ' is' : 's are'} still on duty:</b> ${who}.<br><br>${verb} puts ${n === 1 ? 'them' : 'them all'} off duty at:
-         <input type="datetime-local" id="cfOff" value="${toLocal(Date.now())}" max="${toLocal(Date.now())}" style="margin-top:6px">
+         <div style="margin-top:8px" class="form">${timeBox('cfOff', Date.now(), 'Off-duty time')}<p class="tbhint">${TB_HINT}</p></div>
          <div class="muted small" style="margin-top:6px">Miles are left blank (unknown). Each member gets a note.</div>`,
         [['go', 'Put them off duty and ' + (status === 'Closed' ? 'close' : 'complete')], ['', 'Cancel']], 'red');
+      hookTimeBox('cfOff');
+      const k = await pr;
       if (k !== 'go') return false;
-      const v = (askSheet.vals || {}).cfOff, t = v ? new Date(v) : null;
+      const av = askSheet.vals || {}, hh = av.cfOffH, mm = av.cfOffM;
+      let t = null;
+      if (/^\d{1,2}$/.test(hh || '') && /^\d{1,2}$/.test(mm || '') && +hh < 24 && +mm < 60) { const d = new Date(); t = new Date(d.getFullYear(), d.getMonth(), d.getDate(), +hh, +mm); if (t.getTime() > Date.now() + 60000) t = new Date(t.getTime() - 86400000); }
       r = await run('apiSaveMission', S.creds, Object.assign(base, { offAt: t && !isNaN(t.getTime()) ? t.toISOString() : 'now' }));
     }
     setData(r); toast(msgs[status] || 'Saved.');
@@ -3102,6 +3265,7 @@ function renderPhotos() {
 /* ================= Report tab, year-end report, Review, Settings ================= */
 
 function renderReport() {
+  if (!ensureAll()) { main(section('Report', '<p class="muted">Loading every entry…</p>')); return; }
   const d = S.d, s = d.settings, all = d.all.filter(e => !e.exclude);
   const now = new Date(), cy = now.getFullYear(), R = S.rep;
   if (R.year == null) { R.year = cy; R.month = now.getMonth(); }
@@ -3256,6 +3420,7 @@ function reportRows(year, who) {
 }
 
 function renderYearEnd() {
+  if (!ensureAll()) { main(section('Member Activity Report', '<p class="muted">Loading every entry…</p>')); return; }
   const R = S.report, d = S.d, s = d.settings, year = R.year, who = R.who;
   const rows = reportRows(year, who);
   const t = sum(rows);
@@ -3387,6 +3552,7 @@ async function downloadPdf(el, fname) {
 /* ---------------- Admin: Review ---------------- */
 
 function renderReview() {
+  if (!ensureAll()) { main(section('Review', '<p class="muted">Loading every entry…</p>')); return; }
   const legacy = S.d.all.filter(e => e.source.indexOf('Form') === 0);
   const g = {};
   legacy.forEach(e => { const k = e.unit + '|' + e.date.slice(0, 7); (g[k] = g[k] || []).push(e); });
@@ -3518,22 +3684,10 @@ function renderSettings() {
       <p class="muted small">Keys are stored privately with the app on Google's side. They are never shown again, never put in the sheet and never sent to members' phones.</p>
     </form>`);
 
-  html += section('Member PINs', `${locked.length ? `<p style="margin-top:0"><b>Locked now:</b> ${locked.map(x => esc(x.unit + ' ' + x.name)).join(', ')}</p>` : ''}
-    <div class="form">
-      <label>Member<select id="mps"><option value="">Pick a member…</option>
-        ${members.slice().sort((a, b) => (order[a.status] - order[b.status]) || a.unit.localeCompare(b.unit))
-          .map(x => `<option value="${esc(x.unit)}" ${x.unit === sel ? 'selected' : ''}>${esc(x.unit)} · ${esc(x.name)} · ${esc(x.status)}</option>`).join('')}
-      </select></label>
-      ${pick ? `<p style="margin:-6px 0 12px">${esc(pick.unit)} ${esc(pick.name)} ${statusTag(pick.status)}</p>
-        <div class="btnrow">
-          ${pick.status === 'Locked' ? '<button class="btn small" type="button" id="mpu">Unlock</button>' : ''}
-          ${pick.unit !== S.d.me.unit ? '<button class="btn small ghost" type="button" id="mpr">Reset PIN</button>' : ''}
-        </div>` : ''}
-    </div>
-    <p class="muted small"><b>Unlock</b> lets the member sign in again with their PIN.
-    <b>Reset PIN</b> clears their PIN (and unlocks them); they sign in again with the first sign-in code and choose a new PIN.
-    You can also do this on the Roster tab of the sheet: clear the <b>Locked</b> cell to unlock, or clear the <b>PIN</b> cell to reset.</p>`);
+  html += section('Member PINs', `<p style="margin-top:0">Unlock and Reset PIN are on the <b>Roster</b> tab now, with each member's PIN status and when they last used the app.</p>
+    <button class="btn ghost" type="button" id="toRoster">Open the Roster tab</button>`);
   main(html);
+  if ($('toRoster')) $('toRoster').onclick = () => { S.tab = 'roster'; buildTabs(); render(); window.scrollTo(0, 0); };
 
   $('sf').onsubmit = async ev => {
     ev.preventDefault();
@@ -3545,7 +3699,7 @@ function renderSettings() {
       toast('Settings saved.');
     } catch (e) { $('sb').disabled = false; toast(clean(e), true); }
   };
-  $('mps').onchange = ev => { S.memberSel = ev.target.value; render(); };
+  if ($('mps')) $('mps').onchange = ev => { S.memberSel = ev.target.value; render(); };
   hookChannel('cmp', 'cmpo'); hookChannel('cmb', 'cmbo');
   const reload = () => { const y = window.scrollY; render(); window.scrollTo(0, y); };
   document.querySelectorAll('.plmv').forEach(b => b.onclick = () => { const p = places[+b.dataset.k];
@@ -3607,6 +3761,86 @@ function renderSettings() {
     act('reset', pick.unit + "'s PIN was reset.");
   };
 }
+
+/* ---------------- V1.8.0: Roster tab (members: both posses; admins: PIN status, Unlock, Reset PIN) ---------------- */
+const SHARE_SVG = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 9H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8a2 2 0 0 0-2-2h-2"/><path d="M12 15V3"/><path d="M8 7l4-4 4 4"/></svg>';
+async function shareText(text) {
+  if (navigator.share) { try { await navigator.share({ text: text }); return; } catch (e) { if (e && e.name === 'AbortError') return; } }
+  copyText(text);
+}
+function renderRoster() {
+  const R = S.roster;
+  if (!R || Date.now() - R.at > 300000) loadRoster();
+  if (!R) { main(section('Roster', '<p class="muted">Loading…</p>')); return; }
+  const admin = S.d.me.admin, A = S.rosterAdmin, view = S.rosterView || 'both', q = String(S.rosterQ || '').trim().toLowerCase();
+  const match = r => !q || (r.unit + ' ' + r.name).toLowerCase().indexOf(q) >= 0;
+  const other = R.other || [], inOther = {};
+  other.forEach(g => g.list.forEach(r => { inOther[r.unit + '|' + r.name] = g.short; }));
+  const mineSet = {}; R.mine.forEach(r => { mineSet[r.unit + '|' + r.name] = 1; });
+  const tag = (r, posseShort) => r.unit === S.d.me.unit && posseShort === R.posse ? '<span class="rme">You</span>'
+    : r.admin ? `<span class="rad">${posseShort === R.posse ? 'Admin' : esc(posseShort.split(' ')[0]) + ' admin'}</span>`
+    : inOther[r.unit + '|' + r.name] && posseShort === R.posse ? `<span class="rad">also ${esc(inOther[r.unit + '|' + r.name].split(' ')[0])}</span>`
+    : posseShort !== R.posse && mineSet[r.unit + '|' + r.name] ? `<span class="rad">also ${esc(R.posse.split(' ')[0])}</span>` : '';
+  const stCls = { 'PIN set': 'good', 'Starting PIN': 'gray', 'No PIN yet': 'gray', 'Locked 15 min': 'warn', 'Locked': 'bad' };
+  const adminCard = r => {
+    const a = A && A.members.find(x => x.unit === r.unit) || {}, st = a.status || '', locked = /Locked/.test(st);
+    const lu = a.last ? usageAgoR(a.last) : 'Never', old = !a.last || (Date.now() - new Date(a.last.replace(' ', 'T'))) > 30 * 86400000;
+    return `<div class="rrow"><div class="rtop"><div><b class="ru">${esc(r.unit)}</b> <span class="rn">${esc(r.name)}</span> ${tag(r, R.posse)}</div>${st ? `<span class="rtag ${stCls[st] || 'gray'}">${esc(st)}</span>` : ''}</div>
+      <div class="rmeta">Last used: <b class="${old ? 'rold' : ''}">${esc(lu)}</b></div>
+      ${A ? `<div class="rbtns">${locked ? `<button class="rb solid rul" type="button" data-u="${esc(r.unit)}">Unlock</button>` : ''}${st === 'No PIN yet' ? `<button class="rb rsteps" type="button" data-u="${esc(r.unit)}">Show sign-in steps</button>` : r.unit === S.d.me.unit ? '' : `<button class="rb rrs" type="button" data-u="${esc(r.unit)}">Reset PIN…</button>`}</div>` : ''}</div>`;
+  };
+  const line = (r, posseShort) => `<div class="mr"><b>${esc(r.unit)}</b><span>${esc(r.name)}</span>${tag(r, posseShort)}</div>`;
+  const mine = R.mine.filter(match).sort(byUnit);
+  let body = `<div class="form"><input type="search" id="rq" placeholder="Find a unit or name" value="${esc(S.rosterQ || '')}" style="margin:0 0 10px"></div>`;
+  if (other.length) body += `<div class="rsw">${[['both', 'Both'], ['mine', R.posse.split(' ')[0]]].concat(other.map(g => [g.short, g.short.split(' ')[0]])).map(([k, l]) => `<button type="button" class="rv${view === k ? ' on' : ''}" data-v="${esc(k)}">${esc(l)}</button>`).join('')}</div>`;
+  if (admin && A && (view === 'both' || view === 'mine')) {
+    const cnt = s2 => A.members.filter(x => s2(x.status)).length;
+    body += `<div class="rsum"><div><b>${A.members.length}</b><span>members</span></div><div><b>${cnt(x => x === 'PIN set')}</b><span>PIN set</span></div><div><b>${cnt(x => x === 'No PIN yet' || x === 'Starting PIN')}</b><span>no PIN yet</span></div><div><b style="color:#a12b2b">${cnt(x => /Locked/.test(x))}</b><span>locked</span></div></div>`;
+  }
+  if (view === 'both' || view === 'mine') body += `<div class="rh">${esc(R.posse)} · ${R.mine.length}</div>` + (mine.map(r => admin ? adminCard(r) : line(r, R.posse)).join('') || '<p class="muted">No match.</p>');
+  other.forEach(g => { if (view !== 'both' && view !== g.short) return; const l = g.list.filter(match).sort(byUnit);
+    body += `<div class="rh">${esc(g.short)} · ${g.list.length}</div>` + (l.map(r => line(r, g.short)).join('') || '<p class="muted">No match.</p>'); });
+  if (admin) body += '<p class="muted small" style="margin-top:12px"><b>Reset PIN</b> clears the PIN and any lockout right away; the member signs in again with the first sign-in code and picks a new PIN. You can also tick <b>Reset PIN</b> on the Roster tab of the Google Sheet.</p>';
+  main(section('Roster', body));
+  const y0 = () => window.scrollY;
+  $('rq').oninput = () => { S.rosterQ = $('rq').value; const p = $('rq').selectionStart; renderRoster(); $('rq').focus(); try { $('rq').setSelectionRange(p, p); } catch (e) {} };
+  document.querySelectorAll('.rv').forEach(b => b.onclick = () => { S.rosterView = b.dataset.v; const y = y0(); renderRoster(); window.scrollTo(0, y); });
+  document.querySelectorAll('.rul').forEach(b => b.onclick = () => rosterAct(b.dataset.u, 'unlock'));
+  document.querySelectorAll('.rrs').forEach(b => b.onclick = () => rosterReset(b.dataset.u));
+  document.querySelectorAll('.rsteps').forEach(b => b.onclick = () => rosterSteps(b.dataset.u, false));
+}
+function usageAgoR(ts) { return typeof usageAgo === 'function' ? usageAgo(ts) : ts; }
+function loadRoster() {
+  if (S.rosterLoading) return; S.rosterLoading = true;
+  const jobs = [run('apiRosters', S.creds)].concat(S.d.me.admin ? [run('apiRosterAdmin', S.creds)] : []);
+  Promise.all(jobs).then(r => { S.rosterLoading = false; S.roster = Object.assign(r[0], { at: Date.now() }); if (r[1]) S.rosterAdmin = r[1]; if (S.tab === 'roster' && !$('asksh')) { const y = window.scrollY; renderRoster(); window.scrollTo(0, y); } })
+    .catch(e => { S.rosterLoading = false; if (S.tab === 'roster') main(section('Roster', `<p class="err">${esc(clean(e))}</p>`)); });
+}
+async function rosterAct(unit, action) {
+  try { await run('apiResetMember', S.creds, unit, action); toast(action === 'unlock' ? unit + ' is unlocked.' : unit + "'s PIN was reset."); }
+  catch (e) { toast(clean(e), true); return false; }
+  S.roster.at = 0; loadRoster(); return true;
+}
+function signinText(unit) {
+  const r = (S.roster && S.roster.mine || []).find(x => x.unit === unit) || { name: '' }, A = S.rosterAdmin || {};
+  const url = (A.appUrl || location.hostname || '').replace(/^https?:\/\//, '').replace(/\/$/, '');
+  return `Duty Log: your PIN was reset. Open ${url}, pick ${unit} ${r.name}, enter the sign-in code ${A.code || ''}, and choose a new 4-digit PIN.`;
+}
+function codeBox(unit) { const A = S.rosterAdmin || {}; return `<div class="rcode"><span>Sign-in code: <b>${esc(A.code || '(none set)')}</b></span><button type="button" class="rshare" id="rShare">${SHARE_SVG} Send</button></div>`; }
+async function rosterReset(unit) {
+  const r = (S.roster.mine || []).find(x => x.unit === unit) || { name: '' }, first = String(r.name).split(' ')[0] || unit;
+  const p = askSheet('Reset PIN for ' + unit + ' ' + r.name + '?', `Clears the PIN and unlocks the unit right now.<br><br>${esc(first)} then opens the app, picks their unit, and types the <b>first sign-in code</b> with a new PIN of their choice.${codeBox(unit)}`,
+    [['go', 'Reset PIN'], ['', 'Cancel']], 'red');
+  if ($('rShare')) $('rShare').onclick = () => shareText(signinText(unit));
+  const k = await p;
+  if (k === 'go') rosterAct(unit, 'reset');
+}
+function rosterSteps(unit) {
+  const r = (S.roster.mine || []).find(x => x.unit === unit) || { name: '' };
+  const p = askSheet('Sign-in steps for ' + unit + ' ' + r.name, `They haven't signed in yet. They open the app, pick their unit, and type the <b>first sign-in code</b> with a 4-digit PIN of their choice.${codeBox(unit)}`, [['', 'Close']]);
+  if ($('rShare')) $('rShare').onclick = () => shareText(signinText(unit).replace('your PIN was reset', 'welcome'));
+  return p;
+}
 </script>
 
 <script>
@@ -3619,7 +3853,26 @@ function toLocal(t) { const d = new Date(t); return d.getFullYear() + '-' + pad2
 async function busyBtn(btn, fn) { if (btn) btn.disabled = true; try { await fn(); } catch (e) { toast(clean(e), true); } finally { if (btn && document.body.contains(btn)) btn.disabled = false; } }
 function clock(t) { if (!t) return ''; const d = new Date(t); return pad2(d.getHours()) + ':' + pad2(d.getMinutes()); }
 function halfUpHrs(min) { return Math.max(0.5, Math.ceil(min / 30) / 2); }
-function lastName(n) { return String(n || '').trim().split(/\s+/).slice(-1)[0].toUpperCase(); }
+/* V1.7.2: last name, plus the first initial when another member shares that last name ("M. HARE", "C. HARE").
+   If the initials match too, the whole first name is used. Both posses' rosters count (joint missions). */
+function lastName(n) {
+  const p = String(n || '').trim().split(/\s+/), ln = p.slice(-1)[0].toUpperCase();
+  if (p.length < 2) return ln;
+  const d = dupNames(), same = d[ln];
+  if (!same || same.length < 2) return ln;
+  const ini = p[0][0].toUpperCase();
+  return (same.filter(f => f[0] === ini).length > 1 ? p[0].toUpperCase() : ini + '.') + '\u00a0' + ln;
+}
+function dupNames() {
+  const r = (S.d && S.d.roster) || [], o = (S.otherRoster && S.otherRoster.roster) || [];
+  if (dupNames.src === r && dupNames.o === o) return dupNames.map;
+  const map = {};
+  r.concat(o).forEach(x => { const p = String(x.name || '').trim().split(/\s+/); if (p.length < 2 || x.name === '(vacant)') return;
+    const ln = p.slice(-1)[0].toUpperCase(); (map[ln] || (map[ln] = [])).push(p[0].toUpperCase()); });
+  Object.keys(map).forEach(k => { map[k] = map[k].filter((f, i, a) => a.indexOf(f) === i); });
+  dupNames.src = r; dupNames.o = o; dupNames.map = map;
+  return map;
+}
 function dirLink(place) {
   const pt = splitPlace(place || '').pt;
   return pt ? 'https:\/\/www.google.com/maps/dir/?api=1&destination=' + encodeURIComponent(pt.replace(/\s+/g, '')) : '';
@@ -3655,9 +3908,11 @@ function renderHome() {
     return `<div class="hcardx">
       <div class="hh ${kind}"><div class="k">${isAct ? 'ACTIVE ' + esc(String(a.type).toUpperCase()) : "YOU'RE ON DUTY"}</div><div class="n">${esc(a.name)}</div>
         <div class="d">${a.created ? 'Started ' + clock(a.created) : a.date ? esc(fmtDate(a.date)) : ''}${count != null ? ' · ' + count + ' unit' + (count === 1 ? '' : 's') + ' on duty' : ''}</div></div>
-      ${onHere ? `<div class="hon"><span>● You're on duty since ${clock(mine.on)}</span><b class="tick" data-on="${mine.on}">${hm(dutyNow() - mine.on)}</b></div>` : ''}
-      <div class="hbtns">${onHere ? `<button type="button" class="btn offb hgo" data-off="1">Go Off Duty</button>` : `<button type="button" class="btn onb hgo" data-n="${esc(a.name)}">Go On Duty</button>`}
-        ${url ? `<a class="btn hmap" href="${url}" target="_blank" rel="noopener">CalTopo Map</a>` : '<button type="button" class="btn hmap" disabled>No map yet</button>'}</div>
+      ${onHere ? `<button type="button" class="hon hstart"><span>● You're on duty since ${clock(mine.on)} ✏️${mine.waiting ? ' · ⏳ waiting for signal' : ''}</span><b class="tick" data-on="${mine.on}">${hm(dutyNow() - mine.on)}</b></button>` : ''}
+      <div class="hbtns">${onHere ? `<button type="button" class="btn offb hgo" data-off="1">Go Off Duty</button>` : `<button type="button" class="btn onb hgo" data-n="${esc(a.name)}">Go On Duty</button><button type="button" class="btn hlog" data-n="${esc(a.name)}">Log My Time</button>`}</div>
+      ${!onHere && !myTime(a.name).length && a.type === 'Callout' ? '<div class="hnudge">Responding? Tap <b>Go On Duty</b> when you leave.</div>' : ''}
+      ${myTimeLine(a.name)}
+      <div class="hmapw">${url ? `<a class="btn hmap" href="${url}" target="_blank" rel="noopener">🗺 CalTopo Map</a>` : '<button type="button" class="btn hmap" disabled>No map yet</button>'}</div>
       ${onHere && mine.assignment ? `<div class="hasg"><div class="hl">YOUR ASSIGNMENT</div><div class="ht">${esc(mine.assignment)}</div></div>` : ''}
       ${sec('Staging point', place(a.staging))}${sec('Incident location', place(a.location))}
       ${sec('Comms Plan', commsHtml(a.primary, a.backup))}
@@ -3674,6 +3929,10 @@ function renderHome() {
     const dueCount = boardData().reduce((t, g) => t + g.on.filter(x => dueInfo(x, g.every).due).length, 0);
     html += `<button type="button" class="hadm" id="hBoard"><span>Duty Board: ${onCount} on duty${dueCount ? ' · <b>' + dueCount + ' check' + (dueCount === 1 ? '' : 's') + ' due</b>' : ''}</span><span>›</span></button>`;
   }
+  if (S.offline && !mine) {
+    html = `<div class="hcardx"><div class="hh red"><div class="k">NO SIGNAL</div><div class="n">Current callout</div><div class="d">Don't see the callout? Your time is saved on your phone and matched to it when you have signal.</div></div>
+      <div class="hbtns"><button type="button" class="btn onb hgo" data-n="">Go On Duty</button><button type="button" class="btn hlog" data-n="">Log My Time</button></div></div>` + html;
+  }
   if (!html) {
     const now = new Date(), ym = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0');
     const today = ym + '-' + String(now.getDate()).padStart(2, '0');
@@ -3683,9 +3942,12 @@ function renderHome() {
       ${next.length ? `<div class="hnext"><div class="hl">COMING UP</div>${next.map(m => `<div class="row"><span>${esc(m.name)}</span><b>${esc(shortDate(m.date))}</b></div>`).join('')}</div>` : ''}
       ${LOGO ? `<div class="hbadge"><img src="${LOGO}" alt=""></div>` : ''}`;
   }
-  main(`<div class="home">${addedNotice()}${doneReminders()}${html}</div>`);
-  hookDoneReminders(); hookAddedNotice();
-  document.querySelectorAll('.hgo').forEach(b => b.onclick = () => b.dataset.off ? openOffDuty() : goOnDuty(b.dataset.n));
+  main(`<div class="home">${homeTip()}${changeNotices()}${addedNotice()}${doneReminders()}${html}</div>`);
+  hookDoneReminders(); hookAddedNotice(); hookChangeNotices(); hookHomeTip();
+  document.querySelectorAll('.hgo').forEach(b => b.onclick = () => b.dataset.off ? openOffDuty() : openGoOn(b.dataset.n));
+  document.querySelectorAll('.hlog').forEach(b => b.onclick = () => openLogMyTime(b.dataset.n));
+  document.querySelectorAll('.hstart').forEach(b => b.onclick = () => openChangeStart());
+  document.querySelectorAll('.hmyt').forEach(b => b.onclick = () => openEntryById(b.dataset.id));
   if ($('hBoard')) $('hBoard').onclick = () => { S.tab = 'board'; buildTabs(); render(); window.scrollTo(0, 0); };
   if ($('hLog')) $('hLog').onclick = () => { S.tab = 'log'; buildTabs(); render(); window.scrollTo(0, 0); };
 }
@@ -3702,6 +3964,43 @@ function checkAssignment() {
   try { if (navigator.vibrate) navigator.vibrate([200, 100, 200]); } catch (e) {}
   toast('New assignment: ' + mine.assignment, false, 8000);
 }
+
+/* ---------------- V1.8.0: "Your time" on the callout card, change notices, iPhone tip ---------------- */
+function myTime(name) {
+  const k = String(name || '').toLowerCase();
+  const sent = (S.d.mine || []).filter(e => String(e.mission || '').toLowerCase() === k);
+  const q = (S.queued || []).filter(x => (x.kind === 'log' && String(x.mission).toLowerCase() === k) || (x.kind === 'entry' && String(x.e.mission).toLowerCase() === k) || (x.kind === 'off' && String(x.mission || '').toLowerCase() === k));
+  return sent.concat(q.map(x => ({ waiting: true, kind: x.kind, x: x })));
+}
+function myTimeLine(name) {
+  const l = myTime(name); if (!l.length) return '';
+  return l.slice(0, 3).map(e => {
+    if (e.waiting) { const x = e.x; const t = x.kind === 'log' ? x.on + '–' + x.off : x.kind === 'off' ? 'off ' + clock(x.off) : (x.e.hours + ' hr');
+      return `<div class="hmyt0">Your time: ${esc(t)}${x.miles != null ? ' · ' + x.miles + ' mi' : ''} · <b>⏳ waiting for signal</b></div>`; }
+    const tt = entryTimes(e);
+    return `<button type="button" class="hmyt" data-id="${esc(e.id)}"><span class="hmt">Your time: ${tt ? tt.on + '–' + tt.off + ' · ' : ''}<b>${n1(e.h)} hr</b> · ${n1(e.mi)} mi</span><span class="hme">✏️ Edit</span></button>`;
+  }).join('');
+}
+function changeNotices() {
+  const l = (S.d.notices || []); if (!l.length) return '';
+  return `<div class="hadded hchg"><div class="hah"><span>${l.some(x => x.kind === 'deleted') && l.length === 1 ? '🗑 Your entry was deleted' : '✏️ Your entry was changed'}</span><button type="button" class="amx" id="hcX" aria-label="Dismiss">✕</button></div>
+    ${l.slice(0, 5).map(x => { const lines = String(x.msg).split('\n'); return `<div class="har"><div><b>${esc(lines[0])}</b>${lines.slice(1).map(t => '<br>' + esc(t)).join('')}</div>
+      ${x.entryId && (S.d.mine || []).some(e => e.id === x.entryId) ? `<button type="button" class="link hcre" style="color:var(--navy);font-weight:800;padding:6px 0 0" data-id="${esc(x.entryId)}" data-row="${x.row}">Review entry ›</button>` : ''}</div>`; }).join('')}</div>`;
+}
+function hookChangeNotices() {
+  const l = S.d.notices || []; if (!l.length) return;
+  const ack = () => { const rows = l.map(x => x.row); S.d.notices = []; run('apiNoticesSeen', S.creds, rows).catch(() => {}); };
+  if ($('hcX')) $('hcX').onclick = () => { ack(); render(); };
+  document.querySelectorAll('.hcre').forEach(b => b.onclick = () => { ack(); render(); openEntryById(b.dataset.id); });
+}
+function isIOS() { return /iPhone|iPad|iPod/.test(navigator.userAgent) || (/Macintosh/.test(navigator.userAgent) && navigator.maxTouchPoints > 1); }
+function homeTip() {
+  let standalone = false; try { standalone = (window.matchMedia && matchMedia('(display-mode: standalone)').matches) || navigator.standalone === true; } catch (e) {}
+  let seen = false; try { seen = !!localStorage.getItem('tipHome'); } catch (e) {}
+  if (!isIOS() || standalone || seen || !/millardsar\.org$/.test(location.hostname)) return '';
+  return `<div class="htip"><div><b>Tip:</b> add Duty Log to your Home Screen so it opens with no signal. Tap <b>Share</b> <span aria-hidden="true">⎋</span>, then <b>Add to Home Screen</b>.</div><button type="button" class="amx" id="tipX" aria-label="Dismiss">✕</button></div>`;
+}
+function hookHomeTip() { if ($('tipX')) $('tipX').onclick = () => { try { localStorage.setItem('tipHome', '1'); } catch (e) {} render(); }; }
 
 /* ---------------- V1.7.0: "An admin added time for you" (Home) ---------------- */
 function addedList() {
@@ -3781,30 +4080,288 @@ function openActive(name, which) {
 }
 function closeActive() { const x = $('amsh'); if (x) x.remove(); if (!$('mssh')) document.documentElement.classList.remove('msopen'); }
 
-/* ---------------- Go On Duty ---------------- */
-async function goOnDuty(name) {
+/* ---------------- V1.8.0: the outbox. Duty and time saves land here first, so they work with no signal ---------------- */
+/* kinds: on {mission ('' = current callout), on} · off {id, on, off, miles, notes} · start {id, on} · log {mission, date, on, off, miles, notes} · entry {e, force} */
+function obKey() { return 'outbox_' + (S.creds ? S.creds.unit : ''); }
+function obLoad() { try { return JSON.parse(localStorage.getItem(obKey()) || '[]'); } catch (e) { return S.obMem || []; } }
+function obSave(l) { S.obMem = l; try { localStorage.setItem(obKey(), JSON.stringify(l)); } catch (e) {} drawNet(); }
+function obAdd(it) {
+  it.rid = it.rid || newRid(); it.at = Date.now(); it.state = 'wait';
+  const l = obLoad(); l.push(it); obSave(l);
+  overlayOutbox(); dutyReshow();
+  flushOutbox();
+  return it;
+}
+function obWaiting() { return obLoad().filter(x => x.state === 'wait'); }
+async function flushOutbox() {
+  if (S.obBusy || !S.creds || !S.d) return;
+  if (navigator.onLine === false) { setOffline(true); return; }
+  S.obBusy = true; drawNet();
+  try {
+    for (const it of obLoad()) {
+      if (it.state !== 'wait') continue;
+      let r;
+      try { r = await obSend(it); }
+      catch (e) {
+        if (!e.server) { setOffline(true); break; }
+        const l = obLoad(), x = l.find(z => z.rid === it.rid);
+        if (x) { x.state = 'fail'; x.err = clean(e); x.pick = /pick/i.test(x.err) && (it.kind === 'on' || it.kind === 'log') && !it.mission; obSave(l); }
+        if (it.kind === 'on') { const l2 = obLoad(); l2.forEach(z => { if (z.state === 'wait' && z.kind === 'off' && z.id === 'open' && z.at > it.at) { z.state = 'fail'; z.err = 'Go On Duty before it was not saved.'; } }); obSave(l2); }
+        toast((it.kind === 'on' ? 'Go On Duty' : it.kind === 'off' ? 'Go Off Duty' : 'Your time') + ' was not saved: ' + clean(e), true, 9000);
+        continue;
+      }
+      setOffline(false);
+      obSave(obLoad().filter(z => z.rid !== it.rid));
+      obAfter(it, r);
+    }
+  } finally { S.obBusy = false; overlayOutbox(); drawNet(); dutyReshow(); }
+}
+function obSend(it) {
+  const iso = t => t ? new Date(t).toISOString() : '';
+  if (it.kind === 'on') return run('apiDutyOn', S.creds, it.mission || '', it.rid, iso(it.on));
+  if (it.kind === 'off') return run('apiDutyOff', S.creds, { id: it.id || 'open', on: iso(it.onEdit), off: iso(it.off), miles: it.miles, notes: it.notes, rid: it.rid });
+  if (it.kind === 'start') return run('apiEditShift', S.creds, { id: it.id, on: iso(it.on) });
+  if (it.kind === 'log') return run('apiLogMyTime', S.creds, { mission: it.mission || '', date: it.date, on: it.on, off: it.off, miles: it.miles, notes: it.notes, rid: it.rid });
+  if (it.kind === 'entry') return run('apiAddEntry', S.creds, Object.assign({}, it.e, { rid: it.rid }), it.force);
+  return Promise.resolve(null);
+}
+function obAfter(it, r) {
+  if (!r) return;
+  if (it.kind === 'on' || it.kind === 'start') { if (r.duty && S.d) { S.d.duty = r.duty; if (S.d.me.admin) buildTabs(); } return; }
+  if (it.kind === 'entry') {
+    if (r.meetingDup) { meetingDupSheet(r.meetingDup); return; }
+    if (r.dup) { if (confirm('You already logged ' + (it.e.mission || it.e.type) + ' on ' + fmtDate(it.e.date) + '. Save another entry anyway?')) obAdd({ kind: 'entry', e: it.e, force: true }); return; }
+    if (r.data) applyFresh(r.data);
+    if (it.files && S.obFiles && S.obFiles[it.rid]) { uploadPhotos(S.obFiles[it.rid], { entryId: r.id, mission: it.e.mission, date: it.e.date }); delete S.obFiles[it.rid]; }
+    return;
+  }
+  if (r.posse || r.me) applyFresh(r);          /* off / log: a full copy */
+  if (it.kind === 'off' || it.kind === 'log') toast('Your time was logged.', false, 4000);
+  if (it.kind === 'off' && it.thenOn) openGoOn(it.thenOn);
+}
+/** Puts what's still waiting on top of the last data from the server, so the screen matches what the member did. */
+function overlayOutbox() {
+  if (!S.d || !S.d.duty) return;
+  const l = obLoad().filter(x => x.state === 'wait');
+  if (!S.dutyBase || S.dutyBaseFrom !== S.d.duty) { S.dutyBase = S.d.duty; }
+  let mine = S.dutyBase.mine;
+  l.forEach(it => {
+    if (it.kind === 'on') mine = { id: 'pending', rid: it.rid, unit: S.d.me.unit, name: S.d.me.name, mission: it.mission || 'Current callout', type: '', on: it.on, assignment: '', waiting: true };
+    if (it.kind === 'off') mine = null;
+    if (it.kind === 'start' && mine && mine.id === it.id) mine = Object.assign({}, mine, { on: it.on });
+  });
+  S.d.duty = Object.assign({}, S.dutyBase, { mine: mine });
+  S.dutyBaseFrom = S.d.duty;
+  S.queued = obLoad().filter(x => x.kind === 'log' || x.kind === 'entry' || x.kind === 'off');
+}
+function setOffline(v) { if (!!S.offline === !!v) return; S.offline = !!v; drawNet(); if (S.tab === 'home' && !$('amsh') && !$('asksh')) { const y = window.scrollY; render(); window.scrollTo(0, y); } }
+window.addEventListener('online', () => { setOffline(false); flushOutbox(); keepCurrent(true); });
+window.addEventListener('offline', () => setOffline(true));
+setInterval(() => { if (obWaiting().length) flushOutbox(); }, 30000);
+/** The bar under the tabs: offline, waiting to send, or not saved. */
+function drawNet() {
+  let n = $('netbar');
+  if (!n) { const a = $('actbar'); if (!a) return; a.insertAdjacentHTML('afterend', '<div id="netbar"></div>'); n = $('netbar'); }
+  const l = obLoad(), wait = l.filter(x => x.state === 'wait'), fail = l.filter(x => x.state === 'fail');
+  const at = S.fullAt || (S.savedAt || 0);
+  const parts = [];
+  if (S.offline) parts.push(`<span><b>Offline</b>${at ? ' · last updated ' + esc(new Date(at).toDateString() === new Date().toDateString() ? clock(at) : shortDay(at) + ' ' + clock(at)) : ''}</span>`);
+  if (wait.length) parts.push(`<span>⏳ ${wait.length} waiting for signal${S.obBusy && !S.offline ? ' · sending…' : ''}</span>`);
+  if (fail.length) parts.push(`<button type="button" class="link" id="netFix">⚠ ${fail.length} not saved · Fix ›</button>`);
+  n.className = parts.length ? 'netbar' + (fail.length ? ' bad' : S.offline ? ' off' : '') : '';
+  n.innerHTML = parts.join('');
+  if ($('netFix')) $('netFix').onclick = openOutboxFix;
+}
+function openOutboxFix() {
+  const fail = obLoad().filter(x => x.state === 'fail'); if (!fail.length) { drawNet(); return; }
+  const it = fail[0];
+  const what = it.kind === 'on' ? 'Go On Duty at ' + clock(it.on) : it.kind === 'off' ? 'Go Off Duty at ' + clock(it.off) : it.kind === 'start' ? 'Start time ' + clock(it.on)
+    : it.kind === 'log' ? 'Time ' + it.on + '–' + it.off + ' on ' + fmtDate(it.date) : 'Entry for ' + fmtDate(it.e.date);
+  const btns = (it.pick ? [['pick', 'Pick the mission']] : []).concat([['drop', 'Remove it'], ['', 'Close']]);
+  askSheet('Not saved', `<b>${esc(what)}</b><br><span class="err">${esc(it.err || '')}</span><br><br><span class="muted small">Remove it and enter it again, or pick the mission and it will be sent again.</span>`, btns, 'red').then(k => {
+    const l = obLoad(), x = l.find(z => z.rid === it.rid); if (!x) return;
+    if (k === 'drop') { obSave(l.filter(z => z.rid !== it.rid)); overlayOutbox(); dutyReshow(); }
+    if (k === 'pick') Promise.resolve(navigator.onLine === false ? null : keepCurrent(true)).catch(() => null).then(() => pickMissionFor(name => { const l2 = obLoad(), y = l2.find(z => z.rid === it.rid); if (!y) return; y.mission = name; y.state = 'wait'; y.err = ''; y.rid = newRid(); obSave(l2); overlayOutbox(); flushOutbox(); }));
+  });
+}
+function pickMissionFor(cb) {
+  let sel = $('pfsel'); if (sel) sel.parentNode.remove();
+  const holder = document.createElement('div'); holder.className = 'hidden';
+  holder.innerHTML = missionSelect('').replace('id="ems"', 'id="pfsel"');
+  document.body.appendChild(holder);
+  sel = $('pfsel');
+  [].slice.call(sel.options).forEach(o => { if (o.value === '__new' || o.disabled) o.remove(); });
+  sel.options[0].textContent = 'Cancel';
+  sel.dataset.title = 'Which mission?';
+  sel.onchange = () => { const v = sel.value; holder.remove(); if (v) cb(v); };
+  openPick('pfsel');
+}
+
+/* ---------------- Go On Duty: confirm or change the start time ---------------- */
+async function goOnDuty(name) { openGoOn(name); }
+async function openGoOn(name) {
   const mine = dutyInfo().mine;
   if (mine) {
     if (mine.mission === name) { toast("You're already on duty for this."); return; }
     if (!confirm(`You're on duty for ${mine.mission}. Go off duty there first?`)) return;
     closeActive(); openOffDuty(name); return;
   }
-  S.dutyRid = S.dutyRid || newRid();
-  /* Show it right away; the save finishes in the background. */
-  const before = S.d.duty, act = activeList().find(x => x.name === name), ml = (S.d.missionList || []).find(x => x.name === name) || {};
-  S.d.duty = Object.assign({}, before, { mine: { id: 'pending', unit: S.d.me.unit, name: S.d.me.name, mission: name, type: (act && act.type) || ml.type || '', on: dutyNow(), assignment: '' } });
-  S.dutyPending = true;
-  const reshow = () => { const open = !!$('amsh') && !$('offSave'); drawActBar(); if ((S.tab === 'log' || S.tab === 'home') && !$('mssh')) { const y = window.scrollY; render(); window.scrollTo(0, y); } if (open) openActive(name); };
-  reshow();
-  toast("You're on duty for " + name + '.');
-  try {
-    const r = await run('apiDutyOn', S.creds, name, S.dutyRid);
-    S.dutyRid = null; S.dutyPending = false;
-    if (r && r.duty) { S.d.duty = r.duty; if (S.d.me.admin) buildTabs(); reshow(); } else if (r) setData(r);
-  } catch (e) {
-    S.dutyPending = false; S.d.duty = before; reshow();
-    toast(clean(e), true, 6000);
+  const ml = (S.d.missionList || []).find(x => x.name === name) || {};
+  if (name && ml.status === 'Completed') {
+    const k = await askSheet(name + ' is completed', 'This mission is over. To add your time to it, use <b>Log My Time</b> and enter when you went on and off duty.', [['log', 'Log My Time'], ['go', 'Go on duty anyway'], ['', 'Cancel']], 'yel');
+    if (k === 'log') { openLogMyTime(name); return; }
+    if (k !== 'go') return;
   }
+  closeActive();
+  const kind = ml.type === 'Callout' || !name ? 'red' : 'grn2';
+  document.body.insertAdjacentHTML('beforeend', `<div class="amsh" id="amsh"><div class="ambox form" role="dialog" aria-label="Go on duty">
+    <div class="amhead ${kind}"><div class="k">GO ON DUTY</div><div class="n">${esc(name || 'Current callout')}</div><button type="button" class="amx" id="amx" aria-label="Close">✕</button></div>
+    <div style="padding:14px 16px 4px">
+      ${timeBox('goT', Date.now(), 'Start time')}
+      <p class="tbhint">Edit your time before going on duty. ${TB_HINT}</p>
+      ${!name ? '<p class="muted small" style="margin:6px 0 0">No signal: this is saved on your phone and matched to the callout when it sends.</p>' : ''}
+      <button type="button" class="btn wide onb" id="goSave" style="margin:14px 0 0;width:100%"></button>
+      <div class="center" style="margin:8px 0 10px"><button type="button" class="link" id="goC" style="color:var(--muted)">Cancel</button></div></div></div></div>`);
+  document.documentElement.classList.add('msopen');
+  const upd = () => { const hmv = tbHM('goT'); $('goSave').textContent = hmv ? 'Go On Duty at ' + hmv : 'Enter the start time'; $('goSave').disabled = !hmv; };
+  hookTimeBox('goT', upd); upd(); $('goT').onnow = upd; tbFollowNow('goT');
+  $('amx').onclick = closeActive; $('goC').onclick = closeActive;
+  $('goSave').onclick = () => {
+    const t = tbAt('goT');
+    if (t == null) { toast('Check the start time.', true); return; }
+    if (t < Date.now() - 20 * 3600000) { toast('That start time is more than 20 hours ago. Use Log My Time instead.', true, 6000); return; }
+    closeActive();
+    obAdd({ kind: 'on', mission: name || '', on: t });
+    toast("You're on duty" + (name ? ' for ' + name : '') + ' since ' + clock(t) + '.' + (S.offline ? ' (saved on your phone; sends when you have signal)' : ''), false, 5000);
+  };
+}
+/** Tap "You're on duty since 21:40 ✏️": change the start time. Admins use it from the Board for anyone on duty. */
+function openChangeStart(shift) {
+  const s = shift || dutyInfo().mine; if (!s) return;
+  const mineToo = !shift || (S.d.me && s.unit === S.d.me.unit);
+  closeActive();
+  document.body.insertAdjacentHTML('beforeend', `<div class="amsh" id="amsh"><div class="ambox form" role="dialog" aria-label="Change start time">
+    <div class="amhead grn2"><div class="k">CHANGE START TIME${mineToo ? '' : ' · ' + esc(s.unit) + ' ' + esc(tcName(s.name))}</div><div class="n">${esc(s.mission)}</div><button type="button" class="amx" id="amx" aria-label="Close">✕</button></div>
+    <div style="padding:14px 16px 4px">${timeBox('csT', s.on, 'Start time')}
+      <p class="tbhint">${TB_HINT}</p>
+      <button type="button" class="btn wide" id="csSave" style="margin:14px 0 0;width:100%"></button>
+      <div class="center" style="margin:8px 0 10px"><button type="button" class="link" id="csC" style="color:var(--muted)">Cancel</button></div></div></div></div>`);
+  document.documentElement.classList.add('msopen');
+  const upd = () => { const v = tbHM('csT'); $('csSave').textContent = v ? 'Change start to ' + v : 'Enter the start time'; $('csSave').disabled = !v; };
+  hookTimeBox('csT', upd); upd();
+  $('amx').onclick = closeActive; $('csC').onclick = closeActive;
+  $('csSave').onclick = async () => {
+    const t = tbAt('csT');
+    if (t == null) return;
+    if (!tbChanged('csT')) { closeActive(); return; }
+    closeActive();
+    if (s.id === 'pending') {
+      const l = obLoad(), x = l.find(z => z.rid === s.rid && z.kind === 'on'); if (x) { x.on = t; obSave(l); overlayOutbox(); dutyReshow(); flushOutbox(); }
+      return;
+    }
+    if (mineToo) { obAdd({ kind: 'start', id: s.id, on: t }); toast('Start time changed to ' + clock(t) + '.'); return; }
+    try { applyDuty(await run('apiEditShift', S.creds, { id: s.id, on: new Date(t).toISOString(), off: '', notes: '' })); toast('Start time changed.'); }
+    catch (e) { toast(clean(e), true, 6000); }
+  };
+}
+
+/* ---------------- V1.8.0: Log My Time (never went on duty) ---------------- */
+function openLogMyTime(name) {
+  const ml = name ? (S.d.missionList || []).find(x => x.name === name) || (S.d.missions || []).find(x => x.name === name) || {} : {};
+  const today = todayStr(), day = ml.date && ml.date <= today ? ml.date : today;
+  const kind = ml.type === 'Callout' || !name ? 'red' : 'grn2';
+  closeActive();
+  document.body.insertAdjacentHTML('beforeend', `<div class="amsh" id="amsh"><div class="ambox form" role="dialog" aria-label="Log my time">
+    <div class="amhead ${kind}"><div class="k">LOG MY TIME</div><div class="n">${esc(name || 'Current callout')}</div><button type="button" class="amx" id="amx" aria-label="Close">✕</button></div>
+    <div style="padding:14px 16px 4px">
+      <label style="margin:0 0 12px">Date<input type="date" id="lmD" value="${day}" max="${today}" style="max-width:210px"></label>
+      <div class="tbpair">${timeBox('lmOn', 0, 'On Duty:')}${timeBox('lmOff', 0, 'Off Duty:')}</div>
+      <p class="tbhint">Enter when you went on and off duty. ${TB_HINT}</p>
+      <div class="tbsum" id="lmSum">Enter both times.</div>
+      <label style="margin:10px 0 0">Miles driven<input type="number" id="lmMi" min="0" max="2000" step="1" inputmode="numeric" placeholder="Round trip" style="max-width:170px;font-size:22px;font-weight:700"></label>
+      <label style="margin:10px 0 0">Notes (optional)<textarea id="lmNo" rows="2" maxlength="300"></textarea></label>
+      <button type="button" class="btn wide onb" id="lmSave" style="margin:14px 0 0;width:100%">Save my time</button>
+      <div class="center" style="margin:8px 0 10px"><button type="button" class="link" id="lmC" style="color:var(--muted)">Cancel</button></div></div></div></div>`);
+  document.documentElement.classList.add('msopen');
+  const mins = () => { const a = tbHM('lmOn'), b = tbHM('lmOff'); if (!a || !b) return null; let m = (+b.slice(0, 2) * 60 + +b.slice(3)) - (+a.slice(0, 2) * 60 + +a.slice(3)); if (m <= 0) m += 1440; return m; };
+  const upd = () => { const m = mins(); $('lmSum').innerHTML = m ? `⏱ <b>${Math.floor(m / 60)} h ${pad2(m % 60)} m</b>${m > 0 && tbHM('lmOff') < tbHM('lmOn') ? ' (past midnight)' : ''} → <b>${halfUpHrs(m)} hr</b> logged` : 'Enter both times.'; };
+  hookTimeBox('lmOn', upd); hookTimeBox('lmOff', upd); upd();
+  $('amx').onclick = closeActive; $('lmC').onclick = closeActive;
+  $('lmSave').onclick = () => {
+    const on = tbHM('lmOn'), off = tbHM('lmOff'), d = $('lmD').value, mi = $('lmMi').value.trim();
+    if (!d) { toast('Pick the date.', true); return; }
+    if (!on || !off) { toast('Enter the on and off times (24-hour, like 14:30).', true); return; }
+    if (mi === '' || !(Number(mi) >= 0)) { toast('Enter the miles you drove (0 if none).', true); $('lmMi').focus(); return; }
+    if (mins() > 24 * 60) { toast('That is over 24 hours. Check the times.', true); return; }
+    const notes = $('lmNo').value.trim();
+    closeActive();
+    obAdd({ kind: 'log', mission: name || '', date: d, on: on, off: off, miles: Number(mi), notes: notes });
+    toast(S.offline ? 'Saved on your phone. It sends when you have signal.' : 'Your time was logged.', false, 4000);
+  };
+}
+
+/* ---------------- V1.8.0: edit an entry in one window (members: their own; admins: anyone's) ---------------- */
+const TIME_NOTE = /On duty (\d\d:\d\d) – off (\d\d:\d\d) \(\d+ h \d+ m\)/;
+function entryTimes(e) { const m = TIME_NOTE.exec((e && e.notes) || ''); return m ? { on: m[1], off: m[2] } : null; }
+function plainNotes(n) { return String(n || '').replace(TIME_NOTE, '').replace(/ · (times )?edited by .*$/, '').replace(/^\s*·\s*|\s*·\s*$/g, '').trim(); }
+async function openEntryById(id) {
+  const have = (S.d.mine || []).find(x => x.id === id) || (S.d.all || []).find(x => x.id === id);
+  if (have) { openEntrySheet(have); return; }
+  try { openEntrySheet(await run('apiGetEntry', S.creds, id)); } catch (e) { toast(clean(e), true); }
+}
+function openEntrySheet(e) {
+  if (!e) return;
+  if (e.waiting) { toast('This is still waiting to send. You can change it once it goes through.'); return; }
+  const me = S.d.me, mineE = e.unit === me.unit, canDel = mineE || me.admin;
+  const who = (S.d.roster || []).find(r => r.unit === e.unit), whoTxt = e.unit + (who && who.name ? ' ' + who.name : '');
+  const tt = entryTimes(e);
+  const names = (S.d.missions || []).map(m => m.name);
+  if (e.mission && names.indexOf(e.mission) < 0) names.unshift(e.mission);
+  closeActive();
+  document.body.insertAdjacentHTML('beforeend', `<div class="amsh" id="amsh"><div class="ambox form" role="dialog" aria-label="Edit entry">
+    <div class="amhead grn2"><div class="k">EDIT ENTRY${mineE ? '' : ' · ' + esc(whoTxt)}</div><div class="n">${esc(e.mission || e.type)}</div><button type="button" class="amx" id="amx" aria-label="Close">✕</button></div>
+    <div style="padding:14px 16px 4px">
+      ${mineE ? '' : `<p class="ewho" style="margin:0 0 12px">Entry for <b>${esc(whoTxt)}</b></p>`}
+      <label style="margin:0 0 10px">Date<input type="date" id="eeD" value="${esc(e.date)}" max="${todayStr()}" style="max-width:210px"></label>
+      <label style="margin:0 0 10px">Mission / Event<select id="eeM"><option value="">— None —</option>${names.map(n => `<option ${n === e.mission ? 'selected' : ''}>${esc(n)}</option>`).join('')}</select></label>
+      <label style="margin:0 0 12px">Type<select id="eeT" style="max-width:240px">${typeOptions(e.type)}</select></label>
+      <div id="eeTimes" class="${tt ? '' : 'hidden'}"><div class="tbpair">${timeBox('eeOn', 0, 'On Duty:')}${timeBox('eeOff', 0, 'Off Duty:')}</div>
+        <p class="tbhint">${TB_HINT}</p><div class="tbsum" id="eeSum"></div></div>
+      <div id="eeHrs" class="${tt ? 'hidden' : ''}"><label style="margin:0">Hours<input type="number" id="eeH" min="0.5" max="72" step="0.5" inputmode="decimal" value="${e.h}" style="max-width:130px;font-size:22px;font-weight:700"></label>
+        <button type="button" class="link" id="eeAddT" style="padding:8px 0;color:var(--navy);font-weight:700">+ Add on/off times</button></div>
+      <label style="margin:12px 0 0">Miles<input type="number" id="eeMi" min="0" max="2000" step="1" inputmode="numeric" value="${e.mi}" style="max-width:130px;font-size:22px;font-weight:700"></label>
+      <label style="margin:10px 0 0">Notes (optional)<textarea id="eeNo" rows="2" maxlength="400">${esc(plainNotes(e.notes))}</textarea></label>
+      <button type="button" class="btn wide" id="eeSave" style="margin:14px 0 0;width:100%">Save</button>
+      ${canDel ? '<button type="button" class="btn wide" id="eeDel" style="margin:10px 0 0;width:100%;background:#fff;color:#c53030;border:1.5px solid #c53030">Delete entry…</button>' : ''}
+      <div class="center" style="margin:8px 0 10px"><button type="button" class="link" id="eeC" style="color:var(--muted)">Cancel</button></div>
+      ${mineE ? '' : '<p class="muted small" style="margin:0 0 12px">They get a notice listing exactly what you changed. It also goes on the Board Log.</p>'}</div></div></div>`);
+  document.documentElement.classList.add('msopen');
+  if (tt) { $('eeOnH').value = tt.on.slice(0, 2); $('eeOnM').value = tt.on.slice(3); $('eeOffH').value = tt.off.slice(0, 2); $('eeOffM').value = tt.off.slice(3);
+    $('eeOn').dataset.oh = tt.on.slice(0, 2); $('eeOn').dataset.om = tt.on.slice(3); $('eeOff').dataset.oh = tt.off.slice(0, 2); $('eeOff').dataset.om = tt.off.slice(3); }
+  let useTimes = !!tt;
+  const mins = () => { const a = tbHM('eeOn'), b = tbHM('eeOff'); if (!a || !b) return null; let m = (+b.slice(0, 2) * 60 + +b.slice(3)) - (+a.slice(0, 2) * 60 + +a.slice(3)); if (m <= 0) m += 1440; return m; };
+  const upd = () => { const m = mins(); $('eeSum').innerHTML = m ? `⏱ <b>${Math.floor(m / 60)} h ${pad2(m % 60)} m</b> → <b>${halfUpHrs(m)} hr</b> logged${tt ? ' (was ' + e.h + ' hr)' : ''}` : 'Enter both times.'; };
+  hookTimeBox('eeOn', upd); hookTimeBox('eeOff', upd); upd();
+  $('eeAddT').onclick = () => { useTimes = true; $('eeTimes').classList.remove('hidden'); $('eeHrs').classList.add('hidden'); $('eeOnH').focus(); };
+  $('amx').onclick = closeActive; $('eeC').onclick = closeActive;
+  $('eeSave').onclick = async () => {
+    const v = { date: $('eeD').value, mission: $('eeM').value, type: $('eeT').value, miles: $('eeMi').value, notes: $('eeNo').value.trim() };
+    if (useTimes) { v.on = tbHM('eeOn'); v.off = tbHM('eeOff'); if (!v.on || !v.off) { toast('Enter both times (24-hour, like 14:30).', true); return; } }
+    else v.hours = $('eeH').value;
+    const b = $('eeSave'); b.disabled = true; b.textContent = 'Saving…';
+    try {
+      const d = await run('apiEditEntry', S.creds, e.id, v);
+      closeActive(); S.allStamp = null; applyFresh(d);
+      if (S.tab === 'missions' || S.tab === 'log' || S.tab === 'home') { const y = window.scrollY; render(); window.scrollTo(0, y); }
+      toast(mineE ? 'Saved.' : 'Saved. ' + e.unit + ' gets a notice.');
+    } catch (err) { b.disabled = false; b.textContent = 'Save'; toast(clean(err), true, 7000); }
+  };
+  if ($('eeDel')) $('eeDel').onclick = async () => {
+    const k = await askSheet('Delete this entry?', `${mineE ? '' : `<b>${esc(whoTxt)}</b><br>`}<b>${n1(e.h)} hr · ${n1(e.mi)} mi</b> on ${esc(fmtDate(e.date))}${e.mission ? '<br>' + esc(e.mission) : ''}`, [['del', 'Delete entry'], ['', 'Cancel']], 'red');
+    if (k !== 'del') { openEntrySheet(e); return; }
+    try { const d = await run('apiDeleteEntry', S.creds, e.id); closeActive(); S.allStamp = null; applyFresh(d); const y = window.scrollY; render(); window.scrollTo(0, y); toast('Entry deleted.'); }
+    catch (err) { toast(clean(err), true, 6000); openEntrySheet(e); }
+  };
 }
 
 /** Log page: Go On Duty for any mission (meetings and maintenance too). */
@@ -3833,58 +4390,48 @@ function hookDutyStrip() {
   if ($('lOff')) $('lOff').onclick = () => openOffDuty();
 }
 
-/* ---------------- Go Off Duty ---------------- */
+/* ---------------- Go Off Duty: On Duty and Off Duty boxes, both can be changed ---------------- */
 function openOffDuty(thenOn, pre) {
   const mine = dutyInfo().mine; if (!mine) return;
-  if (mine.id === 'pending') { toast('Still saving your on-duty time. Try again in a moment.'); return; }
   closeActive();
   const now = dutyNow();
   const long = now - mine.on > (dutyInfo().longHours || 16) * 3600000;
-  const toLocal = t => { const d = new Date(t); return d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(d.getDate()) + 'T' + pad2(d.getHours()) + ':' + pad2(d.getMinutes()); };
+  const act = activeList().find(x => x.name === mine.mission), ml = (S.d.missionList || []).find(x => x.name === mine.mission) || {};
+  const kind = (act && act.type === 'Callout') || ml.type === 'Callout' ? 'red' : 'grn2';
   document.body.insertAdjacentHTML('beforeend', `<div class="amsh" id="amsh"><div class="ambox form" role="dialog" aria-label="Go off duty">
-    <div class="amhead grn2"><div class="k">GO OFF DUTY</div><div class="n">${esc(mine.mission)}</div><button type="button" class="amx" id="amx" aria-label="Close">✕</button></div>
-    ${long ? `<div class="warnbox">You went on duty ${hm(now - mine.on)} ago. If you stopped earlier, set the time you went off duty below.</div>` : ''}
-    <div class="sum"><div><span>On duty</span><span>${clock(mine.on)}${new Date(mine.on).toDateString() !== new Date().toDateString() ? ' · ' + esc(new Date(mine.on).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })) : ''}</span></div>
-      <div><span>Off duty</span><span id="offShow">${clock(now)}</span></div><div><span>Time on shift</span><span id="offEl">${hm(now - mine.on)}</span></div>
-      <div class="tot"><span>Logged as</span><span id="offHr">${halfUpHrs((now - mine.on) / 60000)} hr (rounded up)</span></div></div>
-    <label style="margin:0 16px 10px">Off-duty time <span class="muted small">(change it if you forgot to go off duty)</span><input type="datetime-local" id="offT" value="${toLocal(now)}" max="${toLocal(now)}" min="${toLocal(mine.on)}"></label>
-    <label style="margin:0 16px 10px">Miles driven<input type="number" id="offMi" min="0" max="2000" step="1" inputmode="numeric" placeholder="Total miles for this shift"></label>
-    <label style="margin:0 16px 10px">Notes (optional)<textarea id="offNo" rows="2" maxlength="400">${mine.assignment ? 'Assignment: ' + esc(mine.assignment) : ''}</textarea></label>
-    <button type="button" class="btn wide" id="offSave">Go Off Duty &amp; Save</button>
-    <div class="center"><button type="button" class="link" id="offCancel" style="color:var(--muted)">Cancel (stay on duty)</button></div></div></div>`);
+    <div class="amhead ${kind}"><div class="k">GO OFF DUTY</div><div class="n">${esc(mine.mission)}</div><button type="button" class="amx" id="amx" aria-label="Close">✕</button></div>
+    <div style="padding:14px 16px 4px">
+      ${long ? `<div class="warnbox" style="margin:0 0 12px">You went on duty ${hm(now - mine.on)} ago. If you stopped earlier, change the Off Duty time.</div>` : ''}
+      <div class="tbpair">${timeBox('ofOn', mine.on, 'On Duty:')}${timeBox('ofOff', now, 'Off Duty:')}</div>
+      <p class="tbhint">Edit your time before going off duty. ${TB_HINT}</p>
+      <div class="tbsum" id="ofSum"></div>
+      <label style="margin:10px 0 0">Miles driven<input type="number" id="offMi" min="0" max="2000" step="1" inputmode="numeric" placeholder="Round trip" style="max-width:170px;font-size:22px;font-weight:700"></label>
+      <label style="margin:10px 0 0">Notes (optional)<textarea id="offNo" rows="2" maxlength="400">${mine.assignment ? 'Assignment: ' + esc(mine.assignment) : ''}</textarea></label>
+      <button type="button" class="btn wide offb" id="offSave" style="margin:14px 0 0;width:100%"></button>
+      <div class="center" style="margin:8px 0 10px"><button type="button" class="link" id="offCancel" style="color:var(--muted)">Cancel (stay on duty)</button></div></div></div></div>`);
   document.documentElement.classList.add('msopen');
-  const startVal = $('offT').value;
-  /* The box shows minutes only: unless it was changed, "off" is right now */
-  const offTime = () => { const v = $('offT').value; if (!v || v === startVal) return Date.now(); const t = new Date(v).getTime(); return isFinite(t) ? Math.max(t, mine.on) : Date.now(); };
-  const upd = () => { const t = offTime(), min = (t - mine.on) / 60000; $('offShow').textContent = clock(t); $('offEl').textContent = hm(t - mine.on); $('offHr').textContent = (min > 0 ? halfUpHrs(min) : '—') + ' hr (rounded up)'; };
-  $('offT').addEventListener('input', upd); $('offT').addEventListener('change', upd);
-  if (pre) { if (pre.offT) $('offT').value = pre.offT; $('offMi').value = pre.mi; $('offNo').value = pre.notes; upd(); }
+  const times = () => { const off = tbAt('ofOff'); const on = off == null ? null : tbAt('ofOn', off); return { on: on, off: off }; };
+  const upd = () => {
+    const t = times(), ok = t.on != null && t.off != null && t.off > t.on;
+    $('ofSum').innerHTML = ok ? `⏱ <b>${hm(t.off - t.on)}</b> on duty → <b>${halfUpHrs((t.off - t.on) / 60000)} hr</b> logged` : '<span class="err">Check the times.</span>';
+    $('offSave').textContent = tbHM('ofOff') ? 'Go Off Duty at ' + tbHM('ofOff') : 'Enter the off time'; $('offSave').disabled = !ok;
+  };
+  hookTimeBox('ofOn', upd); hookTimeBox('ofOff', upd); $('ofOff').onnow = upd; tbFollowNow('ofOff'); upd();
+  if (pre) { $('offMi').value = pre.mi; $('offNo').value = pre.notes; }
   $('amx').onclick = closeActive; $('offCancel').onclick = closeActive;
-  $('offSave').onclick = async () => {
+  $('offSave').onclick = () => {
     const mi = $('offMi').value.trim();
     if (mi === '' || !(Number(mi) >= 0)) { toast('Enter the miles you drove (0 if none).', true); $('offMi').focus(); return; }
-    const t = offTime();
-    if (t > Date.now() + 60000) { toast("The off-duty time can't be in the future.", true); return; }
-    if (t < mine.on) { toast('The off-duty time is before you went on duty.', true); return; }
-    S.offRid = S.offRid || newRid();
-    const changed = $('offT').value !== startVal;
-    const pre = { offT: changed ? $('offT').value : '', mi: mi, notes: $('offNo').value };
-    /* Close right away; the save (which also reloads your totals) finishes in the background. */
-    const before = S.d.duty;
+    const t = times();
+    if (t.on == null || t.off == null || t.off <= t.on) { toast('Check the times.', true); return; }
+    if (t.off - t.on > 72 * 3600000) { toast('That shift is over 72 hours. Check the times.', true); return; }
+    const onEdit = tbChanged('ofOn') ? t.on : null, notes = $('offNo').value;
     closeActive();
-    S.d.duty = Object.assign({}, before, { mine: null });
-    S.dutyPending = true; dutyReshow();
-    toast('Off duty. Saving your time…', false, 20000);
-    try {
-      const r = await run('apiDutyOff', S.creds, { id: mine.id, off: changed ? new Date(t).toISOString() : '', miles: Number(mi), notes: pre.notes, rid: S.offRid });
-      S.offRid = null; S.dutyPending = false;
-      setData(r); toast('Your time was logged.', false, 4000);
-      if (thenOn) goOnDuty(thenOn);
-    } catch (e) {
-      S.dutyPending = false; S.d.duty = before; dutyReshow();
-      openOffDuty(thenOn, pre);
-      toast("Couldn't save: " + clean(e), true, 8000);
+    if (mine.id === 'pending') {   /* Go On Duty hasn't been sent yet: fix its start time and queue the off */
+      const l = obLoad(), x = l.find(z => z.rid === mine.rid && z.kind === 'on'); if (x && onEdit) { x.on = onEdit; obSave(l); }
     }
+    obAdd({ kind: 'off', id: mine.id === 'pending' ? 'open' : mine.id, onEdit: mine.id === 'pending' ? null : onEdit, off: t.off, miles: Number(mi), notes: notes, mission: mine.mission, thenOn: thenOn || '' });
+    toast('Off duty at ' + clock(t.off) + '.' + (S.offline ? ' Saved on your phone; it sends when you have signal.' : ' Saving your time…'), false, 5000);
   };
 }
 function dutyReshow() { drawActBar(); if ((S.tab === 'log' || S.tab === 'home') && !$('mssh') && !$('amsh')) { const y = window.scrollY; render(); window.scrollTo(0, y); } }
@@ -3913,7 +4460,7 @@ function boardMode() {
 function setBoardMode(m) { S.boardMode = m; try { localStorage.setItem('dutyBoardMode', m); } catch (e) {} const y = window.scrollY; render(); window.scrollTo(0, y); }
 function byUnit(a, b) { return String(a.unit).localeCompare(String(b.unit), undefined, { numeric: true }); }
 function ptag(s) { return s && s.posse ? ` <span class="tag ptag">${esc(String(s.posse).split(' ')[0])}</span>` : ''; }
-function tcName(n) { const l = lastName(n); return l.charAt(0) + l.slice(1).toLowerCase(); }
+function tcName(n) { return lastName(n).toLowerCase().replace(/(^|[\s\u00a0.'-])([a-z])/g, (m, a, b) => a + b.toUpperCase()); }
 function renderBoard() {
   if (!S.d.me.admin) { S.tab = 'log'; return renderLog(); }
   if (S.boardView && S.boardView !== 'active') return renderBoardHist();
@@ -4042,6 +4589,9 @@ function openUnitSheet(id) {
 /* ---------------- Admin: edit a shift's on/off times ---------------- */
 function openEditTimes(id) {
   const s = shiftById(id); if (!s) return;
+  /* V1.8.0: one editor. On duty -> change the start time; off duty -> the entry window (times, miles, notes). */
+  if (s.status === 'On') { openChangeStart(s); return; }
+  if (s.entryId && !/^[a-z]+:/.test(String(s.id))) { closeActive(); openEntryById(s.entryId); return; }
   const isOn = s.status === 'On', now = dutyNow();
   const p2 = n => String(n).padStart(2, '0');
   const toLocal = t => { const d = new Date(t); return d.getFullYear() + '-' + p2(d.getMonth() + 1) + '-' + p2(d.getDate()) + 'T' + p2(d.getHours()) + ':' + p2(d.getMinutes()); };
@@ -4095,13 +4645,13 @@ function openPutOn(mission) {
       ${others.length ? `<optgroup label="Other open missions">${others.map(n => `<option ${n === mis ? 'selected' : ''}>${esc(n)}</option>`).join('')}</optgroup>` : ''}</select></label>
     <label style="margin:0 16px 4px">Units <span class="muted small">(tap everyone who's starting)</span><input type="text" id="poF" placeholder="Type to find a unit or name" autocomplete="off"></label>
     <div class="pol" id="poL"></div>
-    <label style="margin:10px 16px 8px">On-duty time <span class="muted small">(now, or when they really started)</span><input type="datetime-local" id="poT" value="${toLocal(now)}" max="${toLocal(now)}"></label>
+    <div style="margin:10px 16px 8px">${timeBox('poT', now, 'On-duty time')}<p class="tbhint">Now, or when they really started. ${TB_HINT}</p></div>
     <label style="margin:0 16px 10px">Assignment <span class="muted small">(optional, for everyone checked)</span><input type="text" id="poA" maxlength="300"></label>
     <button type="button" class="btn wide" id="poGo" disabled>Pick units above</button>
     <div class="center"><button type="button" class="link" id="poC" style="color:var(--muted)">Cancel</button></div>
     <p class="muted small" style="margin:6px 16px 14px">Shows on the board right away with "Put on duty by ${esc(S.d.me.unit)} ${esc(tcName(S.d.me.name))}" and goes on the Board Log. If they open the app, they see they're on duty and can go off duty themselves.</p></div></div>`);
   document.documentElement.classList.add('msopen');
-  const startT = $('poT').value;
+  hookTimeBox('poT'); tbFollowNow('poT');
   const isJoint = n => groups.some(g => g.mission === n && g.joint) || (S.d.missionList || []).some(m => m.name === n && m.joint);
   const item = (r, val, tag, busyAt) => busyAt
     ? `<label class="poi dis"><input type="checkbox" disabled> <span><b>${esc(r.unit)}</b> ${esc(r.name)}${tag}</span><span class="muted small pon">on duty${busyAt === $('poM').value ? '' : ' · ' + esc(busyAt)}</span></label>`
@@ -4137,9 +4687,10 @@ function openPutOn(mission) {
   $('poGo').onclick = async () => {
     const b = $('poGo'); b.disabled = true; b.textContent = 'Saving…';
     S.poRid = S.poRid || newRid();
-    const v = $('poT').value;
+    const pt = tbAt('poT');
+    if (pt == null) { b.disabled = false; upd(); toast('Check the on-duty time.', true); return; }
     try {
-      const r = await run('apiAdminOn', S.creds, { units: picked(), mission: $('poM').value, on: v && v !== startT ? new Date(v).toISOString() : '', assignment: $('poA').value, rid: S.poRid });
+      const r = await run('apiAdminOn', S.creds, { units: picked(), mission: $('poM').value, on: tbChanged('poT') ? new Date(pt).toISOString() : '', assignment: $('poA').value, rid: S.poRid });
       S.poRid = null; closeActive(); applyDuty(r);
       if (S.otherRoster) S.otherRoster.at = 0;
       toast((r.done.length ? r.done.join(', ') + ' on duty.' : 'Nobody was put on duty.') + (r.skipped.length ? ' Skipped: ' + r.skipped.join('; ') : ''), !!r.skipped.length, r.skipped.length ? 8000 : 4000);
@@ -4157,13 +4708,13 @@ function openCheckOut(mission) {
     <div class="amhead grn2"><div class="k">CHECK OUT</div><div class="n">Put several units off duty</div><button type="button" class="amx" id="amx" aria-label="Close">✕</button></div>
     <div class="pol" id="coL" style="margin-top:12px">${groups.map((g, gi) => `<label class="poi" style="background:#eef3f0"><input type="checkbox" class="coAll" data-g="${gi}" checked> <span><b>${esc(g.mission)}</b> · everyone (${g.on.length})</span></label>` +
       g.on.slice().sort(byUnit).map(x => `<label class="poi"><input type="checkbox" class="coU" data-g="${gi}" value="${esc(x.id)}" checked> <span><b>${esc(x.unit)}</b> ${esc(tcName(x.name))}${ptag(x)}</span><span class="muted small pon">on ${clock(x.on)}</span></label>`).join('')).join('')}</div>
-    <label style="margin:10px 16px 8px">Off-duty time <span class="muted small">(same for everyone checked; never earlier than their own start)</span><input type="datetime-local" id="coT" value="${toLocal(now)}" max="${toLocal(now)}"></label>
+    <div style="margin:10px 16px 8px">${timeBox('coT', now, 'Off-duty time')}<p class="tbhint">Same for everyone checked (never earlier than their own start). ${TB_HINT}</p></div>
     <label style="margin:0 16px 10px">Reason<input type="text" id="coNo" maxlength="200" placeholder="e.g. Mission over, everyone released"></label>
     <button type="button" class="btn wide offb" id="coGo">Put them off duty</button>
     <div class="center"><button type="button" class="link" id="coC" style="color:var(--muted)">Cancel</button></div>
     <p class="muted small" style="margin:6px 16px 14px">Miles are left blank (unknown) and each member can fix theirs. Each gets a note and it all goes on the Board Log.</p></div></div>`);
   document.documentElement.classList.add('msopen');
-  const start = $('coT').value;
+  hookTimeBox('coT'); tbFollowNow('coT');
   const picked = () => [].map.call(document.querySelectorAll('#coL .coU:checked'), x => x.value);
   const upd = () => { const n = picked().length; $('coGo').disabled = !n; $('coGo').textContent = n ? 'Put ' + n + ' unit' + (n === 1 ? '' : 's') + ' off duty' : 'Check at least one unit'; };
   document.querySelectorAll('#coL .coAll').forEach(a => a.onchange = () => { document.querySelectorAll('#coL .coU[data-g="' + a.dataset.g + '"]').forEach(x => { x.checked = a.checked; }); upd(); });
@@ -4173,9 +4724,10 @@ function openCheckOut(mission) {
   $('coGo').onclick = async () => {
     const b = $('coGo'); b.disabled = true; b.textContent = 'Saving…';
     S.coRid = S.coRid || newRid();
-    const v = $('coT').value;
+    const ct = tbAt('coT');
+    if (ct == null) { upd(); toast('Check the off-duty time.', true); return; }
     try {
-      const r = await run('apiAdminOffMany', S.creds, { ids: picked(), off: v && v !== start ? new Date(v).toISOString() : '', notes: $('coNo').value, rid: S.coRid });
+      const r = await run('apiAdminOffMany', S.creds, { ids: picked(), off: tbChanged('coT') ? new Date(ct).toISOString() : '', notes: $('coNo').value, rid: S.coRid });
       S.coRid = null; closeActive(); applyDuty(r);
       toast((r.done.length ? r.done.join(', ') + ' off duty.' : 'Nobody was put off duty.') + (r.skipped.length ? ' Skipped: ' + r.skipped.join('; ') : ''), !!r.skipped.length, r.skipped.length ? 8000 : 4000);
     } catch (e) { upd(); toast(clean(e), true, 6000); }
@@ -4194,8 +4746,7 @@ function openAddTime(mission) {
     <label style="margin:12px 16px 4px">Units <span class="muted small">(everyone who gets this time)</span><input type="text" id="atF" placeholder="Type to find a unit or name" autocomplete="off"></label>
     <div class="pol" id="atL"></div>
     <label style="margin:10px 16px 8px">Date<input type="date" id="atD" value="${day}" max="${today}"></label>
-    <div style="display:flex;gap:10px;margin:0 16px"><label style="flex:1;margin:0">On <span class="muted small">(24 h)</span><input type="text" id="atOn" placeholder="08:00" inputmode="numeric" maxlength="5"></label>
-      <label style="flex:1;margin:0">Off<input type="text" id="atOff" placeholder="14:30" inputmode="numeric" maxlength="5"></label></div>
+    <div style="margin:0 16px"><div class="tbpair">${timeBox('atOn', 0, 'On Duty:')}${timeBox('atOff', 0, 'Off Duty:')}</div><p class="tbhint">${TB_HINT}</p></div>
     <label style="margin:8px 16px 8px">…or hours <span class="muted small">(if you don't know the times)</span><input type="number" id="atH" min="0.5" max="72" step="0.5" inputmode="decimal"></label>
     <label style="margin:0 16px 8px">Miles <span class="muted small">(each; blank = 0)</span><input type="number" id="atMi" min="0" max="2000" step="1" inputmode="numeric"></label>
     <label style="margin:0 16px 10px">Note<input type="text" id="atNo" maxlength="200" placeholder="e.g. Forgot to log, helped at staging"></label>
@@ -4222,12 +4773,10 @@ function openAddTime(mission) {
     .catch(e => { S.otherRoster = { err: "Couldn't load the other posse's roster: " + clean(e) }; if ($('atL')) draw(); });
   $('atL').onchange = upd;
   $('atF').oninput = () => { const q = $('atF').value.trim().toLowerCase(); document.querySelectorAll('#atL .poi').forEach(el => { el.style.display = !q || (el.dataset.q && el.dataset.q.indexOf(q) >= 0) ? '' : 'none'; }); };
-  const tfix = el => { el.onblur = () => { const v = el.value.trim().replace(/[.h]/, ':'); const m = /^(\d{1,2}):?(\d{2})$/.exec(v); if (m && +m[1] < 24 && +m[2] < 60) el.value = pad2(+m[1]) + ':' + m[2]; }; };
-  tfix($('atOn')); tfix($('atOff'));
+  hookTimeBox('atOn'); hookTimeBox('atOff');
   $('amx').onclick = closeActive; $('atC').onclick = closeActive;
   $('atGo').onclick = async () => {
-    $('atOn').onblur(); $('atOff').onblur();
-    const on = $('atOn').value.trim(), off = $('atOff').value.trim();
+    const on = tbHM('atOn') || '', off = tbHM('atOff') || '';
     if ((on || off) && !(/^\d{2}:\d{2}$/.test(on) && /^\d{2}:\d{2}$/.test(off))) { toast('Enter both times like 08:00 and 14:30, or leave them blank and enter hours.', true, 6000); return; }
     const b = $('atGo'); b.disabled = true; b.textContent = 'Saving…';
     S.atRid = S.atRid || newRid();
@@ -4255,27 +4804,28 @@ function openAdminOff(id) {
     <div class="sum"><div><span>On duty</span><span>${clock(s.on)}${new Date(s.on).toDateString() !== new Date().toDateString() ? ' · ' + esc(shortDay(s.on)) : ''}</span></div>
       <div><span>Off duty</span><span id="aoShow">${clock(now)}</span></div><div><span>Time on shift</span><span id="aoEl">${hm(now - s.on)}</span></div>
       <div class="tot"><span>Logged as</span><span id="aoHr">${halfUpHrs((now - s.on) / 60000)} hr (rounded up)</span></div></div>
-    <label style="margin:0 16px 10px">Off-duty time <span class="muted small">(when they really stopped, if you know)</span><input type="datetime-local" id="aoT" value="${toLocal(now)}" max="${toLocal(now)}" min="${toLocal(s.on)}"></label>
+    <div style="margin:4px 16px 10px">${timeBox('aoT', now, 'Off-duty time')}<p class="tbhint">When they really stopped, if you know. ${TB_HINT}</p></div>
     <label style="margin:0 16px 10px">Miles <span class="muted small">(leave blank if you don't know; they can fix it)</span><input type="number" id="aoMi" min="0" max="2000" step="1" inputmode="numeric" placeholder="Unknown"></label>
     <label style="margin:0 16px 10px">Reason<input type="text" id="aoNo" maxlength="200" placeholder="e.g. Forgot to go off duty, couldn't reach them"></label>
     <button type="button" class="btn wide offb" id="aoSave">Put ${esc(s.unit)} off duty</button>
     <div class="center"><button type="button" class="link" id="aoCancel" style="color:var(--muted)">Cancel</button></div>
-    <p class="muted small" style="margin:6px 16px 14px">Saved as their entry with the note "Put off duty by ${esc(S.d.me.unit)} ${esc(lastName(S.d.me.name).charAt(0) + lastName(S.d.me.name).slice(1).toLowerCase())}" and recorded on the Board Log. They see a notice next time they open the app.</p></div></div>`);
+    <p class="muted small" style="margin:6px 16px 14px">Saved as their entry with the note "Put off duty by ${esc(S.d.me.unit)} ${esc(tcName(S.d.me.name))}" and recorded on the Board Log. They see a notice next time they open the app.</p></div></div>`);
   document.documentElement.classList.add('msopen');
-  const start = toLocal(now);
-  const offAt = () => { const v = $('aoT').value; return !v || v === start ? dutyNow() : new Date(v).getTime(); };
+  const offAt = () => { const t = tbAt('aoT'); return t == null ? dutyNow() : t; };
   const upd = () => { const t = offAt(); $('aoShow').textContent = clock(t); $('aoEl').textContent = hm(t - s.on); $('aoHr').textContent = halfUpHrs(Math.max(1, (t - s.on) / 60000)) + ' hr (rounded up)'; };
-  $('aoT').oninput = upd;
+  hookTimeBox('aoT', upd); $('aoT').onnow = upd; tbFollowNow('aoT');
   const close = () => { closeActive(); };
   $('amx').onclick = close; $('aoCancel').onclick = close;
   $('aoSave').onclick = async () => {
     const mi = $('aoMi').value.trim();
     if (mi !== '' && !(Number(mi) >= 0 && Number(mi) <= 2000)) { toast('Miles must be between 0 and 2000, or left blank.', true); return; }
-    const v = $('aoT').value, changed = v && v !== start;
+    const changed = tbChanged('aoT'), t = offAt();
+    if (tbHM('aoT') == null) { toast('Check the off-duty time.', true); return; }
+    if (t < s.on) { toast('The off-duty time is before they went on duty.', true); return; }
     const b = $('aoSave'); b.disabled = true; b.textContent = 'Saving…';
     S.aoRid = S.aoRid || newRid();
     try {
-      const r = await run('apiAdminOff', S.creds, { id: s.id, off: changed ? new Date(v).toISOString() : '', miles: mi, notes: $('aoNo').value, rid: S.aoRid });
+      const r = await run('apiAdminOff', S.creds, { id: s.id, off: changed ? new Date(t).toISOString() : '', miles: mi, notes: $('aoNo').value, rid: S.aoRid });
       S.aoRid = null; closeActive(); applyDuty(r); toast(s.unit + ' is off duty.');
       if (S.afterAdminOff) { const f = S.afterAdminOff; S.afterAdminOff = null; f(); }
     } catch (e) { b.disabled = false; b.textContent = 'Put ' + s.unit + ' off duty'; toast(clean(e), true, 6000); }
@@ -4426,8 +4976,8 @@ function editAssignment(id) {
 }
 /** Put fresh duty info in and redraw what shows it (without reloading everything). */
 function applyDuty(r) {
-  if (!r || !r.duty || !S.d || S.dutyPending) return;
-  S.d.duty = r.duty;
+  if (!r || !r.duty || !S.d) return;
+  S.d.duty = r.duty; overlayOutbox();
   const hadTab = S.tabList && S.tabList.indexOf('board') >= 0;
   if (S.d.me.admin && hadTab !== boardWanted()) buildTabs();
   drawActBar();
@@ -4465,7 +5015,11 @@ function dutyTick() {
 }
 async function dutyRefresh() {
   if (!S.d || !S.creds || document.hidden) return;
-  try { applyDuty(await run('apiDutyStatus', S.creds)); } catch (e) {}
+  try {
+    const r = await run('apiDutyStatus', S.creds, S.dutyStamp || S.d.stamp, { age: Date.now() - Math.max(S.fullAt || 0, S.dutyAt || 0) });
+    if (r && r.same) return;
+    S.dutyAt = Date.now(); if (r && r.stamp) S.dutyStamp = r.stamp; applyDuty(r);
+  } catch (e) {}
 }
 setInterval(dutyTick, 30000);
 setInterval(() => { if (S.d && (S.tab === 'board' || (S.d.me && S.d.me.admin && boardData().length))) dutyRefresh(); }, 60000);
@@ -4496,6 +5050,12 @@ document.addEventListener('visibilitychange', () => { if (!document.hidden) duty
     else if (window.google && google.script && google.script.run) google.script.run.apiClientError(info);
   } catch (e) {}
 })();
+</script>
+<script>
+/* V1.8.0: keep a copy of the app on the phone so it opens with no signal (only on the posse web addresses) */
+if ('serviceWorker' in navigator && /millardsar\.org$/.test(location.hostname)) {
+  window.addEventListener('load', function () { navigator.serviceWorker.register('sw.js').catch(function () {}); });
+}
 </script>
 </body>
 </html>
